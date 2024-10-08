@@ -1,6 +1,6 @@
-**Initialiser l'app :**
+**Initialiser l'app :** <br/>
 
-**Préréquis :**
+**Préréquis :** <br/>
 *-Avoir composer*  <br/>
 *-Avoir NPM / PNPM* <br/>
 *-Avoir php 8 au moins* <br/>
