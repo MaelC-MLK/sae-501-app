@@ -5,7 +5,9 @@
 *-Avoir NPM / PNPM* <br/>
 *-Avoir php 8 au moins* <br/>
 
+```console
 git clone https://github.com/MaelC-MLK/sae-501-app.git . <br/>
+```
 
 Dans le terminal VSCODE : <br/>
 
