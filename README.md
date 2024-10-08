@@ -1,24 +1,36 @@
 **Initialiser l'app :**
 
 **Préréquis :**
-*-Avoir composer*
-*-Avoir NPM / PNPM*
-*-Avoir php 8 au moins*
+*-Avoir composer*  <br/>
+*-Avoir NPM / PNPM* <br/>
+*-Avoir php 8 au moins* <br/>
 
-git clone https://github.com/MaelC-MLK/sae-501-app.git . 
+git clone https://github.com/MaelC-MLK/sae-501-app.git . <br/>
 
-Dans le terminal VSCODE :
+Dans le terminal VSCODE : <br/>
 
-```cd .\backend```
-```composer install```
+```console
+cd .\backend
+```
+```console
+composer install
+```
 
-```cd .\frontend```
-```pnpm install```
+```console
+cd .\frontend
+```
+```console
+pnpm install
+```
 
-```cd ..```
-```docker-compose up -d```
+```console
+cd ..
+```
+```console
+docker-compose up -d
+```
 
 
-Lien pour le front : ***http://localhost:80***
-Lien pour phpmyadmin : ***http://localhost:81***
-Lien pour le back : ***http://localhost:80/api***
+Lien pour le front : ***http://localhost:80*** <br/>
+Lien pour phpmyadmin : ***http://localhost:81*** <br/>
+Lien pour le back : ***http://localhost:80/api*** <br/>
