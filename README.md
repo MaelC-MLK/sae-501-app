@@ -6,7 +6,7 @@
 *-Avoir php 8 au moins* <br/>
 
 ```console
-git clone https://github.com/MaelC-MLK/sae-501-app.git . <br/>
+git clone https://github.com/MaelC-MLK/sae-501-app.git . 
 ```
 
 Dans le terminal VSCODE : <br/>
