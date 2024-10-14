@@ -44,9 +44,12 @@ docker-compose up -d
 ```
 
 ## Executer dans le conteneur docker les commandes : 
+```
 docker exec -it sae-backend /bin/bash
+```
+```
 docker exec -it sae-frontend /bin/bash
-
+```
 ## Liens
 - Frontend : [http://localhost:8090](http://localhost:8090)
 - Backend : [http://localhost:8080](http://localhost:8080)
