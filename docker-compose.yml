@@ -49,7 +49,7 @@ services:
       - database:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: "SAE4_DWeb_DI_01"
+      MYSQL_DATABASE: "SAE501"
     networks:
       - sae-network
   
