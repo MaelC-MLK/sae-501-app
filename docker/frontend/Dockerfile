@@ -1,11 +1,18 @@
-# Use a specific version of Node.js
-FROM node:20
+# Utilise l'image Node.js
+FROM node:18-alpine
 
-# Set working directory
+# Définit le répertoire de travail dans le conteneur
 WORKDIR /app
 
-# Expose port
+# Copie les fichiers de l'application Next.js
+COPY ./frontend/package*.json ./
+COPY ./frontend/ ./
+
+# Installe les dépendances
+RUN npm install
+
+# Expose le port sur lequel Next.js sera lancé
 EXPOSE 5173
 
-# Start the development server
+# Démarre Next.js en mode développement
 CMD ["npm", "run", "dev"]
