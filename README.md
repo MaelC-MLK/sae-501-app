@@ -43,7 +43,7 @@ docker-compose run --rm backend php bin/console doctrine:migrations:migrate --no
 docker-compose up -d
 ```
 
-## Executer dans le conteneur docker les commandes : 
+## Executer des commandes dans les conteneurs docker : 
 ```
 docker exec -it sae-backend /bin/bash
 ```
