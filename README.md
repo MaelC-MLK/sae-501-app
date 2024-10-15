@@ -33,3 +33,44 @@ docker exec -it sae-frontend /bin/bash
 - Frontend : [http://localhost:8090](http://localhost:8090)
 - Backend : [http://localhost:8080](http://localhost:8080)
 - phpMyAdmin : [http://localhost:8070](http://localhost:8070)
+
+## Structure Composants
+/components
+│
+├── ui/               // Composants UI génériques (boutons, cartes, formulaires, etc.)
+│   ├── button.jsx    // Bouton générique basé sur Shadcn UI
+│   ├── card.jsx      // Composant de carte générique
+│   ├── modal.jsx     // Modale générique
+│   └── ...           // Autres composants UI réutilisables
+│
+├── layout/           // Composants liés à la mise en page (header, footer, sidebar)
+│   ├── header.jsx
+│   ├── footer.jsx
+│   ├── sidebar.jsx
+│   └── ... 
+│
+├── sections/         // Sections réutilisables de pages (hero, features, testimonials)
+│   ├── hero.jsx
+│   ├── features.jsx
+│   └── ...
+│
+├── forms/            // Composants liés aux formulaires (inputs, checkboxes, etc.)
+│   ├── text-input.jsx
+│   ├── checkbox.jsx
+│   ├── form.jsx
+│   └── ...
+│
+├── cards/            // Composants de cartes spécifiques (cartes d'événements, profils, etc.)
+│   ├── event-card.jsx
+│   ├── profile-card.jsx
+│   └── ...
+│
+├── modals/           // Modales spécifiques (confirmation, formulaire de connexion, etc.)
+│   ├── login-modal.jsx
+│   ├── confirm-modal.jsx
+│   └── ...
+│
+└── navigation/       // Composants liés à la navigation (menus, breadcrumbs)
+    ├── navbar.jsx
+    ├── breadcrumbs.jsx
+    └── ...
