@@ -13,10 +13,16 @@ docker-compose run --rm frontend npm install
 docker-compose run --rm backend composer install
 ```
 
+### Lance les migrations pour avoir une base de données fonctionnelle
+```
+docker-compose run --rm backend php bin/console doctrine:migrations:migrate --no-interaction
+```
+
 ## Lancer l'environnement
 ```
 docker-compose up -d
 ```
+
 
 ## Executer des commandes dans les conteneurs docker : 
 ```
