@@ -15,7 +15,7 @@ docker-compose run --rm backend composer install
 
 ### Lance les migrations pour avoir une base de données fonctionnelle
 ```
-docker-compose run --rm backend phpcomment bin/console doctrine:migrations:migrate --no-interaction
+docker-compose run --rm backend php bin/console doctrine:migrations:migrate --no-interaction
 ```
 
 ## Lancer l'environnement
