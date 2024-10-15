@@ -18,7 +18,7 @@ const Navbar = () => {
     ];
 
     return (
-        <div className="flex flex-row items-center justify-between bg-background h-16 px-4">
+        <div className="flex flex-row items-center justify-between bg-background h-16 px-4 border-b-2">
             <Link href="/" className="text-2xl font-bold">
                 Event<span className='text-primary'>Ify</span>
             </Link>
