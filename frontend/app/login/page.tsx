@@ -1,0 +1,58 @@
+import React from 'react';
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import Image from 'next/image';
+
+export default async function Page() {
+    return (
+        <div className="flex h-screen">
+            <div className="flex flex-col justify-center md:w-2/3 max-w-md mx-auto p-12">
+                <h1 className="text-3xl font-bold mb-8">Welcome back!</h1>
+                
+                <form>
+                    <div className="mb-4">
+                        <Label htmlFor="email" className='text-lg'>Email*</Label>
+                        <Input type="email" id="email" placeholder="Email" name="email" required className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10" />
+                    </div>
+                    <div className="mb-2">
+                        <Label htmlFor="password" className='text-lg'>Password*</Label>
+                        <Input type="password" id="password" placeholder="Password" name="password" required className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10" />
+                    </div>
+
+                    <div className="text-right mb-6">
+                        <a href="#" className="text-blue-500 hover:underline text-sm">Forgot Password?</a>
+                    </div>
+                    
+                    <Button type="submit" className="w-full bg-blue-500 text-white py-6 text-lg rounded-md hover:bg-blue-600 transition">
+                        Login
+                    </Button>
+                </form>
+                
+                <div className="flex items-center justify-center my-4">
+                    <div className="w-1/3 border-t border-gray-300"></div>
+                    <p className="mx-3 text-gray-500">or</p>
+                    <div className="w-1/3 border-t border-gray-300"></div>
+                </div>
+                
+                <div className="flex gap-2 mb-6">
+                    <Button className="w-full bg-blue-500 text-white py-6 rounded-md sm:text-lg mb-3 hover:bg-blue-600 transition">
+                        Log in with Google
+                    </Button>
+                    <Button className="w-full py-6 sm:text-lg rounded-md transition" variant={'outline'}>
+                        Log in with Apple
+                    </Button>
+                </div>
+
+
+                <p className="text-center text-sm text-gray-500">
+                    Don't you have an account? <a href="#" className="text-blue-500 hover:underline">Sign Up</a>
+                </p>
+            </div>
+            <div className="hidden lg:block relative h-full w-1/3">
+                <Image src="/images/img-login-form.png" alt="Photo" layout="fill" objectFit="cover" />
+            </div>
+        </div>
+    );
+};
+
