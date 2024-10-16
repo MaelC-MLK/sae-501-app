@@ -4,6 +4,7 @@ import ScrollButton from "@/components/ui/scrollButton"
 import { CardEvent } from "@/components/cards/cardEvent"
 import { CarouselRecom } from "@/components/sections/carouselRecom"
 import { SignUpCallToAction } from "@/components/sections/signUpCallToAction"
+import { PaginatedEvents } from "@/components/sections/paginatedEvents"
 
 // Events factices pour tester l'interface
 const events = [
@@ -37,14 +38,7 @@ export default function Home() {
         <CarouselRecom events={events}/>
       </div>
       <ScrollButton />
-      <div id="events-list" className="flex flex-col justify-center items-center bg-background mx-4 sm:mx-20 border-2 rounded-xl p-4 gap-3 shadow my-12">
-        <h2 className="w-full items-start text-2xl font-bold border-b-2">All public events coming !</h2>
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
-          {events.map((event, index) => (
-            <CardEvent key={index} event={event} />
-          ))}
-        </div>
-      </div>
+      <PaginatedEvents events={events} />
       <SignUpCallToAction />
     </div>
   );
