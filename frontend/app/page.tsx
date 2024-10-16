@@ -1,16 +1,10 @@
 import * as React from "react"
 import Image from 'next/image'
-import { Badge } from "@/components/ui/badge"
 import ScrollButton from "@/components/ui/scrollButton"
 import { CardEvent } from "@/components/cards/cardEvent"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
+import { CarouselRecom } from "@/components/sections/carouselRecom"
 
+// Events factice pour tester l'interface
 const events = [
   { title: "Event 1", date: "Saturday, April 6, 2025", time: "16h - 18h", description: "Join us for an information meeting dedicated to the launch of the project.", badge: "Public", image: "/images/event.jpg" },
   { title: "Event 2", date: "Sunday, April 7, 2025", time: "10h - 12h", description: "A workshop focusing on effective communication strategies within teams.", badge: "Public", image: "/images/event.jpg" },
@@ -39,23 +33,9 @@ export default function Home() {
       </div>
       <div className='relative flex flex-col justify-center items-center bg-background top-44 mx-4 sm:mx-20 border-2 rounded-xl p-4 gap-3 shadow'>
         <h2 className="w-full items-start text-2xl font-bold border-b-2">Recommendations</h2>
-        <Carousel className="w-full">
-          <CarouselContent className="-ml-1">
-          {events.map((event, index) => (
-              <CarouselItem key={index} className="pl-1 md:basis-1/2 lg:basis-1/3">
-                <div className="p-1">
-                  <CardEvent event={event} />
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="hover:scale-125 transition-transform duration-200" />
-          <CarouselNext className="hover:scale-125 transition-transform duration-200" />
-        </Carousel>
+        <CarouselRecom events={events}/>
       </div>
-
       <ScrollButton />
-
       <div id="events-list" className="flex flex-col justify-center items-center bg-background mx-4 sm:mx-20 border-2 rounded-xl p-4 gap-3 shadow mt-12">
         <h2 className="w-full items-start text-2xl font-bold border-b-2">All public events coming !</h2>
         <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">

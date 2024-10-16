@@ -3,6 +3,8 @@ import * as React from "react"
 import Image from 'next/image'
 import { Badge } from "@/components/ui/badge"
 
+import { EventProps } from "@/types/event"
+
 import {
     Card,
     CardContent,
@@ -12,15 +14,6 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 
-
-interface EventProps {
-    title: string;
-    date: string;
-    time: string;
-    description: string;
-    badge: string;
-    image: string;
-}
 
 
 export function CardEvent({ event }: { event: EventProps }) {
