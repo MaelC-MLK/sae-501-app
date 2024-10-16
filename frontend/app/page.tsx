@@ -3,8 +3,9 @@ import Image from 'next/image'
 import ScrollButton from "@/components/ui/scrollButton"
 import { CardEvent } from "@/components/cards/cardEvent"
 import { CarouselRecom } from "@/components/sections/carouselRecom"
+import { SignUpCallToAction } from "@/components/sections/signUpCallToAction"
 
-// Events factice pour tester l'interface
+// Events factices pour tester l'interface
 const events = [
   { title: "Event 1", date: "Saturday, April 6, 2025", time: "16h - 18h", description: "Join us for an information meeting dedicated to the launch of the project.", badge: "Public", image: "/images/event.jpg" },
   { title: "Event 2", date: "Sunday, April 7, 2025", time: "10h - 12h", description: "A workshop focusing on effective communication strategies within teams.", badge: "Public", image: "/images/event.jpg" },
@@ -36,7 +37,7 @@ export default function Home() {
         <CarouselRecom events={events}/>
       </div>
       <ScrollButton />
-      <div id="events-list" className="flex flex-col justify-center items-center bg-background mx-4 sm:mx-20 border-2 rounded-xl p-4 gap-3 shadow mt-12">
+      <div id="events-list" className="flex flex-col justify-center items-center bg-background mx-4 sm:mx-20 border-2 rounded-xl p-4 gap-3 shadow my-12">
         <h2 className="w-full items-start text-2xl font-bold border-b-2">All public events coming !</h2>
         <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
           {events.map((event, index) => (
@@ -44,6 +45,7 @@ export default function Home() {
           ))}
         </div>
       </div>
+      <SignUpCallToAction />
     </div>
   );
 }
