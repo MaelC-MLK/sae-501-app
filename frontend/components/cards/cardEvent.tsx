@@ -25,7 +25,7 @@ interface EventProps {
 
 export function CardEvent({ event }: { event: EventProps }) {
     return (
-        <Card className="overflow-hidden relative cursor-pointer shadow">
+        <Card className="group overflow-hidden relative cursor-pointer shadow select-none">
             <div className="relative w-full h-64">
                 <Image
                     src={event.image}
@@ -33,7 +33,7 @@ export function CardEvent({ event }: { event: EventProps }) {
                     layout="fill"
                     objectFit="cover"
                 />
-                <div className="group absolute -bottom-28 left-0 flex flex-col text-secondary bg-black bg-opacity-70 rounded-lg w-full hover:-translate-y-28 transition-transform duration-300">
+                <div className="group absolute -bottom-28 left-0 flex flex-col text-secondary bg-black bg-opacity-70 rounded-lg w-full group-hover:-translate-y-28 transition-transform duration-300">
                     <CardHeader className="flex flex-row justify-between">
                         <div>
                             <CardTitle className="text-2xl">{event.title}</CardTitle>
