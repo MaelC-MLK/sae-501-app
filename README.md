@@ -29,6 +29,16 @@ docker exec -it sae-backend /bin/bash
 ```
 docker exec -it sae-frontend /bin/bash
 ```
+
+## Générer les clés JWT : 
+```
+docker exec -it sae-backend /bin/bash
+```
+Dans le conteneur docker : 
+```
+php bin/console lexik:jwt:generate-keypair
+```
+
 ## Liens
 - Frontend : [http://localhost:8090](http://localhost:8090)
 - Backend : [http://localhost:8080](http://localhost:8080)
