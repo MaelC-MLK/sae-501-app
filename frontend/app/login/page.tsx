@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import Image from 'next/image';
 import { redirect } from 'next/navigation';
 
 export default function Page() {
@@ -38,7 +37,6 @@ export default function Page() {
 
             window.location.href = '/';
         } catch (err) {
-            console.log(err);
             setError('Invalid email or password');
         }
     };
