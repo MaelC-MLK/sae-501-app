@@ -13,8 +13,8 @@ interface NavItem {
 
 const Navbar = () => {
     const navItems: NavItem[] = [
-        { name: 'Sign in', path: '/signin', variant: 'outline' },
-        { name: 'Sign up', path: '/signup', variant: 'default' },
+        { name: 'Sign in', path: '/login', variant: 'outline' },
+        { name: 'Sign up', path: '/register', variant: 'default' },
     ];
 
     return (
