@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import Image from 'next/image';
+import { authenticate } from "@/lib/utils"
 
 
 export default function Page() {
@@ -16,7 +17,6 @@ export default function Page() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        
 
         try {
             const api = 'http://localhost:8080';
@@ -34,25 +34,7 @@ export default function Page() {
                 throw new Error('Failed to login');
             }
             else {
-                console.log("User created successfully");
-                const url = api + '/auth';
-                const password = plainPassword;
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, password }),
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to login');
-                }
-
-                const data = await response.json();
-                localStorage.setItem('token', data.token);
-
-                window.location.href = '/register/success';
+                authenticate(email, plainPassword, '/register/success');
             }
 
         } catch (err) {

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
+import { getUserFromToken } from '@/lib/utils';
 
 type ButtonVariant = "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
 
@@ -12,10 +13,22 @@ interface NavItem {
 }
 
 const Navbar = () => {
-    const navItems: NavItem[] = [
+    let user = null;
+
+    if(localStorage.getItem('token')) {
+        const token = localStorage.getItem('token');
+        user = getUserFromToken(token);
+    }
+
+    const navItems: NavItem[] = user ? [
+        { name: 'Profile', path: '/profile', variant: 'default' },
+        { name: 'Logout', path: '/logout', variant: 'outline' },
+    ]
+    : [
         { name: 'Sign in', path: '/login', variant: 'outline' },
         { name: 'Sign up', path: '/register', variant: 'default' },
-    ];
+    ]
+    ;
 
     return (
         <div className="flex flex-row items-center justify-between bg-background h-16 px-4 border-b-2">
@@ -23,6 +36,7 @@ const Navbar = () => {
                 Event<span className='text-primary'>ify</span>
             </Link>
             <div className="flex flex-row gap-2">
+                {user && <p className='text-primary'>Hello, {user.username}</p>}
                 {navItems.map((item) => (
                     <Link key={item.path} href={item.path}>
                         <Button variant={item.variant}>

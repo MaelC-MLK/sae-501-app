@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { redirect } from 'next/navigation';
+import { authenticate } from "@/lib/utils";
 
 export default function Page() {
     const [email, setEmail] = useState('');
@@ -17,25 +17,7 @@ export default function Page() {
         
 
         try {
-            const api = 'http://localhost:8080';
-            const url = api + '/auth';
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to login');
-            }
-
-            const data = await response.json();
-            localStorage.setItem('token', data.token);
-
-            window.location.href = '/';
+            authenticate(email, password, '/');
         } catch (err) {
             setError('Invalid email or password');
         }
