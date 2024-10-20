@@ -41,7 +41,7 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
             className="flex flex-col justify-center items-center bg-background mx-4 sm:mx-20 border-2 rounded-xl p-4 gap-3 shadow my-12"
         >
             <h2 className="w-full items-start text-2xl font-bold border-b-2">
-                All public events coming !
+                Tous les évènements publiques !
             </h2>
 
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
