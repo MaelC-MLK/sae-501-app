@@ -34,7 +34,7 @@ export default function Page() {
                 throw new Error('Failed to login');
             }
             else {
-                authenticate(email, plainPassword, '/register/success');
+                await authenticate(email, plainPassword, '/register/success');
             }
 
         } catch (err) {

@@ -17,7 +17,7 @@ export default function Page() {
         
 
         try {
-            authenticate(email, password, '/');
+            await authenticate(email, password, '/');
         } catch (err) {
             setError('Invalid email or password');
         }
