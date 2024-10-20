@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 
 
-export default function Page() {
+export default async function Page() {
     const [error, setError] = useState('');
 
     async function logout() {
@@ -29,7 +29,7 @@ export default function Page() {
     }
 
     try {
-        logout();
+        await logout();
     } catch (err) {
         setError('Failed to logout');
     }
