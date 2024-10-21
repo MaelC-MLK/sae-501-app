@@ -20,6 +20,12 @@ export default async function Page() {
         });
 
         if (!response.ok) {
+            // Unauthorized
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/login';
+            }
             throw new Error('Failed to logout');
         }
 
