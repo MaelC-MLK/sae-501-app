@@ -1,24 +1,64 @@
-import React from 'react';
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import Image from 'next/image';
+"use client";
 
-export default async function Page() {
+import React, { useState } from 'react';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { authenticate } from "@/lib/utils";
+
+export default function Page() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+        
+
+        try {
+            await authenticate(email, password, '/');
+        } catch (err) {
+            setError('Invalid email or password');
+        }
+    };
+
     return (
         <div className="flex h-screen">
             <div className="flex flex-col justify-center md:w-2/3 max-w-md mx-auto p-4 sm:p-12">
                 <h1 className="text-3xl font-bold mb-8">Welcome back!</h1>
                 
-                <form>
+                <form onSubmit={handleSubmit}>
+
+                {error && <p className="text-red-500 text-sm">{error}</p>}
                     <div className="mb-4">
                         <Label htmlFor="email" className='text-lg'>Email*</Label>
-                        <Input type="email" id="email" placeholder="Email" name="email" required className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10" />
+                        <Input
+                            type="email"
+                            id="email"
+                            placeholder="Email"
+                            name="email"
+                            required
+                            className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
                     </div>
                     <div className="mb-2">
                         <Label htmlFor="password" className='text-lg'>Password*</Label>
-                        <Input type="password" id="password" placeholder="Password" name="password" required className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10" />
+                        <Input
+                            type="password"
+                            id="password"
+                            placeholder="Password"
+                            name="password"
+                            required
+                            className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
                     </div>
+
+                   
 
                     <div className="text-right mb-6">
                         <a href="#" className="text-blue-500 hover:underline text-sm">Forgot Password?</a>
@@ -43,16 +83,7 @@ export default async function Page() {
                         Log in with Apple
                     </Button>
                 </div>
-
-
-                <p className="text-center text-sm text-gray-500">
-                    Don't you have an account? <a href="#" className="text-blue-500 hover:underline">Sign Up</a>
-                </p>
-            </div>
-            <div className="hidden lg:block relative h-full w-1/3">
-                <Image src="/images/img-login-form.png" alt="Photo" layout="fill" objectFit="cover" />
             </div>
         </div>
     );
-};
-
+}
