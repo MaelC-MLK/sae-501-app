@@ -6,6 +6,7 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 
 import { EventProps } from "@/types/event";
+import Link from 'next/link';
 
 
 interface CardEventDetailProps {
@@ -27,10 +28,19 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
                     <p className="mt-4 text-sm text-gray-700">{event.description}</p>
                 </div>
                 <div className="mt-4 flex space-x-3">
-                    <Button variant={'default'} size={'lg'} className='w-full sm:w-auto'>S'inscrire</Button>
-                    <button className="border border-gray-300 p-2 rounded-lg text-gray-600 hover:bg-gray-100">
-                        <ArrowUpRight className="h-5 w-5" />
-                    </button>
+                    <Button variant={'default'} size={'lg'} className='w-full sm:w-auto'>
+                        <Link href="/register">
+                            S'inscrire
+                        </Link>
+                    </Button>
+                    <Link rel="stylesheet" href="/register" className='w-6'>
+                        <Image
+                            src="/images/Share.svg"
+                            alt="share"
+                            width={500}
+                            height={500}
+                        />
+                    </Link>
                 </div>
             </div>
             <div className="relative w-full md:w-1/3 h-64 md:h-auto">
