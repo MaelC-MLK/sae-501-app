@@ -1,0 +1,17 @@
+meta {
+  name: refresh-jwt-token
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://localhost:8080/api/token/refresh
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "refresh_token" : "244472b3873de669691e0d5a3398515015f0f4c9a1edf7fb8773514431b7941bcc5a3b9dd43e93fc310af6bb7a96b256b08d4eb0d0687fed687870952d5b2c10"
+  }
+}

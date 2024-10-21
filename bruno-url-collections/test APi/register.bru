@@ -1,0 +1,22 @@
+meta {
+  name: register
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8080/api/users
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/ld+json
+}
+
+body:json {
+  {
+    "email": "toty@mail.Com",
+    "plainPassword": "toty"
+  }
+}

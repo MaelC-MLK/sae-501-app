@@ -1,0 +1,11 @@
+meta {
+  name: invalidate-refresh-token
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:8080/api/token/invalidate
+  body: none
+  auth: bearer
+}

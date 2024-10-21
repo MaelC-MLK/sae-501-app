@@ -1,0 +1,18 @@
+meta {
+  name: jwt-token
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8080/auth
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "johndoe",
+    "password": "test"
+  }
+}
