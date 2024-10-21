@@ -56,7 +56,11 @@ export function getUserFromToken(token: string): JwtPayload | null {
 }
 
 export function getBearerToken() {
-    return localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    if (!token) {
+        return null;
+    }
+    return token;
 }
 
 export async function refreshToken() {
