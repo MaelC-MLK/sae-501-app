@@ -1,10 +1,52 @@
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import Image from 'next/image';
+import { authenticate } from "@/lib/utils"
+import Link from 'next/link';
 
-export default async function Page() {
+
+export default function Page() {
+
+    const [email, setEmail] = useState('');
+    const [plainPassword, setPlainPassword] = useState('');
+    const [error, setError] = useState('');
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+
+        try {
+            const api = 'http://localhost:8080';
+            const url = api + '/api/users';
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': "application/ld+json",
+                },
+                body: JSON.stringify({ email, plainPassword }),
+            });
+
+            if (!response.ok) {
+                if(response.status === 422) {
+                    throw new Error('Email already exists');
+                }
+
+                throw new Error('Failed to create account');
+            }
+            else {
+                await authenticate(email, plainPassword, '/register/success');
+            }
+
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+    
     return (
         <div className="flex h-screen">
             <div className="flex flex-col justify-center w-2/3 max-w-md mx-auto p-12">
@@ -23,18 +65,34 @@ export default async function Page() {
                     <div className="w-full border-t border-gray-300"></div>
                 </div>
 
-                <form>
-                    <div className="mb-4">
-                        <Label className='text-lg' htmlFor="name">Name</Label>
-                        <Input type="name" id="name" placeholder="Name" name="name" required className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10" />
-                    </div>
+                <form onSubmit={handleSubmit}>
+
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                    
                     <div className="mb-4">
                         <Label className='text-lg' htmlFor="email">Email</Label>
-                        <Input type="email" id="email" placeholder="E-mail" name="email" required className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10" />
+                        <Input 
+                            type="email" 
+                            id="email" 
+                            placeholder="E-mail"
+                            name="email" 
+                            required 
+                            className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)} />
                     </div>
+
                     <div className="mb-6">
-                        <Label className='text-lg' htmlFor="password">Password</Label>
-                        <Input type="password" id="password" placeholder="Password" name="password" required className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10" />
+                        <Label className='text-lg' htmlFor="plainPassword">Password</Label>
+                        <Input 
+                            type="password" 
+                            id="plainPassword" 
+                            placeholder="Password" 
+                            name="plainPassword" 
+                            required 
+                            className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10" 
+                            value={plainPassword}
+                            onChange={(e) => setPlainPassword(e.target.value)}/>
                     </div>
                     <Button type="submit" className="w-full bg-blue-500 text-white text-lg py-6 rounded-md hover:bg-blue-600 transition">
                         Sign up
@@ -42,7 +100,7 @@ export default async function Page() {
                 </form>
 
                 <p className="text-center text-sm text-gray-500 mt-6">
-                    Already have an account? <a href="#" className="text-blue-500 hover:underline">Log in</a>
+                    Already have an account? <Link href="/login" className="text-blue-500 hover:underline">Log in</Link>
                 </p>
             </div>
 

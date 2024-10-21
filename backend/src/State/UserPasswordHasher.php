@@ -1,10 +1,10 @@
 <?php
 // api/src/State/UserPasswordHasher.php
-
 namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use App\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
@@ -24,6 +24,10 @@ final readonly class UserPasswordHasher implements ProcessorInterface
      */
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): User
     {
+        if (!$data instanceof User) {
+            throw new \InvalidArgumentException('Expected instance of ' . User::class);
+        }
+
         if (!$data->getPlainPassword()) {
             return $this->processor->process($data, $operation, $uriVariables, $context);
         }
@@ -35,6 +39,12 @@ final readonly class UserPasswordHasher implements ProcessorInterface
         $data->setPassword($hashedPassword);
         $data->eraseCredentials();
 
-        return $this->processor->process($data, $operation, $uriVariables, $context);
+        $processedData = $this->processor->process($data, $operation, $uriVariables, $context);
+
+        if (!$processedData instanceof User) {
+            throw new \RuntimeException('Expected instance of ' . User::class);
+        }
+
+        return $processedData;
     }
 }
