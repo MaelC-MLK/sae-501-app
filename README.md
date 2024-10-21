@@ -19,15 +19,10 @@ docker-compose up -d
 ```
 ### Lance les migrations pour avoir une base de données fonctionnelle
 ```
-docker-compose run --rm backend php bin/console doctrine:migrations:migrate --no-interaction
-```
-
-## Executer des commandes dans les conteneurs docker : 
-```
 docker exec -it sae-backend /bin/bash
 ```
 ```
-docker exec -it sae-frontend /bin/bash
+php bin/console doctrine:migrations:migrate
 ```
 
 ## Générer les clés JWT : 
@@ -37,6 +32,14 @@ docker exec -it sae-backend /bin/bash
 Dans le conteneur docker : 
 ```
 php bin/console lexik:jwt:generate-keypair
+```
+
+## Executer des commandes dans les conteneurs docker : 
+```
+docker exec -it sae-backend /bin/bash
+```
+```
+docker exec -it sae-frontend /bin/bash
 ```
 
 ## Liens
