@@ -16,7 +16,7 @@ interface CardEventDetailProps {
 export function CardEventDetail({ event }: CardEventDetailProps) {
     return (
         <div className="w-full flex flex-col md:flex-row justify-between overflow-hidden">
-            <div className="pb-6 sm:p-6 flex flex-col gap-4 justify-between w-full md:w-2/3">
+            <div className="pb-6 md:p-6 flex flex-col gap-4 justify-between w-full md:w-2/3">
                 <div className='flex flex-row border-b-2'>
                     <h2 className="w-full items-start text-2xl font-bold">{event.title}</h2>
                     <Badge variant="default" className="h-fit">{event.badge}</Badge>
@@ -33,13 +33,15 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
                             S'inscrire
                         </Link>
                     </Button>
-                    <Link rel="stylesheet" href="/register" className='w-6'>
-                        <Image
-                            src="/images/Share.svg"
-                            alt="share"
-                            width={500}
-                            height={500}
-                        />
+                    <Link href="/register">
+                        <Button variant={'outline'} size={'lg'} className="p-2 w-auto h-auto">
+                            <Image
+                                src="/images/Share.svg"
+                                alt="share"
+                                width={24}
+                                height={24}
+                            />
+                        </Button>
                     </Link>
                 </div>
             </div>
