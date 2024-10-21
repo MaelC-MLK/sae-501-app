@@ -29,6 +29,8 @@ export default function Page() {
                 <h1 className="text-3xl font-bold mb-8">Welcome back!</h1>
                 
                 <form onSubmit={handleSubmit}>
+
+                {error && <p className="text-red-500 text-sm">{error}</p>}
                     <div className="mb-4">
                         <Label htmlFor="email" className='text-lg'>Email*</Label>
                         <Input
@@ -56,7 +58,7 @@ export default function Page() {
                         />
                     </div>
 
-                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                   
 
                     <div className="text-right mb-6">
                         <a href="#" className="text-blue-500 hover:underline text-sm">Forgot Password?</a>

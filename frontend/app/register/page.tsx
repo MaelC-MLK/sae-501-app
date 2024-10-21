@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import Image from 'next/image';
 import { authenticate } from "@/lib/utils"
+import Link from 'next/link';
 
 
 export default function Page() {
@@ -31,14 +32,18 @@ export default function Page() {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to login');
+                if(response.status === 422) {
+                    throw new Error('Email already exists');
+                }
+
+                throw new Error('Failed to create account');
             }
             else {
                 await authenticate(email, plainPassword, '/register/success');
             }
 
         } catch (err) {
-            setError('Invalid email or password');
+            setError(err.message);
         }
     };
     
@@ -61,6 +66,9 @@ export default function Page() {
                 </div>
 
                 <form onSubmit={handleSubmit}>
+
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                    
                     <div className="mb-4">
                         <Label className='text-lg' htmlFor="email">Email</Label>
                         <Input 
@@ -92,7 +100,7 @@ export default function Page() {
                 </form>
 
                 <p className="text-center text-sm text-gray-500 mt-6">
-                    Already have an account? <a href="#" className="text-blue-500 hover:underline">Log in</a>
+                    Already have an account? <Link href="/login" className="text-blue-500 hover:underline">Log in</Link>
                 </p>
             </div>
 
