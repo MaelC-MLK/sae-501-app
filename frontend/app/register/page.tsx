@@ -7,7 +7,7 @@ import Image from 'next/image';
 export default async function Page() {
     return (
         <div className="flex h-screen">
-            <div className="flex flex-col justify-center w-2/3 max-w-md mx-auto p-12">
+            <div className="flex flex-col justify-center md:w-2/3 max-w-md mx-auto p-4 sm:p-12">
                 <h1 className="text-2xl font-bold mb-6">Create an account</h1>
                 
                 <div className="mb-10">

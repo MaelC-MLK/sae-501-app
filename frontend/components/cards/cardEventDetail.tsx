@@ -15,7 +15,7 @@ interface CardEventDetailProps {
 export function CardEventDetail({ event }: CardEventDetailProps) {
     return (
         <div className="w-full flex flex-col md:flex-row justify-between overflow-hidden">
-            <div className="p-6 flex flex-col gap-4 justify-between w-full md:w-2/3">
+            <div className="pb-6 sm:p-6 flex flex-col gap-4 justify-between w-full md:w-2/3">
                 <div className='flex flex-row border-b-2'>
                     <h2 className="w-full items-start text-2xl font-bold">{event.title}</h2>
                     <Badge variant="default" className="h-fit">{event.badge}</Badge>
@@ -27,7 +27,7 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
                     <p className="mt-4 text-sm text-gray-700">{event.description}</p>
                 </div>
                 <div className="mt-4 flex space-x-3">
-                    <Button variant={'default'} size={'lg'}>S'inscrire</Button>
+                    <Button variant={'default'} size={'lg'} className='w-full sm:w-auto'>S'inscrire</Button>
                     <button className="border border-gray-300 p-2 rounded-lg text-gray-600 hover:bg-gray-100">
                         <ArrowUpRight className="h-5 w-5" />
                     </button>
