@@ -1,8 +1,10 @@
 export interface EventProps {
+    id: string;
     title: string;
     date: string;
     time: string;
+    type: string;
     description: string;
-    badge: string;
     image: string;
+    badge: string;
 }

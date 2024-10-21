@@ -13,6 +13,7 @@ interface NavItem {
 }
 
 const Navbar = () => {
+
     let user = null;
 
     if(localStorage.getItem('token')) {
