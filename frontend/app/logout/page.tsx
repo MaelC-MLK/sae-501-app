@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-
+import { getBearerToken } from '@/lib/utils';
 
 export default async function Page() {
     const [error, setError] = useState('');
@@ -9,12 +9,17 @@ export default async function Page() {
     async function logout() {
         const api = 'http://localhost:8080';
         const url = api + '/api/token/invalidate';
+        const token = getBearerToken();
+
+        if(!token) {
+            throw new Error('No token found');
+        }
 
         const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({ refresh_token: localStorage.getItem('refresh_token') }),
         });
@@ -32,6 +37,7 @@ export default async function Page() {
         await logout();
     } catch (err) {
         setError('Failed to logout');
+        window.location.href = '/login';
     }
 
     return (
