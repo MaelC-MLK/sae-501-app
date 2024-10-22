@@ -3,14 +3,36 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
 use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\EventController;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: 'events/public',
+            normalizationContext: ['groups' => ['event:read']],
+            description: 'Récupère tous les événements publics',
+            controller: EventController::class,
+        ),
+        new Post(validationContext: ['groups' => ['Default', 'event:create']]),
+        new Get(),
+        new Put(),
+        new Patch(),
+        new Delete(),
+    ]
+)]
+
 class Event
 {
     #[ORM\Id]
