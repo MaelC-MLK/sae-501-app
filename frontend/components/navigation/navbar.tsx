@@ -26,8 +26,8 @@ const Navbar = () => {
         { name: 'Logout', path: '/logout', variant: 'outline' },
     ]
     : [
-        { name: 'Sign in', path: '/login', variant: 'outline' },
-        { name: 'Sign up', path: '/register', variant: 'default' },
+        { name: 'Se connecter', path: '/login', variant: 'outline' },
+        { name: 'Créer un compte', path: '/register', variant: 'default' },
     ]
     ;
 
