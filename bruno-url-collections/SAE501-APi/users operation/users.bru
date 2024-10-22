@@ -1,0 +1,21 @@
+meta {
+  name: users
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8080/api/users
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3Mjk1ODIwNTEsImV4cCI6MTcyOTU4NTY1MSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6Im5pbm90aXRpeEBnbWFpbC5jb20ifQ.TAbNGBdUUR0EDS3idhgFAb94a3X-5c-Vm8NBNnEE-H5kohV16DsYQItA0lQBNnI4lV-kFIsNpR2aMVsP2XBitJ7RYIwMLys3xHkoZNgWNzuf-fLxLszff4y2CofQtiq_KQzZBzqypjU8Bm9XfDC8rF56PjWvJMtqofR9Srgyd4VexcvniDs8mE6Ih6-bknmTgkia4U8ONm76qHBJxjvX9u56GvNIdb4CCCwX_FV2TsSAWO6CmmI-W9G9vmXxQilofzgbd9z0OuFCyDzOHfEJX52-SYiM33NsNhxJ_bvwskXJ4vaREhUKh6ORoSO2gdsKQyurbSdSWj96GcKeE3vgMg
+}
+
+body:json {
+  {
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjkzNTIwMTksImV4cCI6MTcyOTM1NTYxOSwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiam9obmRvZSJ9.Uegh7ccma4USbI5QYWH3mduyN9qZYjNKUxSL4grIekurr51-7HahQ59pAcDxb-q5EAgQVhfAAvFHywBDLCYO_6ajMiqw9VHgp9UIXhSgGZbNJiY2U5Qeda4pewMLV7kC0ECKybC3AX_hfcOOKC-_DKWI2ab0JVQArYdsMxAY65v24B1sikidGZteoPPHLr83NjZ7cVgq9f98p4hJLJziMGGZvWfeLT9zOR5WDYtHzgjCsDDTskd-eh_PxFmFHTHBTGGQ6Kb7pK7muD5f4XP-67ghmM7-iA-hv9pC2su2FD0H_HnfI1iU_2k7bwkaZDewI_u_yFdjhha58YXeYMHXMw"
+  }
+}

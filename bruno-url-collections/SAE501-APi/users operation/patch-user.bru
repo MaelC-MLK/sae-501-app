@@ -1,0 +1,26 @@
+meta {
+  name: patch-user
+  type: http
+  seq: 5
+}
+
+patch {
+  url: http://localhost:8080/api/users/10
+  body: json
+  auth: bearer
+}
+
+headers {
+  content-type: application/merge-patch+json
+}
+
+auth:bearer {
+  token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3Mjk1ODI5NjMsImV4cCI6MTcyOTU4NjU2Mywicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6Im5pbm90aXRpeEBnbWFpbC5jb20ifQ.F5oL6KPskEztbaCaY7WMlbHAYsKEBLfrzCXbN-v_jNAZheq0rIfjBWKcHV6FAy68Dt7NQabEshX7QWACg4M4WXQGJpOxOQNbr8fMvYrGI6AEDyx7fe3e3Fx7zKiYIHorXuf3Ti87GVjwXZqGC_vSd7mKvid7Ql7h6jslchjFre6QY-e7LEAISv02JuSmbx9vA5YUOlzVF33S8SmEdz3jy94hN1JI15gf1xXhnQeaNIvLrC4xK_rRR56syzs0P3hl9HjecLSUi9IUvapyrZGKwk3m5i0tO9cw-ozenUsK138hFoHD1rAz9WAWkWUoEwKttVQNCxRQSxDdorfDlo363A
+}
+
+body:json {
+  {
+    "email" : "theodore@gmail.com",
+    "plainPassword" : "theodore"
+  }
+}

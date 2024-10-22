@@ -1,17 +1,17 @@
 meta {
-  name: users
+  name: user
   type: http
-  seq: 5
+  seq: 4
 }
 
 get {
-  url: http://localhost:8080/api/users
+  url: http://localhost:8080/api/users/12
   body: none
   auth: bearer
 }
 
 auth:bearer {
-  token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3Mjk0MTU5OTQsImV4cCI6MTcyOTQxOTU5NCwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoibmlub3RpdGl4QGdtYWlsLmNvbSJ9.WmraPGe_s-2klKwgjdPo_ch3GcL5a--MuQSU4GTW8qlcDoZY90QQHDxDYq6LjB3hCTuYVkywZUqtRm0BzxW04Uk5eDCsGPf8Nr_knQYSHFVhOLOIaXbIfl4tvavTdqX-GuQQue3J2W6bnasvDsqpXuv1n4jDetbhqie_rTZKsclVUnMwbj7coTXAcOeiJ_OzI0jQceXInbRe_TsClhpJdFNd16jJT3bh4ZJLUOWLGrDHkS4Z7-zPUmP5bfOzkIYJjmZNqTmFp79_1Gk3UNLLMDfJ7NHRMyGG1aa5aHEzj035b_wuU2HRDgOc-BdvU4Cx54pLWpeoibvx7A4bhlneZg
+  token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3Mjk1ODIwNTEsImV4cCI6MTcyOTU4NTY1MSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6Im5pbm90aXRpeEBnbWFpbC5jb20ifQ.TAbNGBdUUR0EDS3idhgFAb94a3X-5c-Vm8NBNnEE-H5kohV16DsYQItA0lQBNnI4lV-kFIsNpR2aMVsP2XBitJ7RYIwMLys3xHkoZNgWNzuf-fLxLszff4y2CofQtiq_KQzZBzqypjU8Bm9XfDC8rF56PjWvJMtqofR9Srgyd4VexcvniDs8mE6Ih6-bknmTgkia4U8ONm76qHBJxjvX9u56GvNIdb4CCCwX_FV2TsSAWO6CmmI-W9G9vmXxQilofzgbd9z0OuFCyDzOHfEJX52-SYiM33NsNhxJ_bvwskXJ4vaREhUKh6ORoSO2gdsKQyurbSdSWj96GcKeE3vgMg
 }
 
 body:json {
