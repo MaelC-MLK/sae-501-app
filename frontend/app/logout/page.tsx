@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { getBearerToken } from '@/lib/utils';
 
-export default async function Page() {
+export default function Page() {
     const [error, setError] = useState('');
 
     async function logout() {
@@ -29,7 +29,7 @@ export default async function Page() {
             if (response.status === 401) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('refresh_token');
-                window.location.href = '/login';
+                throw new Error('Failed to logout');
             }
             throw new Error('Failed to logout');
         }
@@ -40,7 +40,7 @@ export default async function Page() {
     }
 
     try {
-        await logout();
+        logout();
     } catch (err) {
         setError('Failed to logout');
         window.location.href = '/login';
