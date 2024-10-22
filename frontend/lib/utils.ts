@@ -39,6 +39,7 @@ export async function authenticate(
 }
 
 interface JwtPayload {
+    sub: string;
     username: string;
     exp: number;
     iat: number;
