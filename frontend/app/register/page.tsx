@@ -11,13 +11,37 @@ import Link from 'next/link';
 
 export default function Page() {
 
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [birthDate, setBirthDate] = useState('');
     const [email, setEmail] = useState('');
     const [plainPassword, setPlainPassword] = useState('');
     const [error, setError] = useState('');
 
+    const validateEmail = (email: string) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const validatePassword = (password: string) => {
+        return password.length >= 8 && password.length <= 30;
+    };
+
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+
+        if (!validateEmail(email)) {
+            setError('Please enter a valid email address.');
+            return;
+        }
+
+        if (!validatePassword(plainPassword)) {
+            setError('Password must be between 8 and 30 characters.');
+            return;
+        }
+
 
         try {
             const api = 'http://localhost:8080';
@@ -43,13 +67,17 @@ export default function Page() {
             }
 
         } catch (err) {
-            setError(err.message);
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('An unknown error occurred');
+            }
         }
     };
     
     return (
-        <div className="flex h-screen">
-            <div className="flex flex-col justify-center md:w-2/3 max-w-md mx-auto p-4 sm:p-12">
+        <div className="flex h-full">
+            <div className="flex flex-col justify-center lg:w-2/3 p-6 sm:p-12">
                 <h1 className="text-2xl font-bold mb-6">Create an account</h1>
                 
                 <div className="mb-10">
@@ -69,6 +97,44 @@ export default function Page() {
 
                     {error && <p className="text-red-500 text-sm">{error}</p>}
                     
+                    <div className="mb-4">
+                        <Label className='text-lg' htmlFor="firstName">Prénom</Label>
+                        <Input 
+                            type="text" 
+                            id="firstName" 
+                            placeholder="Prénom"
+                            name="firstName" 
+                            required 
+                            className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)} />
+                    </div>
+
+                    <div className="mb-4">
+                        <Label className='text-lg' htmlFor="lastName">Nom</Label>
+                        <Input 
+                            type="text" 
+                            id="lastName" 
+                            placeholder="Nom"
+                            name="lastName" 
+                            required 
+                            className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)} />
+                    </div>
+
+                    <div className="mb-4">
+                        <Label className='text-lg' htmlFor="birthDate">Date de naissance</Label>
+                        <Input 
+                            type="date" 
+                            id="birthDate" 
+                            name="birthDate" 
+                            required 
+                            className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"
+                            value={birthDate}
+                            onChange={(e) => setBirthDate(e.target.value)} />
+                    </div>
+
                     <div className="mb-4">
                         <Label className='text-lg' htmlFor="email">Email</Label>
                         <Input 
@@ -104,7 +170,7 @@ export default function Page() {
                 </p>
             </div>
 
-            <div className="hidden lg:block relative h-full w-1/3">
+            <div className="hidden overflow-y-auto lg:block lg:right-0 lg:fixed lg:h-full lg:inset-0 lg:left-auto lg:w-1/3 z-0 ">
                 <Image src="/images/img-register-form.png" alt="Photo" layout="fill" objectFit="cover" />
             </div>
         </div>
