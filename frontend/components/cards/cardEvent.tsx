@@ -32,12 +32,12 @@ export function CardEvent({ event }: { event: EventProps }) {
                         <CardHeader className="flex flex-row justify-between">
                             <div>
                                 <CardTitle className="text-2xl">{event.title}</CardTitle>
-                                <span className="text-lg font-medium">{event.date}</span>
+                                <span className="text-lg font-medium">{event.date_start} - {event.date_end}</span>
                             </div>
-                            <Badge variant="outline" className="h-fit">{event.badge}</Badge>
+                            <Badge variant="outline" className="h-fit">Public</Badge>
                         </CardHeader>
                         <CardContent className="transition-opacity duration-300 opacity-0 group-hover:opacity-100">
-                            <span className="text-md font-normal">{event.time}</span>
+                            <span className="text-md font-normal">{event.time_start} - {event.time_end}</span>
                             <CardDescription className="line-clamp-4 h-20">{event.description}</CardDescription>
                         </CardContent>
                     </div>
