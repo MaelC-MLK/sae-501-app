@@ -32,8 +32,8 @@ class EventController extends AbstractController
                 'description' => $event->getDescription(),
                 'date_start' => $event->getDateStart()->format('d/m/Y'),
                 'date_end' => $event->getDateEnd()->format('d/m/Y'),
-                'time_start' => $event->getTimeStart()->format('H:i:s'),
-                'time_end' => $event->getTimeEnd()->format('H:i:s'),
+                'time_start' => $event->getTimeStart()->format('H:i'),
+                'time_end' => $event->getTimeEnd()->format('H:i'),
                 'isVisible' => $event->isIsVisible(),
             ];
         }, $events);

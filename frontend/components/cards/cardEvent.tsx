@@ -18,27 +18,39 @@ import Link from "next/link"
 
 
 export function CardEvent({ event }: { event: EventProps }) {
+    const defaultImage = "/images/event.jpg";
+
     return (
         <Link href={`/event/${event.id}`} passHref>
             <Card className="group overflow-hidden relative cursor-pointer shadow select-none">
                 <div className="relative w-full h-64">
                     <Image
-                        src={event.image}
+                        src={event.image ? event.image : defaultImage}
                         alt={`${event.title}-image`}
                         layout="fill"
                         objectFit="cover"
                     />
                     <div className="group absolute -bottom-28 left-0 flex flex-col text-secondary bg-black bg-opacity-70 rounded-lg w-full group-hover:-translate-y-28 transition-transform duration-300">
-                        <CardHeader className="flex flex-row justify-between">
-                            <div>
+                        <CardHeader className="flex flex-col mb-1">
+                            <div className="flex flex-row justify-between">
                                 <CardTitle className="text-2xl">{event.title}</CardTitle>
-                                <span className="text-lg font-medium">{event.date_start} - {event.date_end}</span>
+                                <Badge variant="outline" className="h-fit">Public</Badge>
                             </div>
-                            <Badge variant="outline" className="h-fit">Public</Badge>
+                            {event.date_start === event.date_end ? (
+                                <span className="text-sm font-normal">
+                                    {event.date_start} | {event.time_start} - {event.time_end}
+                                </span>
+                            ) : (
+                                <>
+                                    <span className="text-sm font-normal">
+                                        {event.date_start} - {event.time_start}
+                                        {" au "} {event.date_end} - {event.time_end}
+                                    </span>
+                                </>
+                            )}
                         </CardHeader>
                         <CardContent className="transition-opacity duration-300 opacity-0 group-hover:opacity-100">
-                            <span className="text-md font-normal">{event.time_start} - {event.time_end}</span>
-                            <CardDescription className="line-clamp-4 h-20">{event.description}</CardDescription>
+                            <CardDescription className="line-clamp-5 h-24">{event.description}</CardDescription>
                         </CardContent>
                     </div>
                 </div>

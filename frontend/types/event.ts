@@ -5,7 +5,6 @@ export interface EventProps {
     date_end: string;
     time_start: string;
     time_end: string;
-    type: string;
     description: string;
     image: string;
     badge: string;
