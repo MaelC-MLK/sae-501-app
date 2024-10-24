@@ -52,20 +52,14 @@ class Event
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date_end = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
-    private ?\DateTimeInterface $time_start = null;
-
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
-    private ?\DateTimeInterface $time_end = null;
-
     #[ORM\Column]
     private ?bool $isVisible = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
     private Collection $users;
 
-    #[ORM\Column]
-    private ?bool $is_draft = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $state = null;
 
     public function __construct()
     {
@@ -125,30 +119,6 @@ class Event
         return $this;
     }
 
-    public function getTimeStart(): ?\DateTimeInterface
-    {
-        return $this->time_start;
-    }
-
-    public function setTimeStart(\DateTimeInterface $time_start): static
-    {
-        $this->time_start = $time_start;
-
-        return $this;
-    }
-
-    public function getTimeEnd(): ?\DateTimeInterface
-    {
-        return $this->time_end;
-    }
-
-    public function setTimeEnd(\DateTimeInterface $time_end): static
-    {
-        $this->time_end = $time_end;
-
-        return $this;
-    }
-
     public function isIsVisible(): ?bool
     {
         return $this->isVisible;
@@ -185,15 +155,16 @@ class Event
         return $this;
     }
 
-    public function isIsDraft(): ?bool
+    public function getState(): ?string
     {
-        return $this->is_draft;
+        return $this->state;
     }
 
-    public function setIsDraft(bool $is_draft): static
+    public function setState(?string $state): static
     {
-        $this->is_draft = $is_draft;
+        $this->state = $state;
 
         return $this;
     }
+
 }
