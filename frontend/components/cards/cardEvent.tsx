@@ -37,14 +37,14 @@ export function CardEvent({ event }: { event: EventProps }) {
                                 <Badge variant="outline" className="h-fit">Public</Badge>
                             </div>
                             {event.date_start.substring(0, 10) === event.date_end.substring(0, 10) ? (
-    <span className="text-sm font-normal">
-        {event.date_start.substring(0, 10)} | {event.date_start.substring(13)} - {event.date_end.substring(13)}
-    </span>
-) : (
-    <span className="text-sm font-normal">
-        {event.date_start} au {event.date_end}
-    </span>
-)}
+                                <span className="text-sm font-normal">
+                                    {event.date_start.substring(0, 10)} | {event.date_start.substring(13)} - {event.date_end.substring(13)}
+                                </span>
+                            ) : (
+                                <span className="text-sm font-normal">
+                                    {event.date_start} au {event.date_end}
+                                </span>
+                            )}
 
                         </CardHeader>
                         <CardContent className="transition-opacity duration-300 opacity-0 group-hover:opacity-100">
