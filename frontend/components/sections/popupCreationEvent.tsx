@@ -60,8 +60,8 @@ import { fr } from 'date-fns/locale';
 const FormSchema = z.object({
     title: z.string().nonempty("Title is required"),
     description: z.string().nonempty("Description is required"),
-    date_start: z.date(),
-    date_end: z.date(),
+    date_start: z.string(),
+    date_end: z.string(),
     time_start: z.string().nonempty("Start time is required"),
     time_end: z.string().nonempty("End time is required"),
     users: z.array(z.object({
@@ -72,14 +72,13 @@ const FormSchema = z.object({
     })),
     isVisible: z.boolean(),
     isDraft: z.boolean(),
-
 });
 
 export default function PopupCreationEvent({ className }: PopupCreationEventProps) {
     const [date, setDate] = React.useState<DateRange | undefined>({
         from: new Date(),
         to: undefined,
-    })
+    });
     const [startTime, setStartTime] = useState<string>("");
     const [endTime, setEndTime] = useState<string>("");
     const [searchTerm, setSearchTerm] = useState<string>("");
@@ -97,8 +96,8 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         defaultValues: {
             title: "",
             description: "",
-            date_start: new Date(),
-            date_end: new Date(),
+            date_start: new Date().toISOString().replace("T", " ").substring(0, 19),
+            date_end: new Date().toISOString().replace("T", " ").substring(0, 19),
             time_start: "",
             time_end: "",
             users: [],
@@ -107,11 +106,24 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         },
     });
 
+    const combineDateAndTime = (date: Date, time: string) => {
+        const [hours, minutes] = time.split(":").map(Number);
+        const combinedDate = new Date(date);
+        combinedDate.setHours(hours);
+        combinedDate.setMinutes(minutes);
+        combinedDate.setSeconds(0);
+        combinedDate.setMilliseconds(0);
+
+        // Ajuster pour le fuseau horaire local
+        const timezoneOffset = combinedDate.getTimezoneOffset() * 60000;
+        const localDate = new Date(combinedDate.getTime() - timezoneOffset);
+
+        return localDate.toISOString().replace("T", " ").substring(0, 19);
+    };
+
     const areAllFieldsFilled = () => {
         const values = form.getValues();
-        return values.title && values.description && values.date_start && values.date_end && values.time_start && values.time_end
-            // && participants.length > 0
-            ;
+        return values.title && values.date_start && values.date_end && values.time_start && values.time_end;
     };
 
     useEffect(() => {
@@ -170,8 +182,6 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                 { id: 5, name: "Tom Boutin", email: "jane.smith@example.com", avatar: "https://via.placeholder.com/150" },
                 { id: 6, name: "Malek Fougasse", email: "jane.smith@example.com", avatar: "https://via.placeholder.com/150" },
                 { id: 7, name: "Jane Smith", email: "jane.smith@example.com", avatar: "https://via.placeholder.com/150" },
-
-                // Add more users as needed
             ];
 
             const filteredResults = allUsers.filter(user =>
@@ -202,13 +212,45 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         handleSearchChange({ target: { value: searchTerm } } as React.ChangeEvent<HTMLInputElement>);
     };
 
+    const resetForm = () => {
+        const now = new Date();
+        const roundedMinutes = Math.ceil(now.getMinutes() / 15) * 15;
+        now.setMinutes(roundedMinutes);
+        now.setSeconds(0);
+        now.setMilliseconds(0);
+
+        const startHour = now.getHours().toString().padStart(2, "0");
+        const startMinute = now.getMinutes().toString().padStart(2, "0");
+        const startTimeValue = `${startHour}:${startMinute}`;
+        setStartTime(startTimeValue);
+
+        const end = new Date(now.getTime() + 60 * 60 * 1000);
+        const endHour = end.getHours().toString().padStart(2, "0");
+        const endMinute = end.getMinutes().toString().padStart(2, "0");
+        const endTimeValue = `${endHour}:${endMinute}`;
+        setEndTime(endTimeValue);
+
+        setDate({ from: new Date(), to: undefined });
+
+        form.reset({
+            title: "",
+            description: "",
+            date_start: new Date().toISOString().replace("T", " ").substring(0, 19),
+            date_end: new Date().toISOString().replace("T", " ").substring(0, 19),
+            time_start: startTimeValue,
+            time_end: endTimeValue,
+            users: [],
+            isVisible: false,
+            isDraft: false,
+        });
+        setIsPrivate(true);
+    };
+
     const onSubmit = async (data: z.infer<typeof FormSchema>) => {
         const formData = {
             ...data,
-            date_start: date?.from || null,
-            date_end: date?.to || date?.from || null,
-            time_start: startTime,
-            time_end: endTime,
+            date_start: combineDateAndTime(date?.from || new Date(), data.time_start),
+            date_end: combineDateAndTime(date?.to || date?.from || new Date(), data.time_end),
             users: participants,
             isVisible: isPrivate ? false : true,
             isDraft: false,
@@ -218,18 +260,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
             const response = await createEvent(formData);
             console.log("Event created successfully:", response);
             setIsMainDialogOpen(false);
-            form.reset({
-                title: "",
-                description: "",
-                date_start: new Date(),
-                date_end: new Date(),
-                time_start: startTime,
-                time_end: endTime,
-                users: [],
-                isVisible: false,
-                isDraft: false,
-            });
-            setIsPrivate(true);
+            resetForm();
         } catch (error) {
             console.error("Failed to create event:", error);
         }
@@ -238,10 +269,8 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
     const saveDraft = async (data: z.infer<typeof FormSchema>) => {
         const formData = {
             ...data,
-            date_start: date?.from || null,
-            date_end: date?.to || date?.from || null,
-            time_start: startTime,
-            time_end: endTime,
+            date_start: combineDateAndTime(date?.from || new Date(), data.time_start),
+            date_end: combineDateAndTime(date?.to || date?.from || new Date(), data.time_end),
             users: participants,
             isVisible: isPrivate ? false : true,
             isDraft: true,
@@ -249,26 +278,15 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
 
         try {
             const response = await createEvent(formData);
-            console.log("Event saved has draft:", response);
+            console.log("Event saved as draft:", response);
             setIsConfirmDialogOpen(false);
             setIsMainDialogOpen(false);
-            form.reset({
-                title: "",
-                description: "",
-                date_start: new Date(),
-                date_end: new Date(),
-                time_start: startTime,
-                time_end: endTime,
-                users: [],
-                isVisible: false,
-                isDraft: false,
-            });
-            setIsPrivate(true);
-
+            resetForm();
         } catch (error) {
-            console.error("Failed to create event:", error);
+            console.error("Failed to save draft:", error);
         }
     };
+
 
     return (
         <>
@@ -541,8 +559,8 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                                 form.reset({
                                                     title: "",
                                                     description: "",
-                                                    date_start: new Date(),
-                                                    date_end: new Date(),
+                                                    date_start: new Date().toISOString().replace("T", " ").substring(0, 19),
+                                                    date_end: new Date().toISOString().replace("T", " ").substring(0, 19),
                                                     time_start: startTime,
                                                     time_end: endTime,
                                                     users: [],
@@ -581,8 +599,8 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                 form.reset({
                                     title: "",
                                     description: "",
-                                    date_start: new Date(),
-                                    date_end: new Date(),
+                                    date_start: new Date().toISOString().replace("T", " ").substring(0, 19),
+                                    date_end: new Date().toISOString().replace("T", " ").substring(0, 19),
                                     time_start: startTime,
                                     time_end: endTime,
                                     users: [],

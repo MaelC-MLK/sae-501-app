@@ -58,14 +58,14 @@ class Event
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
     private Collection $users;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $state = null;
-
     #[ORM\Column(length: 5, nullable: true)]
     private ?string $image = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $location = null;
+
+    #[ORM\Column]
+    private ?bool $is_draft = null;
 
 
     public function __construct()
@@ -162,17 +162,6 @@ class Event
         return $this;
     }
 
-    public function getState(): ?string
-    {
-        return $this->state;
-    }
-
-    public function setState(?string $state): static
-    {
-        $this->state = $state;
-
-        return $this;
-    }
 
     public function getImage(): ?string
     {
@@ -194,6 +183,18 @@ class Event
     public function setLocation(?string $location): static
     {
         $this->location = $location;
+
+        return $this;
+    }
+
+    public function isIsDraft(): ?bool
+    {
+        return $this->is_draft;
+    }
+
+    public function setIsDraft(bool $is_draft): static
+    {
+        $this->is_draft = $is_draft;
 
         return $this;
     }
