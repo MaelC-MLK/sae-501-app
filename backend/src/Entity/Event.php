@@ -42,6 +42,9 @@ class Event
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
     private Collection $users;
 
+    #[ORM\Column]
+    private ?bool $is_draft = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -156,6 +159,18 @@ class Event
     public function removeUser(User $user): static
     {
         $this->users->removeElement($user);
+
+        return $this;
+    }
+
+    public function isIsDraft(): ?bool
+    {
+        return $this->is_draft;
+    }
+
+    public function setIsDraft(bool $is_draft): static
+    {
+        $this->is_draft = $is_draft;
 
         return $this;
     }
