@@ -50,3 +50,146 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Path: frontend/app/calendar.css */
+/* CSS personnalisé pour le calendrier car besoin de surcharger la librairie*/
+
+.fc-timegrid-slot {
+  font-weight: bold;
+}
+
+/* calendar.css */
+.fc-view-harness {
+  max-height: 70vh; 
+  overflow-y: auto;
+  scroll-margin-top: 10rem;
+}
+
+.fc-day{
+  padding: 8px !important;
+}
+
+.fc-timegrid-slot-label{
+  padding: 2px !important;
+}
+
+.fc-toolbar-chunk{
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.fc-toolbar-title{
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.fc-today-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: background-color 0.3s, color 0.3s !important;
+  padding: 8px 16px !important;
+  background-color: hsl(221 83% 53%) !important; 
+  color: #ffffff !important; 
+  border: none !important;
+  cursor: pointer !important;
+  outline: none !important; 
+}
+
+.fc-today-button:hover {
+  background-color: #0056b3 !important; 
+  color: #e0e0e0 !important; 
+}
+
+.fc-today-button:focus,
+.fc-next-button:focus,
+.fc-prev-button:focus,
+.fc-timeGridDay-button:focus,
+.fc-timeGridWeek-button:focus,
+.fc-dayGridMonth-button:focus {
+  box-shadow: none !important; /* Ajoutez cette ligne */
+}
+
+.fc-next-button,
+.fc-prev-button{
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  clip-path: circle(40%) !important;
+  transition: background-color 0.3s, color 0.3s !important;
+  padding: 8px 16px !important;
+  background-color: transparent !important; 
+  color: black !important; 
+  border: none !important;
+  cursor: pointer !important;
+  outline: none !important; 
+}
+
+.fc-prev-button:hover {
+  background-color: #f5f5f5 !important; 
+}
+.fc-next-button:hover {
+  background-color: #f5f5f5 !important; 
+}
+
+.fc-timeGridDay-button{
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  border-radius: 8px 0px 0px 8px!important;;
+  transition: background-color 0.3s, color 0.3s !important;
+  padding: 8px 16px !important;
+  background-color: hsl(221 83% 58%) !important; 
+  color: #ffffff !important;  
+  border: none !important;
+  cursor: pointer !important;
+  outline: none !important; 
+}
+.fc-timeGridWeek-button{
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  border-radius: 0px 0px 0px 0px!important;;
+  transition: background-color 0.3s, color 0.3s !important;
+  padding: 8px 16px !important;
+  background-color: hsl(221 83% 58%) !important; 
+  color: #ffffff !important;  
+  border: none !important;
+  cursor: pointer !important;
+  outline: none !important; 
+}
+.fc-dayGridMonth-button{
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  border-radius: 0px 8px 8px 0px!important;;
+  transition: background-color 0.3s, color 0.3s !important;
+  padding: 8px 16px !important;
+  background-color: hsl(221 83% 58%) !important; 
+  color: #ffffff !important;  
+  border: none !important;
+  cursor: pointer !important;
+  outline: none !important; 
+}
+.fc-timeGridDay-button:hover,
+.fc-timeGridWeek-button:hover,
+.fc-dayGridMonth-button:hover {
+  background-color: hsl(221 83% 53%) !important; 
+  color: #ffffff !important; 
+}
+
+.fc-timeGridDay-button.fc-button-active,
+.fc-timeGridWeek-button.fc-button-active,
+.fc-dayGridMonth-button.fc-button-active {
+  background-color: hsl(221 83% 53%) !important; 
+  color: #ffffff !important; 
+}
