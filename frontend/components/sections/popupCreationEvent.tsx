@@ -21,7 +21,7 @@ import { CalendarIcon } from "@radix-ui/react-icons"
 import { ClockIcon } from "@radix-ui/react-icons"
 import { CrossCircledIcon } from "@radix-ui/react-icons"
 
-import { addDays, format } from "date-fns"
+import { addDays, format, set } from "date-fns"
 import { DateRange } from "react-day-picker"
 import { useForm } from "react-hook-form";
 
@@ -54,6 +54,8 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import UserSearchSkeleton from "@/components/skeletons/skeletons"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { createEvent } from "@/lib/actions";
+import { PopupCreationEventProps } from "@/types/event";
+import { fr } from 'date-fns/locale';
 
 const FormSchema = z.object({
     title: z.string().nonempty("Title is required"),
@@ -69,9 +71,11 @@ const FormSchema = z.object({
         avatar: z.string().optional(),
     })),
     isVisible: z.boolean(),
+    isDraft: z.boolean(),
+
 });
 
-export default function PopupCreationEvent() {
+export default function PopupCreationEvent({ className }: PopupCreationEventProps) {
     const [date, setDate] = React.useState<DateRange | undefined>({
         from: new Date(),
         to: undefined,
@@ -84,7 +88,10 @@ export default function PopupCreationEvent() {
     const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isPrivate, setIsPrivate] = useState<boolean>(true);
+    const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState<boolean>(false);
     const searchInputRef = useRef<HTMLInputElement>(null);
+    const [isMainDialogOpen, setIsMainDialogOpen] = useState<boolean>(false);
+
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -96,8 +103,16 @@ export default function PopupCreationEvent() {
             time_end: "",
             users: [],
             isVisible: false,
+            isDraft: false,
         },
     });
+
+    const areAllFieldsFilled = () => {
+        const values = form.getValues();
+        return values.title && values.description && values.date_start && values.date_end && values.time_start && values.time_end
+            // && participants.length > 0
+            ;
+    };
 
     useEffect(() => {
         const now = new Date();
@@ -155,7 +170,7 @@ export default function PopupCreationEvent() {
                 { id: 5, name: "Tom Boutin", email: "jane.smith@example.com", avatar: "https://via.placeholder.com/150" },
                 { id: 6, name: "Malek Fougasse", email: "jane.smith@example.com", avatar: "https://via.placeholder.com/150" },
                 { id: 7, name: "Jane Smith", email: "jane.smith@example.com", avatar: "https://via.placeholder.com/150" },
-                
+
                 // Add more users as needed
             ];
 
@@ -194,13 +209,62 @@ export default function PopupCreationEvent() {
             date_end: date?.to || date?.from || null,
             time_start: startTime,
             time_end: endTime,
-            users : participants,
+            users: participants,
             isVisible: isPrivate ? false : true,
+            isDraft: false,
         };
 
         try {
             const response = await createEvent(formData);
             console.log("Event created successfully:", response);
+            setIsMainDialogOpen(false);
+            form.reset({
+                title: "",
+                description: "",
+                date_start: new Date(),
+                date_end: new Date(),
+                time_start: startTime,
+                time_end: endTime,
+                users: [],
+                isVisible: false,
+                isDraft: false,
+            });
+            setIsPrivate(true);
+        } catch (error) {
+            console.error("Failed to create event:", error);
+        }
+    };
+
+    const saveDraft = async (data: z.infer<typeof FormSchema>) => {
+        const formData = {
+            ...data,
+            date_start: date?.from || null,
+            date_end: date?.to || date?.from || null,
+            time_start: startTime,
+            time_end: endTime,
+            users: participants,
+            isVisible: isPrivate ? false : true,
+            isDraft: true,
+        };
+
+        try {
+            const response = await createEvent(formData);
+            console.log("Event saved has draft:", response);
+            setIsConfirmDialogOpen(false);
+            setIsMainDialogOpen(false);
+            form.reset({
+                title: "",
+                description: "",
+                date_start: new Date(),
+                date_end: new Date(),
+                time_start: startTime,
+                time_end: endTime,
+                users: [],
+                isVisible: false,
+                isDraft: false,
+            });
+            setIsPrivate(true);
+
         } catch (error) {
             console.error("Failed to create event:", error);
         }
@@ -208,9 +272,9 @@ export default function PopupCreationEvent() {
 
     return (
         <>
-            <Dialog>
-                <DialogTrigger asChild>
-                    <Button>Ajouter</Button>
+            <Dialog open={isMainDialogOpen} onOpenChange={setIsMainDialogOpen}>
+                <DialogTrigger asChild className={`${className}`}>
+                    <Button onClick={() => setIsMainDialogOpen(true)}>Ajouter</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-xl max-h-dvh overflow-y-auto">
                     <DialogHeader>
@@ -250,16 +314,16 @@ export default function PopupCreationEvent() {
                                                     id="date"
                                                     variant={"outline"}
                                                     className={cn(
-                                                        "justify-start text-left font-normal",
+                                                        "justify-start text-left font-normal capitalize",
                                                         !date && "text-muted-foreground"
                                                     )}
                                                 >
                                                     <CalendarIcon className="mr-2 h-4 w-4" />
                                                     {date?.from ? (
                                                         date.to && date.from.getTime() !== date.to.getTime() ? (
-                                                            `${format(date.from, "LLL dd, y")} - ${format(date.to, "LLL dd, y")}`
+                                                            `${format(date.from, "dd MMMM yyyy", { locale: fr })} - ${format(date.to, "dd MMMM yyyy", { locale: fr })}`
                                                         ) : (
-                                                            format(date.from, "LLL dd, y")
+                                                            format(date.from, "dd MMMM yyyy", { locale: fr })
                                                         )
                                                     ) : (
                                                         <span>Pick a date</span>
@@ -274,6 +338,9 @@ export default function PopupCreationEvent() {
                                                     selected={date}
                                                     onSelect={handleSelect}
                                                     numberOfMonths={2}
+                                                    locale={fr}
+                                                    weekStartsOn={1}
+                                                    className="capitalize"
                                                 />
                                             </PopoverContent>
                                         </Popover>
@@ -389,7 +456,7 @@ export default function PopupCreationEvent() {
                                     <Label htmlFor="visibility" className="mb-2 sm:hidden">
                                         Visibilité
                                     </Label>
-                                    <Tabs  defaultValue={isPrivate ? "private" : "public"} onValueChange={(value) => setIsPrivate(value === "private")}>
+                                    <Tabs defaultValue={isPrivate ? "private" : "public"} onValueChange={(value) => setIsPrivate(value === "private")}>
                                         <TabsList>
                                             <TabsTrigger value="private">Private</TabsTrigger>
                                             <TabsTrigger value="public">Public</TabsTrigger>
@@ -462,7 +529,31 @@ export default function PopupCreationEvent() {
                             </div>
                             <DialogFooter className="gap-2 md:gap-0 mt-6 sm:mt-0">
                                 <DialogClose asChild>
-                                    <Button type="button" variant="outline">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            if (areAllFieldsFilled()) {
+                                                setIsConfirmDialogOpen(true);
+                                            } else {
+                                                setIsMainDialogOpen(false); // Fermer le popup de création d'événement
+                                                form.reset({
+                                                    title: "",
+                                                    description: "",
+                                                    date_start: new Date(),
+                                                    date_end: new Date(),
+                                                    time_start: startTime,
+                                                    time_end: endTime,
+                                                    users: [],
+                                                    isVisible: false,
+                                                    isDraft: false,
+                                                });
+                                                setIsPrivate(true);
+                                            }
+
+                                        }}
+                                    >
                                         Annuler
                                     </Button>
                                 </DialogClose>
@@ -470,6 +561,49 @@ export default function PopupCreationEvent() {
                             </DialogFooter>
                         </form>
                     </Form>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Enregistrer en brouillon ?</DialogTitle>
+                        <DialogDescription>
+                            Voulez-vous enregistrer cet événement en tant que brouillon ?
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setIsConfirmDialogOpen(false);
+                                setIsMainDialogOpen(false); // Fermer le popup de création d'événement
+                                form.reset({
+                                    title: "",
+                                    description: "",
+                                    date_start: new Date(),
+                                    date_end: new Date(),
+                                    time_start: startTime,
+                                    time_end: endTime,
+                                    users: [],
+                                    isVisible: false,
+                                    isDraft: false,
+                                });
+                                setIsPrivate(true);
+                            }}
+                        >
+                            Non
+                        </Button>
+                        <Button
+                            onClick={async () => {
+                                const data = form.getValues();
+                                await saveDraft(data);
+
+                            }}
+                        >
+                            Oui
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </>

@@ -8,3 +8,7 @@ export interface EventProps {
     image: string;
     badge: string;
 }
+
+export interface PopupCreationEventProps {
+    className?: string;
+}

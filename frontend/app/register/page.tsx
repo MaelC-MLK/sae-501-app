@@ -75,14 +75,14 @@ export default function Page() {
     
     return (
         <div className="flex h-full">
-            <div className="flex flex-col justify-center lg:w-2/3 p-6 sm:p-12">
-                <h1 className="text-2xl font-bold mb-6">Create an account</h1>
+            <div className="flex flex-col justify-items-center lg:w-2/3 p-6 sm:p-12 lg:p-24 lg:px-56">
+                <h1 className="text-2xl font-bold mb-6">Créer un compte</h1>
                 
                 <div className="mb-10">
                     <Button className="w-full bg-blue-500 text-white py-6 rounded-md text-lg mb-3 hover:bg-blue-600 transition">
-                        Sign up with Google
+                    S'inscrire avec Google
                     </Button>
-                    <Button className='w-full py-6 text-lg' variant="outline">Sign up with Apple</Button>
+                    <Button className='w-full py-6 text-lg' variant="outline">S'inscrire avec Apple</Button>
                 </div>
 
                 <div className="flex items-center justify-center mb-6">
@@ -135,11 +135,11 @@ export default function Page() {
                     </div>
 
                     <div className="mb-6">
-                        <Label className='text-lg' htmlFor="plainPassword">Password</Label>
+                        <Label className='text-lg' htmlFor="plainPassword">Mot de passe</Label>
                         <Input 
                             type="password" 
                             id="plainPassword" 
-                            placeholder="Password" 
+                            placeholder="Mot de passe" 
                             name="plainPassword" 
                             required 
                             className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10" 
@@ -147,12 +147,12 @@ export default function Page() {
                             onChange={(e) => setPlainPassword(e.target.value)}/>
                     </div>
                     <Button type="submit" className="w-full bg-blue-500 text-white text-lg py-6 rounded-md hover:bg-blue-600 transition">
-                        Sign up
+                        S'incrire
                     </Button>
                 </form>
 
                 <p className="text-center text-sm text-gray-500 mt-6">
-                    Already have an account? <Link href="/login" className="text-blue-500 hover:underline">Log in</Link>
+                Vous avez déjà un compte? <Link href="/login" className="text-blue-500 hover:underline">Connectez-vous</Link>
                 </p>
             </div>
 

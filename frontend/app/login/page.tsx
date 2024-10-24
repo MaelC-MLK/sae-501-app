@@ -24,9 +24,9 @@ export default function Page() {
     };
 
     return (
-        <div className="flex h-screen">
-            <div className="flex flex-col justify-center md:w-2/3 max-w-md mx-auto p-4 sm:p-12">
-                <h1 className="text-3xl font-bold mb-8">Welcome back!</h1>
+        <div className="flex h-full">
+            <div className="flex flex-col justify-center md:w-2/3 max-w-md mx-auto py-24">
+                <h1 className="text-3xl font-bold mb-6">Welcome back!</h1>
                 
                 <form onSubmit={handleSubmit}>
 
