@@ -18,6 +18,7 @@ interface CarouselRecomProps {
 
 
 export function CarouselRecom({ events }: CarouselRecomProps) {
+    console.log(events)
     return (
         <Carousel className="w-full">
             <CarouselContent className="-ml-1">

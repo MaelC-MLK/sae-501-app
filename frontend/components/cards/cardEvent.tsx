@@ -36,18 +36,16 @@ export function CardEvent({ event }: { event: EventProps }) {
                                 <CardTitle className="text-2xl">{event.title}</CardTitle>
                                 <Badge variant="outline" className="h-fit">Public</Badge>
                             </div>
-                            {event.date_start === event.date_end ? (
-                                <span className="text-sm font-normal">
-                                    {event.date_start} | {event.time_start} - {event.time_end}
-                                </span>
-                            ) : (
-                                <>
-                                    <span className="text-sm font-normal">
-                                        {event.date_start} - {event.time_start}
-                                        {" au "} {event.date_end} - {event.time_end}
-                                    </span>
-                                </>
-                            )}
+                            {event.date_start.substring(0, 10) === event.date_end.substring(0, 10) ? (
+    <span className="text-sm font-normal">
+        {event.date_start.substring(0, 10)} | {event.date_start.substring(13)} - {event.date_end.substring(13)}
+    </span>
+) : (
+    <span className="text-sm font-normal">
+        {event.date_start} au {event.date_end}
+    </span>
+)}
+
                         </CardHeader>
                         <CardContent className="transition-opacity duration-300 opacity-0 group-hover:opacity-100">
                             <CardDescription className="line-clamp-5 h-24">{event.description}</CardDescription>
