@@ -13,7 +13,6 @@ export default function Page() {
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [birthDate, setBirthDate] = useState('');
     const [email, setEmail] = useState('');
     const [plainPassword, setPlainPassword] = useState('');
     const [error, setError] = useState('');
@@ -26,8 +25,7 @@ export default function Page() {
     const validatePassword = (password: string) => {
         return password.length >= 8 && password.length <= 30;
     };
-
-
+    
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
@@ -52,7 +50,7 @@ export default function Page() {
                 headers: {
                     'Content-Type': "application/ld+json",
                 },
-                body: JSON.stringify({ email, plainPassword }),
+                body: JSON.stringify({ email, plainPassword, firstName, lastName, birthDate}),
             });
 
             if (!response.ok) {
@@ -121,18 +119,6 @@ export default function Page() {
                             className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)} />
-                    </div>
-
-                    <div className="mb-4">
-                        <Label className='text-lg' htmlFor="birthDate">Date de naissance</Label>
-                        <Input 
-                            type="date" 
-                            id="birthDate" 
-                            name="birthDate" 
-                            required 
-                            className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"
-                            value={birthDate}
-                            onChange={(e) => setBirthDate(e.target.value)} />
                     </div>
 
                     <div className="mb-4">
