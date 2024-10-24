@@ -28,6 +28,8 @@ class EventController extends AbstractController
                 'date_end' => $event->getDateEnd()->format('d/m/Y - H:i'),
                 'isVisible' => $event->isIsVisible(),
                 'state' => $event->getState(),
+                'image' => $event->getImage(),
+                'location' => $event->getLocation(),
             ];
         }, $events);
 

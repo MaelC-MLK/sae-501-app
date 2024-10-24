@@ -61,6 +61,12 @@ class Event
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $state = null;
 
+    #[ORM\Column(length: 5, nullable: true)]
+    private ?string $image = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $location = null;
+
 
     public function __construct()
     {
@@ -164,6 +170,30 @@ class Event
     public function setState(?string $state): static
     {
         $this->state = $state;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?string $location): static
+    {
+        $this->location = $location;
 
         return $this;
     }
