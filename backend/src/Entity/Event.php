@@ -61,6 +61,7 @@ class Event
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $state = null;
 
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -166,5 +167,6 @@ class Event
 
         return $this;
     }
+
 
 }
