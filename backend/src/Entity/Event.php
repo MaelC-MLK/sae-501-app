@@ -67,6 +67,10 @@ class Event
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $location = null;
 
+    #[ORM\ManyToOne(inversedBy: 'owned')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $creator = null;
+
 
     public function __construct()
     {
@@ -194,6 +198,18 @@ class Event
     public function setLocation(?string $location): static
     {
         $this->location = $location;
+
+        return $this;
+    }
+
+    public function getCreator(): ?User
+    {
+        return $this->creator;
+    }
+
+    public function setCreator(?User $creator): static
+    {
+        $this->creator = $creator;
 
         return $this;
     }

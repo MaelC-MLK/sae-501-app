@@ -76,9 +76,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $lastName = null;
 
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'creator')]
+    private Collection $owned;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
+        $this->owned = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -209,6 +213,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastName(string $lastName): static
     {
         $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getOwned(): Collection
+    {
+        return $this->owned;
+    }
+
+    public function addOwned(Event $owned): static
+    {
+        if (!$this->owned->contains($owned)) {
+            $this->owned->add($owned);
+            $owned->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOwned(Event $owned): static
+    {
+        if ($this->owned->removeElement($owned)) {
+            // set the owning side to null (unless already changed)
+            if ($owned->getCreator() === $this) {
+                $owned->setCreator(null);
+            }
+        }
 
         return $this;
     }
