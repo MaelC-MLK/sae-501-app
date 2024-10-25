@@ -24,7 +24,7 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
                 </div>
                 <div>
                     <p className="text-md font-semibold mb-1">{event.date_start} - {event.date_end}</p>
-                    <div className="text-sm text-gray-600 mb-4">{event.time_start} - {event.time_end}</div>
+                    <div className="text-sm text-gray-600 mb-4">{event.date_start} - {event.date_end}</div>
                     <p className="mt-4 text-sm text-gray-700">{event.description}</p>
                 </div>
                 <div className="mt-4 flex space-x-3">
