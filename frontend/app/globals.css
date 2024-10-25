@@ -63,6 +63,7 @@ body {
   max-height: 70vh; 
   overflow-y: auto;
   scroll-margin-top: 10rem;
+  margin-top: 0.5rem;
 }
 
 .fc-day{
@@ -79,9 +80,19 @@ body {
   gap: 1rem;
 }
 
-.fc-toolbar-title{
-  font-weight: bold;
+.fc-toolbar-title {
+  font-weight: 500;
   text-transform: capitalize;
+}
+
+@media (max-width: 768px) {
+  .fc-toolbar-title {
+    font-size: 12px;
+  }
+}
+
+.fc-header-toolbar{
+  margin-top: 1.5rem;
 }
 
 .fc-today-button {
