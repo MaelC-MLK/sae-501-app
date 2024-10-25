@@ -53,7 +53,7 @@ php bin/console lexik:jwt:generate-keypair
 
 ### Si problème avec les migrations : 
 
-- Supprimer toutes les migrations du projet
+- Supprimer toutes les migrations du projet dans les fichiers et sur phpMyAdmin
 
 ```
 php bin/console make:migration
