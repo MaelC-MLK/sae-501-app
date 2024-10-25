@@ -56,10 +56,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { createEvent } from "@/lib/actions";
 import { PopupCreationEventProps } from "@/types/event";
 import { fr } from 'date-fns/locale';
+import ImageUpload from "@/components/sections/dropZoneEventPopup";
 
 const FormSchema = z.object({
     title: z.string().nonempty("Title is required"),
-    description: z.string().nonempty("Description is required"),
+    description: z.string().optional(),
+    location: z.string().optional(),
     date_start: z.string(),
     date_end: z.string(),
     time_start: z.string().nonempty("Start time is required"),
@@ -72,6 +74,7 @@ const FormSchema = z.object({
     })),
     isVisible: z.boolean(),
     isDraft: z.boolean(),
+    image: z.string().optional(), // Ajout du champ pour l'extension de l'image
 });
 
 export default function PopupCreationEvent({ className }: PopupCreationEventProps) {
@@ -95,7 +98,6 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         resolver: zodResolver(FormSchema),
         defaultValues: {
             title: "",
-            description: "",
             date_start: new Date().toISOString().replace("T", " ").substring(0, 19),
             date_end: new Date().toISOString().replace("T", " ").substring(0, 19),
             time_start: "",
@@ -235,11 +237,13 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         form.reset({
             title: "",
             description: "",
+            location: "",
             date_start: new Date().toISOString().replace("T", " ").substring(0, 19),
             date_end: new Date().toISOString().replace("T", " ").substring(0, 19),
             time_start: startTimeValue,
             time_end: endTimeValue,
             users: [],
+            image: "",
             isVisible: false,
             isDraft: false,
         });
@@ -255,7 +259,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
             isVisible: isPrivate ? false : true,
             isDraft: false,
         };
-
+    
         try {
             const response = await createEvent(formData);
             console.log("Event created successfully:", response);
@@ -265,7 +269,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
             console.error("Failed to create event:", error);
         }
     };
-
+    
     const saveDraft = async (data: z.infer<typeof FormSchema>) => {
         const formData = {
             ...data,
@@ -275,7 +279,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
             isVisible: isPrivate ? false : true,
             isDraft: true,
         };
-
+    
         try {
             const response = await createEvent(formData);
             console.log("Event saved as draft:", response);
@@ -286,7 +290,6 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
             console.error("Failed to save draft:", error);
         }
     };
-
 
     return (
         <>
@@ -344,7 +347,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                                             format(date.from, "dd MMMM yyyy", { locale: fr })
                                                         )
                                                     ) : (
-                                                        <span>Pick a date</span>
+                                                        <span>Choisissez une date</span>
                                                     )}
                                                 </Button>
                                             </PopoverTrigger>
@@ -453,6 +456,24 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                     </div>
                                 </div>
                                 <div className="flex flex-col mt-4">
+                                    <Label htmlFor="location" className="mb-2">
+                                        Localisation
+                                    </Label>
+                                    <FormField
+                                        control={form.control}
+                                        name="location"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormControl>
+                                                    <Input id="location" placeholder="Localisation de l'événement" autoComplete="off" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                                <div className="flex flex-col mt-4">
                                     <Label htmlFor="description" className="mb-2">
                                         Description
                                     </Label>
@@ -470,6 +491,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                     />
                                 </div>
 
+
                                 <div className="flex flex-col mt-4 sm:absolute sm:top-2 sm:right-14">
                                     <Label htmlFor="visibility" className="mb-2 sm:hidden">
                                         Visibilité
@@ -481,6 +503,13 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                         </TabsList>
                                     </Tabs>
                                 </div>
+
+                                <div className="flex flex-col mt-4">
+    <Label htmlFor="image" className="mb-2">
+        Ajouter une image
+    </Label>
+    <ImageUpload name="image" />
+</div>
 
                                 <Separator className="my-4" />
 
