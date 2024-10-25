@@ -63,10 +63,7 @@ class Event
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $location = null;
-
-    #[ORM\ManyToOne(inversedBy: 'owned')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $creator = null;
+  
     #[ORM\Column]
     private ?bool $is_draft = null;
 
@@ -190,15 +187,6 @@ class Event
         return $this;
     }
 
-    public function getCreator(): ?User
-    {
-        return $this->creator;
-    }
-
-    public function setCreator(?User $creator): static
-    {
-        $this->creator = $creator;
-    }
     public function isIsDraft(): ?bool
     {
         return $this->is_draft;
