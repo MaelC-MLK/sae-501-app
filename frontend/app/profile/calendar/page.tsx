@@ -5,8 +5,10 @@ export default function Page(){
     
     return (
         <>
+        <div className="pt-16">
             <PopupCreationEvent />
             <Calendar />
+        </div>
         </>
     )
 }
