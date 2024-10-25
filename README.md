@@ -51,6 +51,10 @@ Dans le conteneur docker :
 php bin/console lexik:jwt:generate-keypair
 ```
 
+### Import de la table Event
+
+[Export de la table](./event.sql)
+
 ### Si problème avec les migrations : 
 
 - Supprimer toutes les migrations du projet dans les fichiers et sur phpMyAdmin
