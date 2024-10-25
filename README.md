@@ -62,7 +62,7 @@ php bin/console make:migration
 php bin/console doctrine:migrations:migrate
 ```
 
-## Executer des commandes dans les conteneurs docker : 
+### Executer des commandes dans les conteneurs docker si besoin : 
 ```
 docker exec -it sae-backend /bin/bash
 ```
