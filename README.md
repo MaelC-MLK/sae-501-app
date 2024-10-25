@@ -1,4 +1,20 @@
-# Configuration Docker avec Symphony et Next.js
+# SAÉ 501
+
+## Fonctionnalités testables
+
+Actuellement, les fonctionnalités suivantes fonctionnent en environnement local, mais rencontrent des erreurs CORS sur Codespace, ce qui empêche leur bon fonctionnement dans cet environnement.
+
+ Voici la liste des fonctionnalités disponibles :
+- Register / Login
+- Création d'un événement
+- Système de brouillon lors de la création d'un événement
+- Visualisation du calendrier
+- Visualisation de la page d'accueil avec des données dynamiques ( Pas encore de base "par défaut" donc vide si vous n'avez pas crée d'événement public )
+- Visualisation du calendrier en JOUR/SEMAINE/MOIS
+- Pouvoir supprimer un compte
+
+## Vidéo test de l'application
+[https://youtu.be/jY8JQVgqcpE](https://youtu.be/jY8JQVgqcpE)
 
 ## Installation
 
@@ -37,14 +53,11 @@ php bin/console lexik:jwt:generate-keypair
 
 ## Si problème avec les migrations : 
 
-
 - Supprimer toutes les migrations du projet
-
 
 ```
 php bin/console make:migration
 ```
-
 ```
 php bin/console doctrine:migrations:migrate
 ```
@@ -62,22 +75,8 @@ docker exec -it sae-frontend /bin/bash
 - Backend : [http://localhost:8080](http://localhost:8080)
 - phpMyAdmin : [http://localhost:8070](http://localhost:8070)
 
-## Vidéo test de l'application
-[https://youtu.be/jY8JQVgqcpE](https://youtu.be/jY8JQVgqcpE)
 
-## Fonctionnalités testables
 
-Actuellement, les fonctionnalités suivantes fonctionnent en environnement local, mais rencontrent des erreurs CORS sur Codespace, ce qui empêche leur bon fonctionnement dans cet environnement.
-
- Voici la liste des fonctionnalités disponibles :
-- Register / Login
-- Création d'un événement
-- Système de brouillon lors de la création d'un événement
-- Administration et gestion des utilisateurs
-- Visualisation du calendrier
-- Visualisation de la page d'accueil avec des données dynamiques ( Pas encore de base "par défaut" donc vide si vous n'avez pas crée d'événement public )
-- Visualisation du calendrier en JOUR/SEMAINE/MOIS
-- Pouvoir supprimer un compte
 
 
 
