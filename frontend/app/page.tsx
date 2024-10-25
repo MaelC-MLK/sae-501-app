@@ -13,7 +13,7 @@ export default function Home() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/events/public?is_visible=true')
+    fetch('http://localhost:8080/api/events/public')
       .then(response => response.json())
       .then(data => setEvents(data))
       .catch(error => console.error("Erreur lors de la récupération des événements :", error));
