@@ -42,7 +42,7 @@ Dans le conteneur docker :
 php bin/console doctrine:migrations:migrate
 ```
 
-## Générer les clés JWT : 
+### Générer les clés JWT : 
 ```
 docker exec -it sae-backend /bin/bash
 ```
@@ -51,7 +51,7 @@ Dans le conteneur docker :
 php bin/console lexik:jwt:generate-keypair
 ```
 
-## Si problème avec les migrations : 
+### Si problème avec les migrations : 
 
 - Supprimer toutes les migrations du projet
 
@@ -62,7 +62,7 @@ php bin/console make:migration
 php bin/console doctrine:migrations:migrate
 ```
 
-### Executer des commandes dans les conteneurs docker si besoin : 
+## Executer des commandes dans les conteneurs docker si besoin : 
 ```
 docker exec -it sae-backend /bin/bash
 ```
