@@ -47,3 +47,6 @@ docker exec -it sae-frontend /bin/bash
 - Frontend : [http://localhost:8090](http://localhost:8090)
 - Backend : [http://localhost:8080](http://localhost:8080)
 - phpMyAdmin : [http://localhost:8070](http://localhost:8070)
+
+## Vidéo test de l'application
+[https://youtu.be/jY8JQVgqcpE](https://youtu.be/jY8JQVgqcpE)
