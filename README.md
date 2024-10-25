@@ -14,7 +14,7 @@ Actuellement, les fonctionnalités suivantes fonctionnent en environnement local
 - Pouvoir supprimer un compte
 
 ## Vidéo test de l'application
-[https://youtu.be/jY8JQVgqcpE](https://youtu.be/jY8JQVgqcpE)
+[https://youtu.be/kFpWfK2EiVU](https://youtu.be/kFpWfK2EiVU)
 
 ## Installation
 
