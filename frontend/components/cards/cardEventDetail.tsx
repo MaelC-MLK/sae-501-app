@@ -23,8 +23,15 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
                     <Badge variant="default" className="h-fit">Public</Badge>
                 </div>
                 <div>
-                    <p className="text-md font-semibold mb-1">{event.date_start} - {event.date_end}</p>
-                    <div className="text-sm text-gray-600 mb-4">{event.date_start} - {event.date_end}</div>
+                    {event.date_start.substring(0, 10) === event.date_end.substring(0, 10) ? (
+                        <span className="text-md font-semibold mb-1">
+                            {event.date_start.substring(0, 10)} | {event.date_start.substring(13)} - {event.date_end.substring(13)}
+                        </span>
+                    ) : (
+                        <span className="text-md font-semibold mb-1">
+                            {event.date_start} au {event.date_end}
+                        </span>
+                    )}
                     <p className="mt-4 text-sm text-gray-700">{event.description}</p>
                 </div>
                 <div className="mt-4 flex space-x-3">
