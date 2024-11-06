@@ -24,14 +24,15 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
                 </div>
                 <div>
                     {event.date_start.substring(0, 10) === event.date_end.substring(0, 10) ? (
-                        <span className="text-md font-semibold mb-1">
+                        <span className="text-md font-medium">
                             {event.date_start.substring(0, 10)} | {event.date_start.substring(13)} - {event.date_end.substring(13)}
                         </span>
                     ) : (
-                        <span className="text-md font-semibold mb-1">
+                        <span className="text-md font-medium">
                             {event.date_start} au {event.date_end}
                         </span>
                     )}
+                    <p className='mt-2 font-semibold text-gray-700'>{event.location}</p>
                     <p className="mt-4 text-sm text-gray-700">{event.description}</p>
                 </div>
                 <div className="mt-4 flex space-x-3">
