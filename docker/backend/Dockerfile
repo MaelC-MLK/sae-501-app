@@ -11,10 +11,12 @@ RUN apt-get update && \
     unzip \
     libzip-dev \
     libpq-dev \
-    libonig-dev
+    libonig-dev \
+    libicu-dev && \
+    docker-php-ext-install pdo_mysql intl && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install PDO MySQL extension
-RUN docker-php-ext-install pdo_mysql
+RUN echo "extension=intl.so" >> /usr/local/etc/php/conf.d/docker-php-ext-intl.ini
 
 # Install Composer globally
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
