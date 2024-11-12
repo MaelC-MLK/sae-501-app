@@ -1,45 +1,47 @@
-"use client"; 
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { getBearerToken } from '@/lib/utils';
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { getBearerToken } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const userId = '1'; // Remplacez par l'ID de l'utilisateur que vous souhaitez récupérer
+  const userId = "1"; // Remplacez par l'ID de l'utilisateur que vous souhaitez récupérer
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const api = 'http://localhost:8080';
+        const api = "http://localhost:8080";
         const url = `${api}/api/users/${userId}`;
         const token = getBearerToken();
 
-        if(!token) {
-          throw new Error('No token found');
-      }
+        if (!token) {
+          throw new Error("No token found");
+        }
 
         const response = await fetch(url, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/ld+json',
-            'Authorization': `Bearer ${token}`,
+            "Content-Type": "application/ld+json",
+            Authorization: `Bearer ${token}`,
           },
         });
 
         if (!response.ok) {
-          throw new Error('Erreur lors de la récupération des données utilisateur');
+          throw new Error("Erreur lors de la récupération des données utilisateur");
         }
 
         const data = await response.json();
+        console.log(data);
         setUser(data);
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError('An unknown error occurred');
+          setError("An unknown error occurred");
         }
       } finally {
         setLoading(false);
@@ -50,29 +52,64 @@ export default function Profile() {
   }, [userId]);
 
   if (loading) {
-    return <div>Chargement...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+          <p className="mt-4 text-gray-700">Chargement...</p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Erreur : {error}</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-red-500">Erreur : {error}</p>
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col items-center bg-gray-50 min-h-screen py-10">
->>>>>>> 900a991150d64e3a326190a9fc2d2f9149c221ab
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-        <div className="flex flex-col items-center">
-          <div className="relative w-24 h-24 rounded-full overflow-hidden">
-            <Image src="/images/event.jpg" alt="Profile Picture" layout="fill" objectFit="cover" />
-          </div>
-          <h2 className="mt-4 text-xl font-semibold">{user.name}</h2>
-          <p className="text-gray-400">{user.id}</p>
-        </div>
+    <div className="bg-gray-100 min-h-screen p-10 pt-24">
+      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="flex flex-col lg:flex-row">
+          <div className="lg:w-1/3 p-6 bg-gray-50">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-2xl font-bold text-gray-800">Profil</h3>
+              <Button >
+                Edit Profile
+              </Button>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white">
+                <Image
+                  src="/images/event.jpg"
+                  alt="Profile Picture"
+                  layout="fill"
+                  objectFit="cover"
+                />
+              </div>
+              <h2 className="mt-4 text-2xl font-semibold text-gray-800">
+                {user?.firstName} {user?.lastName}
+              </h2>
+              <div className="flex items-center justify-between">
+                <p className="text-gray-700">{user?.email}</p>
+              </div>
 
-        <div className="mt-6 space-y-4">
-          <div className="flex items-center space-x-4">
-            <span className="text-gray-500">Email:</span>
-            <p className="text-gray-700">{user.email}</p>
+            </div>
+          </div>
+
+          <div className="lg:w-2/3 p-6">
+            <h3 className="text-2xl font-bold text-gray-800">Mes Événements</h3>
+            <div className="mt-4 space-y-4">
+              <div className="p-4 bg-gray-100 rounded">
+                <p className="text-gray-700">Mes événements à venir</p>
+              </div>
+              <div className="p-4 bg-gray-100 rounded">
+                <p className="text-gray-700">Mes événements favoris</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
