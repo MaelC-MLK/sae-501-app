@@ -15,10 +15,6 @@ interface CarouselRecomProps {
 
 export function CarouselRecom({ events }: CarouselRecomProps) {
     const recommendedEvents = events.filter(event => event.isRecommended);
-
-
-    console.log(events)
-    console.log(recommendedEvents)
     return (
         <Carousel className="w-full">
             <CarouselContent className="-ml-1">

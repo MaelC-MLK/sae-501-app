@@ -6,6 +6,8 @@ import { Button } from '../ui/button';
 
 import { EventProps } from "@/types/event";
 import Link from 'next/link';
+import { PopupJoinPublicEvent } from '../sections/popupJoinPublicEvent';
+import PopupCreationEvent from '../sections/popupCreationEvent';
 
 
 interface CardEventDetailProps {
@@ -36,11 +38,8 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
                     <p className="mt-4 text-sm text-gray-700">{event.description}</p>
                 </div>
                 <div className="mt-4 flex space-x-3">
-                    <Button variant={'default'} size={'lg'} className='w-full sm:w-auto'>
-                        <Link href="/register">
-                            S'inscrire
-                        </Link>
-                    </Button>
+                    <PopupJoinPublicEvent />
+                    <PopupCreationEvent />
                     <Link href="/register">
                         <Button variant={'outline'} size={'lg'} className="p-2 w-auto h-auto">
                             <Image
