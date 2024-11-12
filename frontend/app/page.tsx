@@ -20,8 +20,8 @@ export default function Home() {
   }, []);
 
   return (
-    <div>
-      <div className='w-full h-80 absolute'>
+    <div className="mt-10">
+      <div className='w-full h-80 absolute '>
         <Image
           src="/images/homepage-background.jpg"
           alt="homepage-image"
