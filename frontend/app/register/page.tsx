@@ -126,7 +126,8 @@ export default function Page() {
                     <div className="mb-4">
                         <Label className='text-lg' htmlFor="birthDate">Date de naissance</Label>
                         <Input 
-                            type="date" 
+                            type="text" 
+                            placeholder='DD/MM/YYYY'
                             id="birthDate" 
                             name="birthDate" 
                             required 
