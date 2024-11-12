@@ -4,14 +4,17 @@ import Image from 'next/image';
 
 const ScrollButton = () => {
     const handleScroll = () => {
-        window.scrollTo({
-            top: window.innerHeight,
-            behavior: 'smooth',
-        });
+        const element = document.getElementById('scroll-btn');
+        if (element) {
+            element.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+            });
+        }
     };
 
     return (
-        <div onClick={handleScroll} className="w-fit flex flex-col items-center justify-center mx-auto gap-1 cursor-pointer mt-52 hover:translate-y-2 transition-transform duration-300">
+        <div id='scroll-btn' onClick={handleScroll} className="w-fit flex flex-col items-center justify-center mx-auto gap-1 cursor-pointer mt-52 hover:translate-y-2 transition-transform duration-300">
             <span className="text-sm text-primary">Voir plus d'évènements</span>
             <Image
                 src="/images/ScrollDown.svg"
