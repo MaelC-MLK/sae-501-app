@@ -1,5 +1,4 @@
 import React from 'react';
-import { ArrowUpRight } from 'lucide-react';
 import Image from 'next/image';
 
 import { Badge } from '../ui/badge';
@@ -14,17 +13,18 @@ interface CardEventDetailProps {
 }
 
 export function CardEventDetail({ event }: CardEventDetailProps) {
+    const defaultImage = "/images/event.jpg";
+
     return (
         <div className="w-full flex flex-col md:flex-row justify-between overflow-hidden">
             <div className="pb-6 md:p-6 flex flex-col gap-4 justify-between w-full md:w-2/3">
                 <div className='flex flex-row border-b-2'>
                     <h2 className="w-full items-start text-2xl font-bold">{event.title}</h2>
-                    <Badge variant="default" className="h-fit">{event.badge}</Badge>
+                    <Badge variant="default" className="h-fit">Public</Badge>
                 </div>
                 <div>
-                    <p className="text-md font-semibold mb-1">{event.date}</p>
-                    <div className="text-sm text-gray-600 mb-4">{event.time}</div>
-                    <p className="text-sm font-medium text-gray-700">Type : {event.type}</p>
+                    <p className="text-md font-semibold mb-1">{event.date_start} - {event.date_end}</p>
+                    <div className="text-sm text-gray-600 mb-4">{event.time_start} - {event.time_end}</div>
                     <p className="mt-4 text-sm text-gray-700">{event.description}</p>
                 </div>
                 <div className="mt-4 flex space-x-3">
@@ -47,7 +47,7 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
             </div>
             <div className="relative w-full md:w-1/3 h-64 md:h-auto">
                 <Image
-                    src={event.image}
+                    src={event.image ? event.image : defaultImage}
                     alt={event.title}
                     layout="fill"
                     objectFit="cover"

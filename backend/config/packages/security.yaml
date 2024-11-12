@@ -35,6 +35,7 @@ security:
         provider: users
 
   access_control:
+    - { path: ^/api/events/public, roles: PUBLIC_ACCESS }
     - { path: ^/$, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
     - { path: ^/api/users, roles: PUBLIC_ACCESS, methods: [POST] } # Allows accessing the Swagger UI docs
     - { path: ^/api/docs, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI docs
