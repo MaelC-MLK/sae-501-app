@@ -39,7 +39,6 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
                 </div>
                 <div className="mt-4 flex space-x-3">
                     <PopupJoinPublicEvent />
-                    <PopupCreationEvent />
                     <Link href="/register">
                         <Button variant={'outline'} size={'lg'} className="p-2 w-auto h-auto">
                             <Image
