@@ -66,12 +66,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $events;
 
     #[Assert\NotBlank(groups: ['user:create'])]
-    #[Groups(['user:create', 'user:update'])]
+    #[Groups(['user:create', 'user:update', 'user:read'])]
     #[ORM\Column(length: 255)]
     private ?string $firstName = null;
 
     #[Assert\NotBlank(groups: ['user:create'])]
-    #[Groups(['user:create', 'user:update'])]
+    #[Groups(['user:create', 'user:update', 'user:read'])]
     #[ORM\Column(length: 255)]
     private ?string $lastName = null;
 
