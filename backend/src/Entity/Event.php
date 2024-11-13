@@ -74,10 +74,11 @@ class Event
     private Collection $users;
 
     #[Vich\UploadableField(mapping: 'events_image', fileNameProperty: 'image', size: 'imageSize')]
+    #[Groups(['event:write'])]
     private ?File $imageFile = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['event:read', 'event:write'])]
+    // #[Groups(['event:read', 'event:write'])]
     private ?string $image = null;
 
     #[ORM\Column(nullable: true)]
