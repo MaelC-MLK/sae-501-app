@@ -33,3 +33,22 @@ export async function deleteEvent(eventId: string) {
         throw new Error('Failed to delete event');
     }
 }
+
+
+export async function signUserInvite(email: any) {
+    const response = await fetch("http://localhost:8080/api/users/email", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/ld+json",
+        },
+        body: JSON.stringify({
+            email: email,
+        }),
+    });
+
+    if (!response.ok) {
+        throw new Error("Erreur lors de l'inscription. Veuillez réessayer.");
+    }
+
+    return await response.json();
+}
