@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "../ui/separator";
+import { signUserInvite } from "@/lib/actions";
 
 export function PopupJoinPublicEvent() {
     const [email, setEmail] = useState("");
@@ -22,19 +23,7 @@ export function PopupJoinPublicEvent() {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch("http://localhost:8080/api/users/email", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/ld+json",
-                },
-                body: JSON.stringify({
-                    email: email,
-                }),
-            });
-    
-            if (!response.ok) {
-                throw new Error("Erreur lors de l'inscription. Veuillez réessayer.");
-            }
+            await signUserInvite(email);
         } catch (err: string | any) {
             setError(err.message);
         } finally {
