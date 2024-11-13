@@ -15,9 +15,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Controller\EventController;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
+#[Vich\Uploadable]
 #[ApiResource(
+    normalizationContext: ['groups' => ['event:read']],
+    denormalizationContext: ['groups' => ['event:write']],
     operations: [
         new GetCollection(
             uriTemplate: 'events/public',
@@ -25,7 +31,12 @@ use App\Controller\EventController;
             description: 'Récupère tous les événements publics',
             controller: EventController::class,
         ),
-        new Post(validationContext: ['groups' => ['Default', 'event:create']]),
+        // new Post(validationContext: ['groups' => ['Default', 'event:create']]),
+        new Post(
+            validationContext: ['groups' => ['Default', 'event:create']],
+            outputFormats: ['jsonld' => ['application/ld+json']],
+            inputFormats: ['multipart' => ['multipart/form-data']]
+        ),
         new Get(),
         new Put(),
         new Patch(),
@@ -41,30 +52,46 @@ class Event
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['event:read', 'event:write'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['event:read', 'event:write'])]
     private ?\DateTimeInterface $date_start = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['event:read', 'event:write'])]
     private ?\DateTimeInterface $date_end = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
+    #[Groups(['event:read', 'event:write'])]
     private ?bool $isVisible = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
     private Collection $users;
 
-    #[ORM\Column(length: 5, nullable: true)]
+    #[Vich\UploadableField(mapping: 'events_image', fileNameProperty: 'image', size: 'imageSize')]
+    private ?File $imageFile = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['event:read', 'event:write'])]
     private ?string $image = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $imageSize = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $location = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
+    #[Groups(['event:read', 'event:write'])]
     private ?bool $is_draft = null;
 
 
@@ -133,8 +160,8 @@ class Event
 
     public function setIsVisible(bool $isVisible): static
     {
-        $this->isVisible = $isVisible;
-
+        $this->isVisible = filter_var($isVisible, FILTER_VALIDATE_BOOLEAN);
+    
         return $this;
     }
 
@@ -173,6 +200,32 @@ class Event
         $this->image = $image;
 
         return $this;
+    }
+
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageSize(?int $imageSize): void
+    {
+        $this->imageSize = $imageSize;
+    }
+
+    public function getImageSize(): ?int
+    {
+        return $this->imageSize;
     }
 
     public function getLocation(): ?string
