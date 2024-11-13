@@ -7,7 +7,6 @@ import { Button } from '../ui/button';
 import { EventProps } from "@/types/event";
 import Link from 'next/link';
 import { PopupJoinPublicEvent } from '../sections/popupJoinPublicEvent';
-import PopupCreationEvent from '../sections/popupCreationEvent';
 
 
 interface CardEventDetailProps {
