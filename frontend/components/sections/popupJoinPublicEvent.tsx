@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -7,12 +8,41 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Separator } from "../ui/separator"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "../ui/separator";
 
 export function PopupJoinPublicEvent() {
+    const [email, setEmail] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const handleSubmit = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch("http://localhost:8080/api/users/email", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/ld+json",
+                },
+                body: JSON.stringify({
+                    email: email,
+                }),
+            });
+    
+            if (!response.ok) {
+                throw new Error("Erreur lors de l'inscription. Veuillez réessayer.");
+            }
+        } catch (err: string | any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -27,23 +57,32 @@ export function PopupJoinPublicEvent() {
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="flex flex-col">
-                        <Label htmlFor="name" className="mb-2">
+                        <Label htmlFor="email" className="mb-2">
                             Email
                         </Label>
                         <div className="flex flex-col sm:flex-row gap-3">
                             <Input
                                 id="email"
                                 placeholder="Entrez votre email..."
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 className="col-span-3"
                             />
-                            <DialogFooter>
-                                <Button variant={'default'} type="submit">S'inscrire</Button>
-                            </DialogFooter>
-
                         </div>
+                        {error && <p className="text-red-500 mt-2">{error}</p>}
                     </div>
                 </div>
-                <div className="flex flex-row items-center justify-center gap-3">
+                <DialogFooter>
+                    <Button 
+                        variant={'default'} 
+                        type="button" 
+                        onClick={handleSubmit} 
+                        disabled={loading}
+                    >
+                        {loading ? 'En cours...' : "S'inscrire"}
+                    </Button>
+                </DialogFooter>
+                <div className="flex flex-row items-center justify-center gap-3 mt-4">
                     <Separator className="shrink" />
                     <span className="text">Ou</span>
                     <Separator className="shrink" />
@@ -66,5 +105,5 @@ export function PopupJoinPublicEvent() {
                 </div>
             </DialogContent>
         </Dialog>
-    )
+    );
 }
