@@ -3,24 +3,32 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { getBearerToken } from "@/lib/utils";
+import { getUserFromToken } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { PopUpEditProfile } from "@/components/sections/popUpEditProfile";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const userId = "1"; // Remplacez par l'ID de l'utilisateur que vous souhaitez récupérer
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const api = "http://localhost:8080";
-        const url = `${api}/api/users/${userId}`;
         const token = getBearerToken();
-
         if (!token) {
           throw new Error("No token found");
         }
+
+        // Décodage du token pour obtenir l'ID utilisateur
+        const userId = getUserFromToken(token);
+        if (!userId) {
+          throw new Error("Invalid user ID");
+        }
+        console.log(userId.sub);
+
+        const api = "http://localhost:8080";
+        const url = `${api}/api/users/${userId.sub}`;
 
         const response = await fetch(url, {
           method: "GET",
@@ -35,7 +43,6 @@ export default function Profile() {
         }
 
         const data = await response.json();
-        console.log(data);
         setUser(data);
       } catch (err) {
         if (err instanceof Error) {
@@ -49,7 +56,7 @@ export default function Profile() {
     };
 
     fetchUserData();
-  }, [userId]);
+  }, []); // On ne veut pas que l'ID utilisateur change, donc [] comme dépendance.
 
   if (loading) {
     return (
@@ -76,10 +83,16 @@ export default function Profile() {
         <div className="flex flex-col lg:flex-row">
           <div className="lg:w-1/3 p-6 bg-gray-50">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-2xl font-bold text-gray-800">Profil</h3>
-              <Button >
-                Edit Profile
-              </Button>
+              <div>
+                {user ? (
+                  <PopUpEditProfile
+                    user={user}
+                    onUpdate={(updatedUser) => setUser(updatedUser)}
+                  />
+                ) : (
+                  <p>Chargement du profil...</p>
+                )}
+              </div>
             </div>
             <div className="flex flex-col items-center">
               <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white">
@@ -96,7 +109,6 @@ export default function Profile() {
               <div className="flex items-center justify-between">
                 <p className="text-gray-700">{user?.email}</p>
               </div>
-
             </div>
           </div>
 
