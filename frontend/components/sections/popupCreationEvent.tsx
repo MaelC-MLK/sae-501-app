@@ -53,7 +53,7 @@ import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import UserSearchSkeleton from "@/components/skeletons/skeletons"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { createEvent } from "@/lib/actions";
+import { createEvent, uploadEventImage } from "@/lib/actions";
 import { PopupCreationEventProps } from "@/types/event";
 import { fr } from 'date-fns/locale';
 import ImageUpload from "@/components/sections/dropZoneEventPopup";
@@ -93,6 +93,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
     const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState<boolean>(false);
     const searchInputRef = useRef<HTMLInputElement>(null);
     const [isMainDialogOpen, setIsMainDialogOpen] = useState<boolean>(false);
+    const [imageFile, setImageFile] = useState<File | null>(null);
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -105,6 +106,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
             users: [],
             isVisible: false,
             isDraft: false,
+            image: "",
         },
     });
 
@@ -263,6 +265,11 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         try {
             const response = await createEvent(formData);
             console.log("Event created successfully:", response);
+
+            if (imageFile) {
+                await uploadEventImage(imageFile, response.id);
+            }
+
             setIsMainDialogOpen(false);
             resetForm();
         } catch (error) {
@@ -278,6 +285,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
             users: participants,
             isVisible: isPrivate ? false : true,
             isDraft: true,
+            image: "",
         };
     
         try {
@@ -508,7 +516,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
     <Label htmlFor="image" className="mb-2">
         Ajouter une image
     </Label>
-    <ImageUpload name="image" />
+    <ImageUpload name="image" onFileSelect={(file) => setImageFile(file)} />
 </div>
 
                                 <Separator className="my-4" />
