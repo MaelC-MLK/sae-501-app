@@ -69,7 +69,7 @@ class Event
     #[ORM\Column]
     private ?bool $is_draft = null;
   
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column]
     private ?bool $isRecommended = null;
 
 
@@ -213,12 +213,12 @@ class Event
         return $this;
     }
   
-      public function isRecommended(): ?bool
+    public function isRecommended(): ?bool
     {
         return $this->isRecommended;
     }
 
-    public function setRecommended(?bool $isRecommended): static
+    public function setIsRecommended(?bool $isRecommended): static
     {
         $this->isRecommended = $isRecommended;
 

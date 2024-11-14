@@ -85,9 +85,10 @@ class UserCrudController extends AbstractCrudController
                     'User' => 'ROLE_USER',
                 ])
                 ->allowMultipleChoices(),
-            ImageField::new('avatar', 'Avatar')
+            ImageField::new('avatar', 'Avatar (JPG, PNG, WEBP file less than 1MB)' )
                 ->setBasePath('uploads/users/')
                 ->setUploadDir('public/uploads/users')
+                ->setFileConstraints(new Image(maxSize: '1M'))
                 ->setUploadedFileNamePattern(
                     fn (UploadedFile $file): string => sprintf('%s_%s.%s', date('YmdHis'), uniqid(), $file->guessExtension())
                 ),

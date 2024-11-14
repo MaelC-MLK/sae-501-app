@@ -11,8 +11,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Validator\Constraints\File;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use Symfony\Component\Validator\Constraints\Image;
 
 class EventCrudController extends AbstractCrudController
 {
@@ -28,18 +28,18 @@ class EventCrudController extends AbstractCrudController
             TextField::new('description'),
             DateTimeField::new('date_start', 'Start Date'),
             DateTimeField::new('date_end', 'End Date'),
-            BooleanField::new('isVisible', 'Visible'),
             TextField::new('location', 'Location'),
+            BooleanField::new('isVisible', 'Visible'),
             BooleanField::new('isDraft', 'Draft'),
-            ImageField::new('image', 'Image')
+            BooleanField::new('isRecommended', 'Recommended'),
+            ImageField::new('image', 'Image (JPG, PNG, WEBP file less than 1MB)')
                 ->setBasePath('uploads/events/')
                 ->setUploadDir('public/uploads/events')
+                ->setFileConstraints(new Image(maxSize: '1M'))
                 ->setUploadedFileNamePattern(
                     fn (UploadedFile $file): string => sprintf('%s_%s.%s', date('YmdHis'), uniqid(), $file->guessExtension())
                 ),
             AssociationField::new('users')->autocomplete()
         ];
     }
-
-    
 }
