@@ -68,6 +68,9 @@ class Event
   
     #[ORM\Column]
     private ?bool $is_draft = null;
+  
+    #[ORM\Column(nullable: true)]
+    private ?bool $isRecommended = null;
 
 
     public function __construct()
@@ -206,6 +209,18 @@ class Event
     public function setIsDraft(bool $is_draft): static
     {
         $this->is_draft = $is_draft;
+
+        return $this;
+    }
+  
+      public function isRecommended(): ?bool
+    {
+        return $this->isRecommended;
+    }
+
+    public function setRecommended(?bool $isRecommended): static
+    {
+        $this->isRecommended = $isRecommended;
 
         return $this;
     }
