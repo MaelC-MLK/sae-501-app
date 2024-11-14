@@ -17,7 +17,7 @@ export async function authenticate(
     }
 
     const api = 'http://localhost:8080';
-    const url = api + '/auth';
+    const url = api + '/api/auth';
 
     const response = await fetch(url, {
         method: 'POST',
