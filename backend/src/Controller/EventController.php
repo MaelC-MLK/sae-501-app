@@ -26,7 +26,6 @@ class EventController extends AbstractController
                 'image' => $event->getImage(),
                 'location' => $event->getLocation(),
                 'isRecommended' => $event->isRecommended(),
-                
             ];
         }, $events);
 
