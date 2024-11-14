@@ -2,18 +2,25 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Event;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class EventController extends AbstractController
-{
-    public function __invoke(Request $request, EntityManagerInterface $entityManager): JsonResponse
+class EventByUserController extends AbstractController
+{ 
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $criteria = ['isVisible' => true];
-        $events = $entityManager->getRepository(Event::class)->findBy($criteria);
+        $this->entityManager = $entityManager;
+    }
+
+    public function __invoke(Request $request, int $userId): JsonResponse
+    {
+        $events = $this->entityManager->getRepository(Event::class)->findByUser($userId);
 
         $data = array_map(function (Event $event) {
             return [
@@ -25,12 +32,9 @@ class EventController extends AbstractController
                 'isVisible' => $event->isIsVisible(),
                 'image' => $event->getImage(),
                 'location' => $event->getLocation(),
-                
             ];
         }, $events);
 
         return new JsonResponse($data);
     }
-
-    
 }

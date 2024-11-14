@@ -51,6 +51,9 @@ body {
   }
 }
 
+@layer utilities {
+
+}
 /* Path: frontend/app/calendar.css */
 /* CSS personnalisé pour le calendrier car besoin de surcharger la librairie*/
 
@@ -58,11 +61,11 @@ body {
   font-weight: bold;
 }
 
+
 /* calendar.css */
 .fc-view-harness {
-  max-height: 70vh; 
+  max-height: 80vh; 
   overflow-y: auto;
-  scroll-margin-top: 10rem;
   margin-top: 0.5rem;
 }
 
@@ -71,7 +74,7 @@ body {
 }
 
 .fc-timegrid-slot-label{
-  padding: 2px !important;
+  padding: 0px !important;
 }
 
 .fc-toolbar-chunk{
