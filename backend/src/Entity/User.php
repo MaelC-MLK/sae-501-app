@@ -31,10 +31,6 @@ use Symfony\Component\Validator\Constraints as Assert;
             processor: UserPasswordHasher::class,
             validationContext: ['groups' => ['Default', 'user:create']]
         ),
-        new Post(
-            uriTemplate: 'users/email',
-            validationContext: ['groups' => ['user:create']]
-        ),
         new Get(),
         new Put(processor: UserPasswordHasher::class, security: "is_granted('ROLE_ADMIN') or object == user"),
         new Patch(processor: UserPasswordHasher::class, security: "is_granted('ROLE_ADMIN') or object == user"),
