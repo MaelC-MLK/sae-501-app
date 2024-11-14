@@ -13,17 +13,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "../ui/separator";
 import { signUserInvite } from "@/lib/actions";
+import { PopupJoinPublicEventProps } from "@/types/event";
 
-export function PopupJoinPublicEvent() {
+export function PopupJoinPublicEvent({ eventId }: PopupJoinPublicEventProps) {
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async () => {
         setLoading(true);
         setError(null);
-        try {
-            await signUserInvite(email);
+        try {           
+            await signUserInvite(email, eventId);
         } catch (err: string | any) {
             setError(err.message);
         } finally {
