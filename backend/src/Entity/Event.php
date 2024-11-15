@@ -19,6 +19,8 @@ use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use App\Controller\EventByUserController;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[Vich\Uploadable]
@@ -38,6 +40,14 @@ use Symfony\Component\Validator\Constraints as Assert;
             outputFormats: ['jsonld' => ['application/ld+json']],
             inputFormats: ['multipart' => ['multipart/form-data']]
         ),
+         new GetCollection(
+            uriTemplate: 'events/user/{userId}',
+            normalizationContext: ['groups' => ['event:read']],
+            description: 'Récupère tous les événements liés à un utilisateur spécifique',
+            controller: EventByUserController::class,
+            read: false,
+        ),
+
         new Get(),
         new Put(),
         new Patch(),
@@ -102,6 +112,10 @@ class Event
     #[Assert\Choice(choices: ["0", "1"], message: "La valeur doit être '0' ou '1'.")]
     private ?string $is_draft = null;
 
+    #[ORM\Column]
+    private ?bool $isRecommended = null;
+
+
 
     public function __construct()
     {
@@ -161,7 +175,15 @@ class Event
         return $this;
     }
 
-    
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context, $payload) {
+        if ($this->getDateStart() && $this->getDateEnd() && $this->getDateStart() > $this->getDateEnd()) {
+            $context->buildViolation('The date start must be before the date end')
+                    ->atPath('date_start')
+                    ->addViolation();
+        }
+    }
+
     public function isIsVisible(): ?bool
     {
         // Retourner un booléen pour la sérialisation et les appels à l'API
@@ -275,8 +297,23 @@ class Event
     
         return $this;
     }
-    
-    
+
+  
+    public function isRecommended(): ?bool
+    {
+        return $this->isRecommended;
+    }
+
+    public function setIsRecommended(?bool $isRecommended): static
+    {
+        $this->isRecommended = $isRecommended;
+
+        return $this;
+    }
+
+    public function __toString(){
+        return $this->id.'-'.$this->title .'-'. $this->date_start->format('Y-m-d H:i:s'); 
+    }
 
 
 }

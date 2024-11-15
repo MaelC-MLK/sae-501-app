@@ -8,8 +8,11 @@ export interface EventProps {
     description: string;
     image: string;
     badge: string;
+    location: string;
+    isRecommended: number;
 }
 
 export interface PopupCreationEventProps {
     className?: string;
 }
+

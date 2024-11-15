@@ -17,7 +17,7 @@ export async function authenticate(
     }
 
     const api = 'http://localhost:8080';
-    const url = api + '/auth';
+    const url = api + '/api/auth';
 
     const response = await fetch(url, {
         method: 'POST',
@@ -64,6 +64,22 @@ export function getBearerToken() {
     return token;
 }
 
+export function getUserIdFromToken(): string | null {
+    const token = getBearerToken();
+    if (!token) {
+        console.error('JWT Token not found');
+        return null;
+    }
+
+    const user = getUserFromToken(token);
+    if (!user) {
+        console.error('Invalid token');
+        return null;
+    }
+
+    return user.sub; 
+}
+
 export async function refreshToken() {
     if (localStorage.getItem('refresh_token')) {
         const refreshToken = localStorage.getItem('refresh_token');
@@ -86,4 +102,5 @@ export async function refreshToken() {
     else {
         window.location.href = '/login';
     }
+  
 }

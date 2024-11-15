@@ -23,8 +23,16 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
                     <Badge variant="default" className="h-fit">Public</Badge>
                 </div>
                 <div>
-                    <p className="text-md font-semibold mb-1">{event.date_start} - {event.date_end}</p>
-                    <div className="text-sm text-gray-600 mb-4">{event.time_start} - {event.time_end}</div>
+                    {event.date_start.substring(0, 10) === event.date_end.substring(0, 10) ? (
+                        <span className="text-md font-medium">
+                            {event.date_start.substring(0, 10)} | {event.date_start.substring(13)} - {event.date_end.substring(13)}
+                        </span>
+                    ) : (
+                        <span className="text-md font-medium">
+                            {event.date_start} au {event.date_end}
+                        </span>
+                    )}
+                    <p className='mt-2 font-semibold text-gray-700'>{event.location}</p>
                     <p className="mt-4 text-sm text-gray-700">{event.description}</p>
                 </div>
                 <div className="mt-4 flex space-x-3">
@@ -47,11 +55,12 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
             </div>
             <div className="relative w-full md:w-1/3 h-64 md:h-auto">
                 <Image
-                    src={event.image ? event.image : defaultImage}
+                    src={event.image ? `http://localhost:8080/uploads/events/${event.image}` : defaultImage}
                     alt={event.title}
                     layout="fill"
                     objectFit="cover"
                     className="rounded-xl"
+                    unoptimized={true}
                 />
             </div>
         </div>
