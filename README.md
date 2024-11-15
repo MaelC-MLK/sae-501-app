@@ -19,10 +19,6 @@ Voici la liste des fonctionnalités disponibles (15/11/2024) :
 - Affichage des événéments dans le calendrier en fonction de l'utilisateur connecté
 - Suppresion d'événément crée par un utilisateur dans la vu calendrier
 - Upload des images à partir de la création d'événément ( upload sur le server )
-  
-
-## Vidéo test de l'application
-[https://youtu.be/kFpWfK2EiVU](https://youtu.be/kFpWfK2EiVU)
 
 ## Installation
 
