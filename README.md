@@ -19,6 +19,10 @@ Voici la liste des fonctionnalités disponibles (15/11/2024) :
 - Affichage des événéments dans le calendrier en fonction de l'utilisateur connecté
 - Suppresion d'événément crée par un utilisateur dans la vu calendrier
 - Upload des images à partir de la création d'événément ( upload sur le server )
+- Récupérer les données de chaque évènement public et les afficher sur la page de détail de l'évènement
+- Intégrer un footer à l'application
+- Afficher des évènements publics dans les recommandations de la page d'accueil
+- Pouvoir s'inscrire avec une adresse mail à un évènement public
 
 ## Installation
 
