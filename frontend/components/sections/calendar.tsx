@@ -19,7 +19,7 @@ export default function Calendar() {
     right: "timeGridDay,timeGridWeek,dayGridMonth",
   });
   const [events, setEvents] = useState<
-    { id: string; title: string; start: Date; end: Date; allDay?: boolean }[]
+    { id: string; title: string; start: Date; end: Date }[]
   >([]);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,11 +36,7 @@ export default function Calendar() {
     if (userId) {
       try {
         const events = await fetchUserEvents(userId);
-        const updatedEvents = events.map((event: { id: string; title: string; start: Date; end: Date; allDay?: boolean }) => ({
-          ...event,
-          allDay: event.start.getDate() !== event.end.getDate()
-        }));
-        setEvents(updatedEvents);
+        setEvents(events);
       } catch (error) {
         console.error(
           "Erreur lors de la récupération des événements de l'utilisateur :",
@@ -133,8 +129,7 @@ export default function Calendar() {
         headerToolbar={headerToolbar}
         initialView={calendarView}
         locale={frLocale}
-        allDayText=""
-        displayEventTime={true}
+        displayEventTime={true} // Afficher l'heure pour les événements
         slotLabelFormat={{
           hour: "2-digit",
           minute: "2-digit",
@@ -161,12 +156,12 @@ export default function Calendar() {
           onClick={handleOutsideClick}
         >
           <div
-            className="bg-white rounded-3xl shadow-2xl w-full max-w-md py-6 px-6 absolute"
+            className="bg-slate-50 rounded-3xl shadow-2xl w-full max-w-md px-6 pb-6 pt-3 absolute text-gray-800"
             style={{ top: modalPosition.top, left: modalPosition.left }}
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              className="relative group text-gray-500 hover:text-gray-700 px-2 float-right"
+              className="relative group text-gray-500 hover:text-gray-700 px-1 float-right"
               onClick={closeModal}
             >
               <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2">
@@ -191,7 +186,7 @@ export default function Calendar() {
             </button>
 
             <button
-              className="relative group text-gray-500 hover:text-gray-700 px-2 float-right"
+              className="relative group text-gray-500 hover:text-gray-700 px-1 float-right"
               onClick={() => setIsPopupDeleteOpen(true)}
             >
               <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2">
@@ -216,7 +211,7 @@ export default function Calendar() {
             </button>
 
             <button
-              className="relative group text-gray-500 hover:text-gray-700 px-2 float-right"
+              className="relative group text-gray-500 hover:text-gray-700 px-1 float-right"
               onClick={() => console.log("Modifier")}
             >
               <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2">
@@ -239,9 +234,15 @@ export default function Calendar() {
                 </svg>
               </div>
             </button>
-            <h2 className="text-xl font-semibold mt-9 mb-4">
+            <div className="flex flex-row gap-3 mt-9 mb-4 relative">
+            <div
+              className="w-4 h-4 rounded-full shrink-0 absolute top-1"
+              style={{ backgroundColor: "#9A9CFF" }}
+            ></div>
+            <h2 className="text-xl font-semibold ml-6">
               {selectedEvent.title}
             </h2>
+          </div>
             <div className="flex flex-row gap-3 mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
