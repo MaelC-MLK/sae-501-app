@@ -129,7 +129,6 @@ export default function Calendar() {
         headerToolbar={headerToolbar}
         initialView={calendarView}
         locale={frLocale}
-        displayEventTime={true} // Afficher l'heure pour les événements
         slotLabelFormat={{
           hour: "2-digit",
           minute: "2-digit",
