@@ -47,6 +47,9 @@ docker exec -it sae-backend /bin/bash
 ```
 Dans le conteneur docker : 
 ```
+php bin/console make:migration
+```
+```
 php bin/console doctrine:migrations:migrate
 ```
 
