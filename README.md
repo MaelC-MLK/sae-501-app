@@ -11,9 +11,15 @@ Actuellement, les fonctionnalités suivantes fonctionnent en environnement local
 - Visualisation du calendrier
 - Visualisation de la page d'accueil avec des données dynamiques ( Pas encore de base "par défaut" donc vide si vous n'avez pas crée d'événement public )
 - Visualisation du calendrier en JOUR/SEMAINE/MOIS
-- Pouvoir supprimer un compte
+
+Voici la liste des fonctionnalités disponibles (15/11/2024) :
+- Pouvoir supprimer un compte dans le backoffice
 - Backoffice administrateur : gestion des utilisateurs et des évenements
 - Page profil et modification du profil
+- Affichage des événéments dans le calendrier en fonction de l'utilisateur connecté
+- Suppresion d'événément crée par un utilisateur dans la vu calendrier
+- Upload des images à partir de la création d'événément ( upload sur le server )
+  
 
 ## Vidéo test de l'application
 [https://youtu.be/kFpWfK2EiVU](https://youtu.be/kFpWfK2EiVU)
