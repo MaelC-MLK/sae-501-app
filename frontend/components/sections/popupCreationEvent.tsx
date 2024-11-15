@@ -56,10 +56,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { createEvent } from "@/lib/actions";
 import { PopupCreationEventProps } from "@/types/event";
 import { fr } from 'date-fns/locale';
+import ImageUpload from "@/components/sections/dropZoneEventPopup";
 
 const FormSchema = z.object({
     title: z.string().nonempty("Title is required"),
-    description: z.string().nonempty("Description is required"),
+    description: z.string().optional(),
+    location: z.string().optional(),
     date_start: z.string(),
     date_end: z.string(),
     time_start: z.string().nonempty("Start time is required"),
@@ -71,7 +73,7 @@ const FormSchema = z.object({
         avatar: z.string().optional(),
     })),
     isVisible: z.boolean(),
-    isDraft: z.boolean(),
+    is_draft: z.boolean(),
 });
 
 export default function PopupCreationEvent({ className }: PopupCreationEventProps) {
@@ -90,19 +92,19 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
     const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState<boolean>(false);
     const searchInputRef = useRef<HTMLInputElement>(null);
     const [isMainDialogOpen, setIsMainDialogOpen] = useState<boolean>(false);
+    const [imageFile, setImageFile] = useState<File | null>(null);
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
             title: "",
-            description: "",
             date_start: new Date().toISOString().replace("T", " ").substring(0, 19),
             date_end: new Date().toISOString().replace("T", " ").substring(0, 19),
             time_start: "",
             time_end: "",
             users: [],
             isVisible: false,
-            isDraft: false,
+            is_draft: false,
         },
     });
 
@@ -233,29 +235,38 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         setDate({ from: new Date(), to: undefined });
 
         form.reset({
-            title: "",
-            description: "",
+            title: undefined,
+            description: undefined,
+            location: undefined,
             date_start: new Date().toISOString().replace("T", " ").substring(0, 19),
             date_end: new Date().toISOString().replace("T", " ").substring(0, 19),
             time_start: startTimeValue,
             time_end: endTimeValue,
             users: [],
             isVisible: false,
-            isDraft: false,
+            is_draft: false,
         });
+
+        setParticipants([]);
+        setImageFile(null);
         setIsPrivate(true);
     };
 
     const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-        const formData = {
-            ...data,
-            date_start: combineDateAndTime(date?.from || new Date(), data.time_start),
-            date_end: combineDateAndTime(date?.to || date?.from || new Date(), data.time_end),
-            users: participants,
-            isVisible: isPrivate ? false : true,
-            isDraft: false,
-        };
+        const formData = new FormData();
+        formData.append('title', data.title);
+        formData.append('description', data.description || "");
+        formData.append('date_start', combineDateAndTime(date?.from || new Date(), data.time_start).toString());
+        formData.append('date_end', combineDateAndTime(date?.to || date?.from || new Date(), data.time_end).toString());
+        formData.append('users', JSON.stringify(participants));
+        formData.append('isVisible', isPrivate ? "false" : "true");
+        formData.append('is_draft', "false");
 
+        
+        if (imageFile) {
+            formData.append('imageFile', imageFile);
+        }
+        
         try {
             const response = await createEvent(formData);
             console.log("Event created successfully:", response);
@@ -265,17 +276,21 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
             console.error("Failed to create event:", error);
         }
     };
-
+    
     const saveDraft = async (data: z.infer<typeof FormSchema>) => {
-        const formData = {
-            ...data,
-            date_start: combineDateAndTime(date?.from || new Date(), data.time_start),
-            date_end: combineDateAndTime(date?.to || date?.from || new Date(), data.time_end),
-            users: participants,
-            isVisible: isPrivate ? false : true,
-            isDraft: true,
-        };
+        const formData = new FormData();
+        formData.append('title', data.title);
+        formData.append('description', data.description || "");
+        formData.append('date_start', combineDateAndTime(date?.from || new Date(), data.time_start).toString());
+        formData.append('date_end', combineDateAndTime(date?.to || date?.from || new Date(), data.time_end).toString());
+        formData.append('users', JSON.stringify(participants));
+        formData.append('isVisible', "false");
+        formData.append('is_draft', "true");
 
+        if (imageFile) {
+            formData.append('imageFile', imageFile);
+        }
+    
         try {
             const response = await createEvent(formData);
             console.log("Event saved as draft:", response);
@@ -286,7 +301,6 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
             console.error("Failed to save draft:", error);
         }
     };
-
 
     return (
         <>
@@ -344,7 +358,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                                             format(date.from, "dd MMMM yyyy", { locale: fr })
                                                         )
                                                     ) : (
-                                                        <span>Pick a date</span>
+                                                        <span>Choisissez une date</span>
                                                     )}
                                                 </Button>
                                             </PopoverTrigger>
@@ -453,6 +467,24 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                     </div>
                                 </div>
                                 <div className="flex flex-col mt-4">
+                                    <Label htmlFor="location" className="mb-2">
+                                        Localisation
+                                    </Label>
+                                    <FormField
+                                        control={form.control}
+                                        name="location"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormControl>
+                                                    <Input id="location" placeholder="Localisation de l'événement" autoComplete="off" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                                <div className="flex flex-col mt-4">
                                     <Label htmlFor="description" className="mb-2">
                                         Description
                                     </Label>
@@ -470,6 +502,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                     />
                                 </div>
 
+
                                 <div className="flex flex-col mt-4 sm:absolute sm:top-2 sm:right-14">
                                     <Label htmlFor="visibility" className="mb-2 sm:hidden">
                                         Visibilité
@@ -481,6 +514,13 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                         </TabsList>
                                     </Tabs>
                                 </div>
+
+                                <div className="flex flex-col mt-4">
+    <Label htmlFor="image" className="mb-2">
+        Ajouter une image
+    </Label>
+    <ImageUpload name="image" onFileSelect={(file) => setImageFile(file)} />
+</div>
 
                                 <Separator className="my-4" />
 
@@ -565,7 +605,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                                     time_end: endTime,
                                                     users: [],
                                                     isVisible: false,
-                                                    isDraft: false,
+                                                    is_draft: false,
                                                 });
                                                 setIsPrivate(true);
                                             }
@@ -605,7 +645,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                     time_end: endTime,
                                     users: [],
                                     isVisible: false,
-                                    isDraft: false,
+                                    is_draft: false,
                                 });
                                 setIsPrivate(true);
                             }}

@@ -1,10 +1,13 @@
 export interface EventProps {
-    id: number;
+    id: string;
     title: string;
     date_start: string;
     date_end: string;
+    time_start: string;
+    time_end: string;
     description: string;
     image: string;
+    badge: string;
     location: string;
     isRecommended: number;
 }
@@ -12,3 +15,4 @@ export interface EventProps {
 export interface PopupCreationEventProps {
     className?: string;
 }
+
