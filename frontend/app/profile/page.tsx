@@ -6,6 +6,7 @@ import { getBearerToken } from "@/lib/utils";
 import { getUserFromToken } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PopUpEditProfile } from "@/components/sections/popUpEditProfile";
+import { PopUpDeleteUser } from "@/components/sections/popUpDeleteUser";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -91,6 +92,15 @@ export default function Profile() {
                   />
                 ) : (
                   <p>Chargement du profil...</p>
+                )}
+              </div>
+              <div>
+                {user ? (
+                  <PopUpDeleteUser
+                    user={user}
+                  />
+                ) : (
+                  <p>...</p>
                 )}
               </div>
             </div>
