@@ -72,11 +72,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Groups(['user:create', 'user:update', 'user:read'])]
     #[ORM\Column(length: 255, nullable: true)]
-    #[ORM\Column(length: 255, nullable: true)]
     private ?string $firstName = null;
 
     #[Groups(['user:create', 'user:update', 'user:read'])]
-    #[ORM\Column(length: 255, nullable: true)]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $lastName = null;
 
@@ -110,12 +108,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @see PasswordAuthenticatedUserInterface
      */
     public function getPassword(): ?string
-    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    public function setPassword(?string $password): self
     public function setPassword(?string $password): self
     {
         $this->password = $password;
@@ -205,7 +201,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     public function setFirstName(?string $firstName): static
-    public function setFirstName(?string $firstName): static
     {
         $this->firstName = $firstName;
 
@@ -217,7 +212,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastName;
     }
 
-    public function setLastName(?string $lastName): static
     public function setLastName(?string $lastName): static
     {
         $this->lastName = $lastName;
