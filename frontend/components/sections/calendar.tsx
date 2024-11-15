@@ -129,6 +129,7 @@ export default function Calendar() {
         headerToolbar={headerToolbar}
         initialView={calendarView}
         locale={frLocale}
+        allDaySlot={false}
         slotLabelFormat={{
           hour: "2-digit",
           minute: "2-digit",
