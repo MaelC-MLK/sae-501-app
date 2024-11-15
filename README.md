@@ -62,7 +62,7 @@ php bin/console lexik:jwt:generate-keypair
 ### Import de la table Event
 
 [Export de la base](./SAE501.sql)<br/><br/>
-Cette export contient un utilisateur déjà inscrit à des événements :
+Cette export contient un utilisateur déjà inscrit à des événements :<br/>
 email : demo@gmail.com <br/>
 mot de passe : azertyuiop
 <br/><br/>
