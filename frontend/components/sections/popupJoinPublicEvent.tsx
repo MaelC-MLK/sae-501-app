@@ -14,17 +14,20 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "../ui/separator";
 import { signUserInvite } from "@/lib/actions";
 import { PopupJoinPublicEventProps } from "@/types/event";
+import Link from "next/link";
 
 export function PopupJoinPublicEvent({ eventId }: PopupJoinPublicEventProps) {
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const handleSubmit = async () => {
         setLoading(true);
         setError(null);
         try {           
             await signUserInvite(email, eventId);
+            setIsOpen(false);
         } catch (err: string | any) {
             setError(err.message);
         } finally {
@@ -34,7 +37,7 @@ export function PopupJoinPublicEvent({ eventId }: PopupJoinPublicEventProps) {
     
 
     return (
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
                 <Button variant={'default'} size={'lg'} className='w-full sm:w-auto'>S'inscrire</Button>
             </DialogTrigger>
@@ -85,12 +88,16 @@ export function PopupJoinPublicEvent({ eventId }: PopupJoinPublicEventProps) {
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="w-full flex flex-row gap-3">
-                        <Button size={'lg'} variant={'outline'} className="w-full">
-                            Se connecter
-                        </Button>
-                        <Button size={'lg'} variant={'default'} className="w-full">
-                            Créer un compte
-                        </Button>
+                        <Link href={"/login"} className="w-full">
+                            <Button size={'lg'} variant={'outline'} className="w-full">
+                                Se connecter
+                            </Button>
+                        </Link>
+                        <Link href={"/register"} className="w-full">
+                            <Button size={'lg'} variant={'default'} className="w-full">
+                                Créer un compte
+                            </Button>
+                        </Link>
                     </div>
                 </div>
             </DialogContent>
