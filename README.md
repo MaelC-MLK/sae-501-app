@@ -65,7 +65,7 @@ php bin/console lexik:jwt:generate-keypair
 Cette export contient un utilisateur déjà inscrit à des événements :
 email : demo@gmail.com <br/>
 mot de passe : azertyuiop
-<br/>
+<br/><br/>
 Et des événements publics visibles sur la page d'accueil.
 
 ### Si problème avec les migrations : 
