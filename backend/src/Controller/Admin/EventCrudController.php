@@ -29,9 +29,9 @@ class EventCrudController extends AbstractCrudController
             DateTimeField::new('date_start', 'Start Date'),
             DateTimeField::new('date_end', 'End Date'),
             TextField::new('location', 'Location'),
-            BooleanField::new('isVisible', 'Visible'),
-            BooleanField::new('isDraft', 'Draft'),
-            BooleanField::new('isRecommended', 'Recommended'),
+            BooleanField::new('isVisible', 'Visible')->setRequired(false),
+            BooleanField::new('isDraft', 'Draft')->setRequired(false),
+            BooleanField::new('isRecommended', 'Recommended')->setRequired(false),
             ImageField::new('image', 'Image (JPG, PNG, WEBP file less than 1MB)')
                 ->setBasePath('uploads/events/')
                 ->setUploadDir('public/uploads/events')
@@ -41,5 +41,35 @@ class EventCrudController extends AbstractCrudController
                 ),
             AssociationField::new('users')->autocomplete()
         ];
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if(!$entityInstance->isIsVisible()){
+            $entityInstance->setIsVisible(false);
+        }
+        if(!$entityInstance->isIsDraft()){
+            $entityInstance->setIsDraft(false);
+        }
+        if(!$entityInstance->isRecommended()){
+            $entityInstance->setIsRecommended(false);
+        }
+
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if(!$entityInstance->isIsVisible()){
+            $entityInstance->setIsVisible(false);
+        }
+        if(!$entityInstance->isIsDraft()){
+            $entityInstance->setIsDraft(false);
+        }
+        if(!$entityInstance->isRecommended()){
+            $entityInstance->setIsRecommended(false);
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
     }
 }
