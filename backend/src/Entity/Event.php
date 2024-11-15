@@ -18,6 +18,7 @@ use App\Controller\EventController;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[Vich\Uploadable]
@@ -66,15 +67,20 @@ class Event
     #[Groups(['event:read', 'event:write'])]
     private ?\DateTimeInterface $date_end = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(length: 1)]
     #[Groups(['event:read', 'event:write'])]
-    private ?bool $isVisible = null;
+    #[Assert\Choice(choices: ["0", "1"], message: "La valeur doit être '0' ou '1'.")]
+    private ?string $isVisible = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
     private Collection $users;
 
     #[Vich\UploadableField(mapping: 'events_image', fileNameProperty: 'image', size: 'imageSize')]
     #[Groups(['event:write'])]
+    #[Assert\Image(
+        mimeTypes: ["image/jpeg", "image/png", "image/webp"],
+        mimeTypesMessage: "Format d'image invalide (JPEG, PNG, WEBP)."
+    )]
     private ?File $imageFile = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -91,9 +97,10 @@ class Event
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $location = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(length: 1)]
     #[Groups(['event:read', 'event:write'])]
-    private ?bool $is_draft = null;
+    #[Assert\Choice(choices: ["0", "1"], message: "La valeur doit être '0' ou '1'.")]
+    private ?string $is_draft = null;
 
 
     public function __construct()
@@ -154,17 +161,27 @@ class Event
         return $this;
     }
 
+    
     public function isIsVisible(): ?bool
     {
-        return $this->isVisible;
+        // Retourner un booléen pour la sérialisation et les appels à l'API
+        return $this->isVisible === "1";
     }
 
-    public function setIsVisible(bool $isVisible): static
+    public function setIsVisible($isVisible): static
     {
-        $this->isVisible = filter_var($isVisible, FILTER_VALIDATE_BOOLEAN);
+        if (is_bool($isVisible)) {
+            $this->isVisible = $isVisible ? "1" : "0";
+        } elseif (is_string($isVisible) || is_numeric($isVisible)) {
+            // Normalisation pour gérer "true", "false", "1", "0", etc.
+            $this->isVisible = filter_var($isVisible, FILTER_VALIDATE_BOOLEAN) ? "1" : "0";
+        } else {
+            $this->isVisible = null; // Valeur par défaut si rien n'est fourni
+        }
     
         return $this;
     }
+    
 
     /**
      * @return Collection<int, User>
@@ -243,15 +260,23 @@ class Event
 
     public function isIsDraft(): ?bool
     {
-        return $this->is_draft;
+        return $this->is_draft === "1";
     }
 
-    public function setIsDraft(bool $is_draft): static
+    public function setIsDraft($isDraft): static
     {
-        $this->is_draft = $is_draft;
-
+        if (is_bool($isDraft)) {
+            $this->is_draft = $isDraft ? "1" : "0";
+        } elseif (is_string($isDraft) || is_numeric($isDraft)) {
+            $this->is_draft = filter_var($isDraft, FILTER_VALIDATE_BOOLEAN) ? "1" : "0";
+        } else {
+            $this->is_draft = null;
+        }
+    
         return $this;
     }
+    
+    
 
 
 }

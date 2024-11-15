@@ -53,7 +53,7 @@ import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import UserSearchSkeleton from "@/components/skeletons/skeletons"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { createEvent, uploadEventImage } from "@/lib/actions";
+import { createEvent } from "@/lib/actions";
 import { PopupCreationEventProps } from "@/types/event";
 import { fr } from 'date-fns/locale';
 import ImageUpload from "@/components/sections/dropZoneEventPopup";
@@ -73,8 +73,7 @@ const FormSchema = z.object({
         avatar: z.string().optional(),
     })),
     isVisible: z.boolean(),
-    isDraft: z.boolean(),
-    image: z.string().optional(), // Ajout du champ pour l'extension de l'image
+    is_draft: z.boolean(),
 });
 
 export default function PopupCreationEvent({ className }: PopupCreationEventProps) {
@@ -105,8 +104,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
             time_end: "",
             users: [],
             isVisible: false,
-            isDraft: false,
-            image: "",
+            is_draft: false,
         },
     });
 
@@ -237,39 +235,41 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         setDate({ from: new Date(), to: undefined });
 
         form.reset({
-            title: "",
-            description: "",
-            location: "",
+            title: undefined,
+            description: undefined,
+            location: undefined,
             date_start: new Date().toISOString().replace("T", " ").substring(0, 19),
             date_end: new Date().toISOString().replace("T", " ").substring(0, 19),
             time_start: startTimeValue,
             time_end: endTimeValue,
             users: [],
-            image: "",
             isVisible: false,
-            isDraft: false,
+            is_draft: false,
         });
+
+        setParticipants([]);
+        setImageFile(null);
         setIsPrivate(true);
     };
 
     const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-        const formData = {
-            ...data,
-            date_start: combineDateAndTime(date?.from || new Date(), data.time_start),
-            date_end: combineDateAndTime(date?.to || date?.from || new Date(), data.time_end),
-            users: participants,
-            isVisible: isPrivate ? false : true,
-            isDraft: false,
-        };
-    
+        const formData = new FormData();
+        formData.append('title', data.title);
+        formData.append('description', data.description || "");
+        formData.append('date_start', combineDateAndTime(date?.from || new Date(), data.time_start).toString());
+        formData.append('date_end', combineDateAndTime(date?.to || date?.from || new Date(), data.time_end).toString());
+        formData.append('users', JSON.stringify(participants));
+        formData.append('isVisible', isPrivate ? "true" : "false");
+        formData.append('is_draft', "false");
+
+        
+        if (imageFile) {
+            formData.append('imageFile', imageFile);
+        }
+        
         try {
             const response = await createEvent(formData);
             console.log("Event created successfully:", response);
-
-            if (imageFile) {
-                await uploadEventImage(imageFile, response.id);
-            }
-
             setIsMainDialogOpen(false);
             resetForm();
         } catch (error) {
@@ -284,8 +284,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
             date_end: combineDateAndTime(date?.to || date?.from || new Date(), data.time_end),
             users: participants,
             isVisible: isPrivate ? false : true,
-            isDraft: true,
-            image: "",
+            is_draft: true,
         };
     
         try {
@@ -602,7 +601,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                                     time_end: endTime,
                                                     users: [],
                                                     isVisible: false,
-                                                    isDraft: false,
+                                                    is_draft: false,
                                                 });
                                                 setIsPrivate(true);
                                             }
@@ -642,7 +641,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                     time_end: endTime,
                                     users: [],
                                     isVisible: false,
-                                    isDraft: false,
+                                    is_draft: false,
                                 });
                                 setIsPrivate(true);
                             }}

@@ -3,9 +3,10 @@ import { useFormContext } from 'react-hook-form';
 import { UploadIcon, CrossCircledIcon } from "@radix-ui/react-icons";
 import Image from 'next/image';
 import { ImageUploadProps } from "@/types/image";
+import { on } from 'events';
 
-const ImageUpload: React.FC<ImageUploadProps> = ({ name, onFileSelect }) => {
-    const { setValue } = useFormContext();
+const ImageUpload: React.FC<ImageUploadProps> = ({ onFileSelect }) => {
+
     const [dragActive, setDragActive] = useState(false);
     const [file, setFile] = useState<File | null>(null);
 
@@ -24,23 +25,29 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ name, onFileSelect }) => {
         e.stopPropagation();
         setDragActive(false);
         const droppedFile = e.dataTransfer.files[0];
-        if (droppedFile) {
+        if (droppedFile && droppedFile.type.startsWith('image/')) {
             setFile(droppedFile);
             onFileSelect(droppedFile); // Pass the selected file
+            console.log(droppedFile);
+        } else {
+            alert('Veuillez déposer uniquement des fichiers image.');
         }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0];
-        if (selectedFile) {
+        if (selectedFile && selectedFile.type.startsWith('image/')) {
             setFile(selectedFile);
             onFileSelect(selectedFile); // Pass the selected file
+            console.log(selectedFile);
+            
+        } else {
+            alert('Veuillez sélectionner uniquement des fichiers image.');
         }
     };
 
     const handleRemove = () => {
         setFile(null);
-        setValue(name, undefined);
         onFileSelect(null); // Pass null to indicate removal
     };
 
