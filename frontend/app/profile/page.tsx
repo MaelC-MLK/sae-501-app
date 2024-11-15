@@ -101,6 +101,7 @@ export default function Profile() {
                   alt="Profile Picture"
                   layout="fill"
                   objectFit="cover"
+                  unoptimized={true}
                 />
               </div>
               <h2 className="mt-4 text-2xl font-semibold text-gray-800">
