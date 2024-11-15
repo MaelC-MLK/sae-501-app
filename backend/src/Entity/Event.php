@@ -15,6 +15,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Controller\EventController;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use App\Controller\EventByUserController;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
@@ -26,7 +28,7 @@ use App\Controller\EventByUserController;
             description: 'Récupère tous les événements publics',
             controller: EventController::class,
         ),
-        new GetCollection(
+         new GetCollection(
             uriTemplate: 'events/user/{userId}',
             normalizationContext: ['groups' => ['event:read']],
             description: 'Récupère tous les événements liés à un utilisateur spécifique',
@@ -40,6 +42,7 @@ use App\Controller\EventByUserController;
         new Delete(),
     ]
 )]
+
 class Event
 {
     #[ORM\Id]
@@ -65,7 +68,7 @@ class Event
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
     private Collection $users;
 
-    #[ORM\Column(length: 5, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -73,6 +76,9 @@ class Event
   
     #[ORM\Column]
     private ?bool $is_draft = null;
+  
+    #[ORM\Column]
+    private ?bool $isRecommended = null;
 
 
     public function __construct()
@@ -131,6 +137,15 @@ class Event
         $this->date_end = $date_end;
 
         return $this;
+    }
+
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context, $payload) {
+        if ($this->getDateStart() && $this->getDateEnd() && $this->getDateStart() > $this->getDateEnd()) {
+            $context->buildViolation('The date start must be before the date end')
+                    ->atPath('date_start')
+                    ->addViolation();
+        }
     }
 
     public function isIsVisible(): ?bool
@@ -204,6 +219,22 @@ class Event
         $this->is_draft = $is_draft;
 
         return $this;
+    }
+  
+    public function isRecommended(): ?bool
+    {
+        return $this->isRecommended;
+    }
+
+    public function setIsRecommended(?bool $isRecommended): static
+    {
+        $this->isRecommended = $isRecommended;
+
+        return $this;
+    }
+
+    public function __toString(){
+        return $this->id.'-'.$this->title .'-'. $this->date_start->format('Y-m-d H:i:s'); 
     }
 
 

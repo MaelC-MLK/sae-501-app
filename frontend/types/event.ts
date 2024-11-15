@@ -6,6 +6,7 @@ export interface EventProps {
     description: string;
     image: string;
     location: string;
+    isRecommended: number;
 }
 
 export interface PopupCreationEventProps {

@@ -19,16 +19,18 @@ import Link from "next/link"
 
 export function CardEvent({ event }: { event: EventProps }) {
     const defaultImage = "/images/event.jpg";
-
+    const image = event.image ? `http://localhost:8080/uploads/events/${event.image}` : defaultImage;
+    console.log(image)
     return (
         <Link href={`/event/${event.id}`} passHref>
             <Card className="group overflow-hidden relative cursor-pointer shadow select-none">
                 <div className="relative w-full h-64">
                     <Image
-                        src={event.image ? event.image : defaultImage}
+                        src={image}
                         alt={`${event.title}-image`}
                         layout="fill"
                         objectFit="cover"
+                        unoptimized={true}
                     />
                     <div className="group absolute -bottom-28 left-0 flex flex-col text-secondary bg-black bg-opacity-70 rounded-lg w-full group-hover:-translate-y-28 transition-transform duration-300">
                         <CardHeader className="flex flex-col mb-1">

@@ -51,16 +51,12 @@ body {
   }
 }
 
-@layer utilities {
-
-}
 /* Path: frontend/app/calendar.css */
 /* CSS personnalisé pour le calendrier car besoin de surcharger la librairie*/
 
 .fc-timegrid-slot {
   font-weight: bold;
 }
-
 
 /* calendar.css */
 .fc-view-harness {
@@ -76,6 +72,7 @@ body {
 .fc-timegrid-slot-label{
   padding: 0px !important;
 }
+
 
 .fc-toolbar-chunk{
   display: flex;
