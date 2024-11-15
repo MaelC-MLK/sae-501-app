@@ -57,6 +57,7 @@ import { createEvent } from "@/lib/actions";
 import { PopupCreationEventProps } from "@/types/event";
 import { fr } from 'date-fns/locale';
 import ImageUpload from "@/components/sections/dropZoneEventPopup";
+import { getUserIdFromToken } from "@/lib/utils";
 
 const FormSchema = z.object({
     title: z.string().nonempty("Title is required"),
@@ -261,11 +262,13 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         formData.append('users', JSON.stringify(participants));
         formData.append('isVisible', isPrivate ? "false" : "true");
         formData.append('is_draft', "false");
+        formData.append('creator', getUserIdFromToken() || "");
 
         
         if (imageFile) {
             formData.append('imageFile', imageFile);
         }
+
         
         try {
             const response = await createEvent(formData);

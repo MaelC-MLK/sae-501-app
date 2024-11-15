@@ -115,6 +115,10 @@ class Event
     #[ORM\Column(nullable: true)]
     private ?bool $isRecommended = null;
 
+    #[ORM\ManyToOne(inversedBy: 'event_created')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $creator = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -311,6 +315,18 @@ class Event
 
     public function __toString(){
         return $this->id.'-'.$this->title .'-'. $this->date_start->format('Y-m-d H:i:s'); 
+    }
+
+    public function getCreator(): ?User
+    {
+        return $this->creator;
+    }
+
+    public function setCreator(?User $creator): static
+    {
+        $this->creator = $creator;
+
+        return $this;
     }
 
 
