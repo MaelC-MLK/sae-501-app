@@ -17,6 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Controller\EventController;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use App\Controller\EventByUserController;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ApiResource(
@@ -26,6 +27,13 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
             normalizationContext: ['groups' => ['event:read']],
             description: 'Récupère tous les événements publics',
             controller: EventController::class,
+        ),
+         new GetCollection(
+            uriTemplate: 'events/user/{userId}',
+            normalizationContext: ['groups' => ['event:read']],
+            description: 'Récupère tous les événements liés à un utilisateur spécifique',
+            controller: EventByUserController::class,
+            read: false,
         ),
         new Post(validationContext: ['groups' => ['Default', 'event:create']]),
         new Get(),

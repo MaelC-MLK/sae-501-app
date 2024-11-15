@@ -17,4 +17,16 @@ export async function createEvent(eventData: any) {
     }
 
     return await response.json();
-}
+
+export async function deleteEvent(eventId: string) {
+    const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/ld+json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to delete event');
+    }
