@@ -112,10 +112,8 @@ class Event
     #[Assert\Choice(choices: ["0", "1"], message: "La valeur doit être '0' ou '1'.")]
     private ?string $is_draft = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?bool $isRecommended = null;
-
-
 
     public function __construct()
     {
