@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use Symfony\Component\Validator\Constraints\Image;
 
 class UserCrudController extends AbstractCrudController
 {

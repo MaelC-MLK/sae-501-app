@@ -3,9 +3,9 @@
 /.env.local.php
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
+/migrations/
 /public/bundles/
 /public/uploads/
-
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
@@ -14,5 +14,3 @@
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
 
-
-/migrations/
