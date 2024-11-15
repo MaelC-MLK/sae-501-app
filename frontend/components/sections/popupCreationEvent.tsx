@@ -259,7 +259,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         formData.append('date_start', combineDateAndTime(date?.from || new Date(), data.time_start).toString());
         formData.append('date_end', combineDateAndTime(date?.to || date?.from || new Date(), data.time_end).toString());
         formData.append('users', JSON.stringify(participants));
-        formData.append('isVisible', isPrivate ? "true" : "false");
+        formData.append('isVisible', isPrivate ? "false" : "true");
         formData.append('is_draft', "false");
 
         
@@ -278,14 +278,18 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
     };
     
     const saveDraft = async (data: z.infer<typeof FormSchema>) => {
-        const formData = {
-            ...data,
-            date_start: combineDateAndTime(date?.from || new Date(), data.time_start),
-            date_end: combineDateAndTime(date?.to || date?.from || new Date(), data.time_end),
-            users: participants,
-            isVisible: isPrivate ? false : true,
-            is_draft: true,
-        };
+        const formData = new FormData();
+        formData.append('title', data.title);
+        formData.append('description', data.description || "");
+        formData.append('date_start', combineDateAndTime(date?.from || new Date(), data.time_start).toString());
+        formData.append('date_end', combineDateAndTime(date?.to || date?.from || new Date(), data.time_end).toString());
+        formData.append('users', JSON.stringify(participants));
+        formData.append('isVisible', "false");
+        formData.append('is_draft', "true");
+
+        if (imageFile) {
+            formData.append('imageFile', imageFile);
+        }
     
         try {
             const response = await createEvent(formData);
