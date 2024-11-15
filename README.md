@@ -12,6 +12,8 @@ Actuellement, les fonctionnalités suivantes fonctionnent en environnement local
 - Visualisation de la page d'accueil avec des données dynamiques ( Pas encore de base "par défaut" donc vide si vous n'avez pas crée d'événement public )
 - Visualisation du calendrier en JOUR/SEMAINE/MOIS
 - Pouvoir supprimer un compte
+- Backoffice administrateur : gestion des utilisateurs et des évenements
+- Page profil et modification du profil
 
 ## Vidéo test de l'application
 [https://youtu.be/kFpWfK2EiVU](https://youtu.be/kFpWfK2EiVU)
