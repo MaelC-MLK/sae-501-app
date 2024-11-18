@@ -26,3 +26,25 @@ export async function fetchUserEvents(userId: string) {
         end: parse(event.date_end, 'dd/MM/yyyy - HH:mm', new Date()),
     }));
 }
+
+
+export async function fetchUserBy(value: string) {
+    const token = getBearerToken();
+    if (!token) {
+        throw new Error('JWT Token not found');
+    }
+
+    const response = await fetch(`http://localhost:8080/api/users?query=${value}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch users');
+    }
+
+    return await response.json();
+}
