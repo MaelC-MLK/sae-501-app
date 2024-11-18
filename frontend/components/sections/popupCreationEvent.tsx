@@ -262,7 +262,8 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         formData.append('users', JSON.stringify(participants));
         formData.append('isVisible', isPrivate ? "false" : "true");
         formData.append('is_draft', "false");
-        formData.append('creator', getUserIdFromToken() || "");
+        formData.append('location', data.location || "");
+        formData.append('creator', `/api/users/${getUserIdFromToken()}`);
 
         
         if (imageFile) {
@@ -289,7 +290,10 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         formData.append('users', JSON.stringify(participants));
         formData.append('isVisible', "false");
         formData.append('is_draft', "true");
+        formData.append('location', data.location || "");
+        formData.append('creator', `/api/users/${getUserIdFromToken()}`);
 
+        
         if (imageFile) {
             formData.append('imageFile', imageFile);
         }

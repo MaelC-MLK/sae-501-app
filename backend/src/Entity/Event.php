@@ -67,6 +67,7 @@ class Event
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['event:read', 'event:write'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -105,6 +106,7 @@ class Event
 
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['event:read', 'event:write'])]
     private ?string $location = null;
 
     #[ORM\Column(length: 1)]
@@ -117,6 +119,7 @@ class Event
 
     #[ORM\ManyToOne(inversedBy: 'event_created')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['event:read', 'event:write'])]
     private ?User $creator = null;
 
     public function __construct()
