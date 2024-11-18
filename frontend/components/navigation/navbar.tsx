@@ -22,8 +22,8 @@ const Navbar = () => {
     }
 
     const navItems: NavItem[] = user ? [
-        { name: 'Profile', path: '/profile', variant: 'default' },
-        { name: 'Logout', path: '/logout', variant: 'outline' },
+        { name: 'Profil', path: '/profile', variant: 'default' },
+        { name: 'Déconnexion', path: '/logout', variant: 'outline' },
     ]
     : [
         { name: 'Se connecter', path: '/login', variant: 'outline' },

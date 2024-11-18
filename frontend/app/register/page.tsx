@@ -17,6 +17,7 @@ export default function Page() {
     const [plainPassword, setPlainPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true);
 
     const validateEmail = (email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -48,6 +49,7 @@ export default function Page() {
 
 
         try {
+            await new Promise((resolve) => setTimeout(resolve, 2000));
             const api = 'http://localhost:8080';
             const url = api + '/api/users';
 
@@ -76,6 +78,9 @@ export default function Page() {
             } else {
                 setError('An unknown error occurred');
             }
+        }
+        finally {
+            setLoading(false);
         }
     };
 
