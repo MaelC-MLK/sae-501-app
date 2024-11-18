@@ -84,6 +84,7 @@ class Event
     private ?string $isVisible = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
+    #[Groups(['event:read', 'event:write'])]
     private Collection $users;
 
     #[Vich\UploadableField(mapping: 'events_image', fileNameProperty: 'image', size: 'imageSize')]
