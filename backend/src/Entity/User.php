@@ -82,9 +82,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
 
+    /**
+     * @var Collection<int, Event>
+     */
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'creator', orphanRemoval: true)]
+    private Collection $event_created;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
+        $this->event_created = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -231,6 +238,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAvatar(?string $avatar): static
     {
         $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getEventCreated(): Collection
+    {
+        return $this->event_created;
+    }
+
+    public function addEventCreated(Event $eventCreated): static
+    {
+        if (!$this->event_created->contains($eventCreated)) {
+            $this->event_created->add($eventCreated);
+            $eventCreated->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventCreated(Event $eventCreated): static
+    {
+        if ($this->event_created->removeElement($eventCreated)) {
+            // set the owning side to null (unless already changed)
+            if ($eventCreated->getCreator() === $this) {
+                $eventCreated->setCreator(null);
+            }
+        }
 
         return $this;
     }

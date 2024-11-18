@@ -67,6 +67,7 @@ class Event
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['event:read', 'event:write'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -105,6 +106,7 @@ class Event
 
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['event:read', 'event:write'])]
     private ?string $location = null;
 
     #[ORM\Column(length: 1)]
@@ -114,6 +116,11 @@ class Event
 
     #[ORM\Column(nullable: true)]
     private ?bool $isRecommended = null;
+
+    #[ORM\ManyToOne(inversedBy: 'event_created')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['event:read', 'event:write'])]
+    private ?User $creator = null;
 
     public function __construct()
     {
@@ -311,6 +318,18 @@ class Event
 
     public function __toString(){
         return $this->id.'-'.$this->title .'-'. $this->date_start->format('Y-m-d H:i:s'); 
+    }
+
+    public function getCreator(): ?User
+    {
+        return $this->creator;
+    }
+
+    public function setCreator(?User $creator): static
+    {
+        $this->creator = $creator;
+
+        return $this;
     }
 
 
