@@ -47,6 +47,9 @@ docker exec -it sae-backend /bin/bash
 ```
 Dans le conteneur docker : 
 ```
+php bin/console make:migration
+```
+```
 php bin/console doctrine:migrations:migrate
 ```
 
@@ -61,7 +64,12 @@ php bin/console lexik:jwt:generate-keypair
 
 ### Import de la table Event
 
-[Export de la table](./event.sql)
+[Export de la base](./SAE501.sql)<br/><br/>
+Cette export contient un utilisateur déjà inscrit à des événements :<br/>
+email : demo@gmail.com <br/>
+mot de passe : azertyuiop
+<br/><br/>
+Et des événements publics visibles sur la page d'accueil.
 
 ### Si problème avec les migrations : 
 

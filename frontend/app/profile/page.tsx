@@ -7,6 +7,7 @@ import { getUserFromToken } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PopUpEditProfile } from "@/components/sections/popUpEditProfile";
 import { PopUpDeleteUser } from "@/components/sections/popUpDeleteUser";
+import Link from "next/link";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -133,6 +134,13 @@ export default function Profile() {
                 <p className="text-gray-700">Mes événements favoris</p>
               </div>
             </div>
+
+            <Link href="/profile/calendar" >
+                <Button variant="default" className="mt-10">
+                    Mon calendrier
+                </Button>
+            </Link>
+
           </div>
         </div>
       </div>
