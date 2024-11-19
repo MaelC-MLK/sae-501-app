@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
-import { getUserFromToken } from '@/lib/utils';
+import { useUser } from '@/contexts/UserProvider';
+import Image from 'next/image';
 
 type ButtonVariant = "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
 
@@ -13,13 +14,7 @@ interface NavItem {
 }
 
 const Navbar = () => {
-
-    let user = null;
-
-    if(localStorage.getItem('token')) {
-        const token = localStorage.getItem('token');
-        user = getUserFromToken(token);
-    }
+    const { user, setUser } = useUser();
 
     const navItems: NavItem[] = user ? [
         { name: 'Profile', path: '/profile', variant: 'default' },
@@ -37,7 +32,8 @@ const Navbar = () => {
                 Event<span className='text-primary'>ify</span>
             </Link>
             <div className="flex flex-row gap-2">
-                {user && <p className='text-primary'>Hello, {user.username}</p>}
+                {user && <Link href="/profile" className="w-4 h-4 rounded-full"><Image src={"http://localhost:8080/uploads/users/"+user.avatar} alt="Profile" layout="fit" className="rounded-full w-4 h-4 "
+          objectFit="cover" unoptimized="true"/></Link>}
                 {navItems.map((item) => (
                     <Link key={item.path} href={item.path}>
                         <Button variant={item.variant}>

@@ -5,19 +5,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { authenticate } from "@/lib/utils";
+import { useUser } from '@/contexts/UserProvider';
+import { UserProps } from "@/types/user";
+import { set } from 'date-fns';
 
 export default function Page() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const { setUser } = useUser();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        
 
         try {
-            await authenticate(email, password, '/');
+            await authenticate(email, password, '/', setUser);
         } catch (err) {
             setError('Invalid email or password');
         }

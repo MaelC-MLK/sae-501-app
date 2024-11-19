@@ -1,16 +1,10 @@
-import { getBearerToken } from '@/lib/utils';
 import { parse } from 'date-fns';
 
 export async function fetchUserEvents(userId: string) {
-    const token = getBearerToken();
-    if (!token) {
-        throw new Error('JWT Token not found');
-    }
-
-    const response = await fetch(`http://localhost:8080/api/events/user/${userId}`, {
+const response = await fetch(`http://localhost:8080/api/events/user/${userId}`, {
         method: 'GET',
+        credentials: 'include',
         headers: {
-            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
         },
     });
