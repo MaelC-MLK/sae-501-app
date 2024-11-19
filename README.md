@@ -19,6 +19,10 @@ Voici la liste des fonctionnalités disponibles (15/11/2024) :
 - Affichage des événéments dans le calendrier en fonction de l'utilisateur connecté
 - Suppresion d'événément crée par un utilisateur dans la vu calendrier
 - Upload des images à partir de la création d'événément ( upload sur le server )
+- Récupérer les données de chaque évènement public et les afficher sur la page de détail de l'évènement
+- Intégrer un footer à l'application
+- Afficher des évènements publics dans les recommandations de la page d'accueil
+- Pouvoir s'inscrire avec une adresse mail à un évènement public
 
 ## Installation
 
@@ -43,6 +47,9 @@ docker exec -it sae-backend /bin/bash
 ```
 Dans le conteneur docker : 
 ```
+php bin/console make:migration
+```
+```
 php bin/console doctrine:migrations:migrate
 ```
 
@@ -57,7 +64,12 @@ php bin/console lexik:jwt:generate-keypair
 
 ### Import de la table Event
 
-[Export de la table](./event.sql)
+[Export de la base](./SAE501.sql)<br/><br/>
+Cette export contient un utilisateur déjà inscrit à des événements :<br/>
+email : demo@gmail.com <br/>
+mot de passe : azertyuiop
+<br/><br/>
+Et des événements publics visibles sur la page d'accueil.
 
 ### Si problème avec les migrations : 
 

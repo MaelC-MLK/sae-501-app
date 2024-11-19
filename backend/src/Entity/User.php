@@ -4,6 +4,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiFilter;
+
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
@@ -12,6 +13,8 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -23,6 +26,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Filter\ArticleQueryFilter;
+
 
 #[ApiResource(
     operations: [
@@ -39,6 +44,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' => ['user:create', 'user:update']],
 )]
+// #[ApiFilter(SearchFilter::class, properties: ['email' => 'partial', 'firstName' => 'partial', 'lastName' => 'partial'])]
+#[ApiFilter(ArticleQueryFilter::class, strategy: 'partial')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[UniqueEntity('email')]
@@ -82,9 +89,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
 
+    /**
+     * @var Collection<int, Event>
+     */
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'creator', orphanRemoval: true)]
+    private Collection $event_created;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
+        $this->event_created = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -231,6 +245,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAvatar(?string $avatar): static
     {
         $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getEventCreated(): Collection
+    {
+        return $this->event_created;
+    }
+
+    public function addEventCreated(Event $eventCreated): static
+    {
+        if (!$this->event_created->contains($eventCreated)) {
+            $this->event_created->add($eventCreated);
+            $eventCreated->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventCreated(Event $eventCreated): static
+    {
+        if ($this->event_created->removeElement($eventCreated)) {
+            // set the owning side to null (unless already changed)
+            if ($eventCreated->getCreator() === $this) {
+                $eventCreated->setCreator(null);
+            }
+        }
 
         return $this;
     }
