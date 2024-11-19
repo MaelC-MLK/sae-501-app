@@ -17,8 +17,6 @@ const Navbar = () => {
     const { user, setUser } = useUser();
 
     const navItems: NavItem[] = user ? [
-        { name: 'Profile', path: '/profile', variant: 'default' },
-        { name: 'Logout', path: '/logout', variant: 'outline' },
     ]
     : [
         { name: 'Se connecter', path: '/login', variant: 'outline' },
@@ -32,8 +30,17 @@ const Navbar = () => {
                 Event<span className='text-primary'>ify</span>
             </Link>
             <div className="flex flex-row gap-2">
-                {user && <Link href="/profile" className="w-4 h-4 rounded-full"><Image src={"http://localhost:8080/uploads/users/"+user.avatar} alt="Profile" layout="fit" className="rounded-full w-4 h-4 "
-          objectFit="cover" unoptimized="true"/></Link>}
+            {user && (
+                    <Link href="/profile" className="w-12 h-12 relative rounded-full overflow-hidden">
+                        <Image 
+                            src={`http://localhost:8080/uploads/users/${user.avatar}`} 
+                            alt="Profile" 
+                            layout="fill" 
+                            className="object-cover" 
+                            unoptimized={true}
+                        />
+                    </Link>
+                )}
                 {navItems.map((item) => (
                     <Link key={item.path} href={item.path}>
                         <Button variant={item.variant}>
