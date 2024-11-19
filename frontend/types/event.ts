@@ -17,5 +17,5 @@ export interface PopupCreationEventProps {
 }
 
 export interface PopupJoinPublicEventProps {
-    eventId: number;
+    eventId: string;
 }
