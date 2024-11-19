@@ -3,14 +3,10 @@
 import { error } from "console";
 
 export async function createEvent(eventData: any) {
-    console.log(eventData);
     const response = await fetch('http://localhost:8080/api/events', {
         method: 'POST',
-        
+        credentials: 'include',
         headers: {
-            // 'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            
         },
         body: eventData,
     });
@@ -25,9 +21,9 @@ export async function createEvent(eventData: any) {
 export async function deleteEvent(eventId: string) {
     const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
         method: 'DELETE',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/ld+json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
     });
 
@@ -40,6 +36,7 @@ export async function deleteEvent(eventId: string) {
 export async function signUserInvite(email: any, eventId: any) {
     const response = await fetch("http://localhost:8080/api/user/email", {
         method: "POST",
+        credentials: 'include',
         headers: {
             "Content-Type": "application/ld+json",
         },

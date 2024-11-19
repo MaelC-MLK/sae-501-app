@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import Image from "next/image";
 import { getBearerToken } from "@/lib/utils";
 import { getUserFromToken } from "@/lib/utils";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { PopUpEditProfile } from "@/components/sections/popUpEditProfile";
 import { PopUpDeleteUser } from "@/components/sections/popUpDeleteUser";
 import Link from "next/link";
+import { useUser } from "@/contexts/UserProvider";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -17,20 +18,10 @@ export default function Profile() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = getBearerToken();
-        if (!token) {
-          throw new Error("No token found");
-        }
-
-        // Décodage du token pour obtenir l'ID utilisateur
-        const userId = getUserFromToken(token);
-        if (!userId) {
-          throw new Error("Invalid user ID");
-        }
-        console.log(userId.sub);
+        const user = useUser();
 
         const api = "http://localhost:8080";
-        const url = `${api}/api/users/${userId.sub}`;
+        const url = `${api}/api/users/${user.id}`;
 
         const response = await fetch(url, {
           method: "GET",

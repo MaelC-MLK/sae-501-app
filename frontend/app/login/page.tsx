@@ -5,12 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { authenticate } from "@/lib/utils";
+import { useUser } from '@/contexts/UserProvider';
+import { UserProps } from "@/types/user";
+import { set } from 'date-fns';
 
 export default function Page() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const { setUser } = useUser();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -18,7 +22,7 @@ export default function Page() {
         setLoading(true);
 
         try {
-            await authenticate(email, password, '/');
+            await authenticate(email, password, '/', setUser);
         } catch (err) {
             setError('Authentication failed. Please try again.');
         } finally {

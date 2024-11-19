@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import {jwtDecode} from 'jwt-decode';
+import { UserProps } from "@/types/user"
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -9,7 +9,8 @@ export function cn(...inputs: ClassValue[]) {
 export async function authenticate(
     email: string, 
     password: string, 
-    redirect: string
+    redirect: string,
+    setUser: (user: UserProps | null) => void
 ) 
 {
     if (!email || !password) {
@@ -21,6 +22,7 @@ export async function authenticate(
 
     const response = await fetch(url, {
         method: 'POST',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
         },
@@ -32,75 +34,22 @@ export async function authenticate(
     }
 
     const data = await response.json();
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('refresh_token', data.refresh_token);
 
-    window.location.href = redirect;
+    // Mettez à jour le contexte utilisateur
+    const user: UserProps = {
+        id: data.id,
+        email: data.email,
+        firstName: data.firstname || null ,
+        lastName: data.lastname || null ,
+        avatar: data.avatar || null ,
+    };
+
+    console.log('Login user:', user);
+
+    setUser(user);
+
+    // window.location.href = redirect;
 }
 
-interface JwtPayload {
-    sub: string;
-    username: string;
-    exp: number;
-    iat: number;
-    roles: string[];
-}
 
-export function getUserFromToken(token: string): JwtPayload | null {
-    try {
-        const decoded = jwtDecode<JwtPayload>(token);
-        return decoded;
-    } catch (error) {
-        console.error('Invalid token', error);
-        return null;
-    }
-}
 
-export function getBearerToken() {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        return null;
-    }
-    return token;
-}
-
-export function getUserIdFromToken(): string | null {
-    const token = getBearerToken();
-    if (!token) {
-        console.error('JWT Token not found');
-        return null;
-    }
-
-    const user = getUserFromToken(token);
-    if (!user) {
-        console.error('Invalid token');
-        return null;
-    }
-
-    return user.sub; 
-}
-
-export async function refreshToken() {
-    if (localStorage.getItem('refresh_token')) {
-        const refreshToken = localStorage.getItem('refresh_token');
-
-        const response = await fetch('/api/token/refresh', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ refresh_token: refreshToken }),
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            localStorage.setItem('token', data.token);
-        } else {
-            window.location.href = '/login';
-        }
-    }
-    else {
-        window.location.href = '/login';
-    }
-  
-}
