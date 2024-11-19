@@ -27,7 +27,6 @@ export default function Profile() {
           method: "GET",
           headers: {
             "Content-Type": "application/ld+json",
-            Authorization: `Bearer ${token}`,
           },
         });
 

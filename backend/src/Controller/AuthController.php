@@ -82,4 +82,35 @@ class AuthController
         // Retourner la réponse
         return $response;
     }
+
+    #[Route('/api/auth/me', name: 'api_auth_me', methods: ['POST'])]
+    public function authMe (Request $request): JsonResponse
+    {
+        // Récupérer le token JWT depuis le cookie
+        $token = $request->cookies->get('TOKEN');
+
+        if (!$token) {
+            return new JsonResponse(['error' => 'Unauthorized'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        // Valider le token
+        $user = $this->jwtManager->parse($token);
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Unauthorized'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        $user = $this->userProvider->loadUserByIdentifier($user['username']);
+        // Créer une réponse JSON avec les informations de l'utilisateur
+        $data = [
+            'id' => $user->getId(),
+            'email' => $user->getEmail(),
+            'firstname' => $user->getFirstname(),
+            'lastname' => $user->getLastname(),
+            'avatar' => $user->getAvatar(),
+        ];
+
+        // Retourner la réponse
+        return new JsonResponse($data);
+    }
 }
