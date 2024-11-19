@@ -42,7 +42,7 @@ export default function VerifyEmailPage({ params }: { params: { token: string, i
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-            <div className="bg-white p-8 rounded shadow-md text-center">
+            <div className="bg-white p-8 rounded-lg shadow-md text-center">
                 {status === 'loading' && <h1>Vérification de l'email...</h1>}
                 {(status === 'success' || status === 'alreadyVerified' || status === 'error') && (
                     <>
