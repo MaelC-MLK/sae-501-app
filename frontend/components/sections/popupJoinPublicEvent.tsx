@@ -45,7 +45,7 @@ export function PopupJoinPublicEvent({ eventId }: PopupJoinPublicEventProps) {
                 <DialogHeader>
                     <DialogTitle>Utiliser une adresse email</DialogTitle>
                     <DialogDescription>
-                        Entrez votre adresse email pour vous inscrire à cet événement
+                        Vous recevrez un email de confirmation pour valider votre inscription
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
