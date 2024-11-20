@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from 'react';
-import { getBearerToken } from '@/lib/utils';
 
 export default function Page() {
     const [error, setError] = useState('');
