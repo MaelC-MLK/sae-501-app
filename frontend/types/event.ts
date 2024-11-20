@@ -16,3 +16,6 @@ export interface PopupCreationEventProps {
     className?: string;
 }
 
+export interface PopupJoinPublicEventProps {
+    eventId: string;
+}

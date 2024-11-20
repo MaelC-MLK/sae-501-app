@@ -54,9 +54,13 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import UserSearchSkeleton from "@/components/skeletons/skeletons"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { createEvent } from "@/lib/actions";
+import { fetchUserBy } from "@/lib/data";
+
 import { PopupCreationEventProps } from "@/types/event";
 import { fr } from 'date-fns/locale';
 import ImageUpload from "@/components/sections/dropZoneEventPopup";
+import { getUserIdFromToken } from "@/lib/utils";
+import { useDebouncedCallback } from 'use-debounce';
 
 const FormSchema = z.object({
     title: z.string().nonempty("Title is required"),
@@ -68,7 +72,8 @@ const FormSchema = z.object({
     time_end: z.string().nonempty("End time is required"),
     users: z.array(z.object({
         id: z.number(),
-        name: z.string(),
+        firstName: z.string(),
+        lastName: z.string(),
         email: z.string(),
         avatar: z.string().optional(),
     })),
@@ -168,33 +173,35 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         setEndTime(value);
     };
 
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSearchChange = useDebouncedCallback(async (value: string) => {
+
+    
+        if (value.length > 0) {
+            try {
+                const results = await fetchUserBy(value);
+    
+                const filteredResults = results.filter((user: any) =>
+                    !participants.some(participant => participant.id === user.id)
+                );
+    
+                setSearchResults(filteredResults);
+            } catch (error) {
+                console.error("Failed to fetch search results:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            setSearchResults([]);
+            setIsLoading(false);
+        }
+    }, 300); // 300ms delay
+    
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         setSearchTerm(value);
         setIsPopoverOpen(value.length > 0);
         setIsLoading(true);
-
-        // Simulate search results with a timeout
-        setTimeout(() => {
-            const allUsers = [
-                { id: 1, name: "John Doe", email: "john.doe@example.com", avatar: "https://via.placeholder.com/150" },
-                { id: 2, name: "Jane Smith", email: "jane.smith@example.com", avatar: "https://via.placeholder.com/150" },
-                { id: 3, name: "Alice Johnson", email: "jane.smith@example.com", avatar: "https://via.placeholder.com/150" },
-                { id: 4, name: "Mael Cheron", email: "jane.smith@example.com", avatar: "https://via.placeholder.com/150" },
-                { id: 5, name: "Tom Boutin", email: "jane.smith@example.com", avatar: "https://via.placeholder.com/150" },
-                { id: 6, name: "Malek Fougasse", email: "jane.smith@example.com", avatar: "https://via.placeholder.com/150" },
-                { id: 7, name: "Jane Smith", email: "jane.smith@example.com", avatar: "https://via.placeholder.com/150" },
-            ];
-
-            const filteredResults = allUsers.filter(user =>
-                (user.name.toLowerCase().includes(value.toLowerCase()) ||
-                    user.email.toLowerCase().includes(value.toLowerCase())) &&
-                !participants.some(participant => participant.id === user.id)
-            );
-
-            setSearchResults(filteredResults);
-            setIsLoading(false);
-        }, 1000); // Simulate a 1 second delay for the search
+        handleSearchChange(value);
     };
 
     const handleAddParticipant = (participant: any, event: React.MouseEvent) => {
@@ -211,7 +218,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         const updatedParticipants = participants.filter(participant => participant.id !== participantId);
         setParticipants(updatedParticipants);
         form.setValue("users", updatedParticipants);
-        handleSearchChange({ target: { value: searchTerm } } as React.ChangeEvent<HTMLInputElement>);
+        handleSearchChange(searchTerm);
     };
 
     const resetForm = () => {
@@ -258,14 +265,24 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         formData.append('description', data.description || "");
         formData.append('date_start', combineDateAndTime(date?.from || new Date(), data.time_start).toString());
         formData.append('date_end', combineDateAndTime(date?.to || date?.from || new Date(), data.time_end).toString());
-        formData.append('users', JSON.stringify(participants));
+        
         formData.append('isVisible', isPrivate ? "false" : "true");
         formData.append('is_draft', "false");
+        formData.append('location', data.location || "");
+        formData.append('creator', `/api/users/${getUserIdFromToken()}`);
 
         
         if (imageFile) {
             formData.append('imageFile', imageFile);
         }
+
+        console.log("Participants:", participants);
+
+
+        const participantsArray = participants.map(participant => `/api/users/${participant.id}`);
+        formData.append('users', JSON.stringify(participantsArray));
+    
+    
         
         try {
             const response = await createEvent(formData);
@@ -283,13 +300,22 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         formData.append('description', data.description || "");
         formData.append('date_start', combineDateAndTime(date?.from || new Date(), data.time_start).toString());
         formData.append('date_end', combineDateAndTime(date?.to || date?.from || new Date(), data.time_end).toString());
-        formData.append('users', JSON.stringify(participants));
+        
         formData.append('isVisible', "false");
         formData.append('is_draft', "true");
+        formData.append('location', data.location || "");
+        formData.append('creator', `/api/users/${getUserIdFromToken()}`);
 
+        
         if (imageFile) {
             formData.append('imageFile', imageFile);
         }
+
+        console.log("Participants:", participants);
+
+        const participantsArray = participants.map(participant => `/api/users/${participant.id}`);
+        formData.append('users', JSON.stringify(participantsArray));
+    
     
         try {
             const response = await createEvent(formData);
@@ -533,7 +559,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                             id="participants"
                                             placeholder="Rechercher des participants"
                                             value={searchTerm}
-                                            onChange={handleSearchChange}
+                                            onChange={handleInputChange}
                                             className=""
                                             ref={searchInputRef}
                                             autoComplete="off"
@@ -552,10 +578,10 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                                                     onClick={(event) => handleAddParticipant(result, event)}
                                                                 >
                                                                     <Avatar className="mr-2">
-                                                                        <AvatarImage src={result.avatar} alt={result.name} />
-                                                                        <AvatarFallback>{result.name.charAt(0)}</AvatarFallback>
+                                                                        <AvatarImage src={result.avatar} alt={result.firstName} />
+                                                                        <AvatarFallback>{result.firstName.charAt(0)}</AvatarFallback>
                                                                     </Avatar>
-                                                                    <span>{result.name}</span>
+                                                                    <span className="capitalize">{result.firstName} {result.lastName}</span>
                                                                 </div>
                                                             ))
                                                         ) : (
@@ -574,8 +600,8 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                     {participants.map((participant) => (
                                         <div key={participant.id} className="relative">
                                             <Avatar className="">
-                                                <AvatarImage src={participant.avatar} alt={participant.name} />
-                                                <AvatarFallback>{participant.name.charAt(0)}</AvatarFallback>
+                                                <AvatarImage src={participant.avatar} alt={participant.firstName} />
+                                                <AvatarFallback>{participant.firstName.charAt(0)}</AvatarFallback>
                                             </Avatar>
                                             <CrossCircledIcon
                                                 className="absolute -top-0.5 -right-0.5 h-4 w-4 text-black cursor-pointer bg-white rounded-full"

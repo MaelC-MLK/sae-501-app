@@ -19,12 +19,13 @@ export default function Calendar() {
     right: "timeGridDay,timeGridWeek,dayGridMonth",
   });
   const [events, setEvents] = useState<
-    { id: string; title: string; start: Date; end: Date }[]
+    { id: string; title: string; start: Date; end: Date; isVisible: boolean }[]
   >([]);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPopupDeleteOpen, setIsPopupDeleteOpen] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+  const [filter, setFilter] = useState("all");
   const calendarRef = useRef<FullCalendar>(null);
 
   useEffect(() => {
@@ -73,7 +74,7 @@ export default function Calendar() {
 
   useEffect(() => {
     window.addEventListener("resize", handleWindowResize);
-    handleWindowResize(); // Initial call to set the view based on the current window size
+    handleWindowResize();
     return () => window.removeEventListener("resize", handleWindowResize);
   }, []);
 
@@ -121,15 +122,36 @@ export default function Calendar() {
     setIsPopupDeleteOpen(false);
   };
 
+  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilter(event.target.value);
+  };
+
+  const filteredEvents = events.filter((event) => {
+    if (filter === "all") return true;
+    if (filter === "public") return event.isVisible === true;
+    if (filter === "private") return event.isVisible === false;
+    return true;
+  });
+
   return (
     <div className="m-8 md:m-16 calendar-container">
+      <div className="mb-4">
+        <label htmlFor="filter" className="mr-2">
+          Filtrer les événements :
+        </label>
+        <select id="filter" value={filter} onChange={handleFilterChange}>
+          <option value="all">Tous</option>
+          <option value="public">Publics</option>
+          <option value="private">Privés</option>
+        </select>
+      </div>
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin]}
         headerToolbar={headerToolbar}
         initialView={calendarView}
         locale={frLocale}
-        displayEventTime={true} // Afficher l'heure pour les événements
+        allDaySlot={false}
         slotLabelFormat={{
           hour: "2-digit",
           minute: "2-digit",
@@ -146,7 +168,7 @@ export default function Calendar() {
             </div>
           );
         }}
-        events={events}
+        events={filteredEvents}
         eventClick={handleEventClick}
       />
 
@@ -234,15 +256,16 @@ export default function Calendar() {
                 </svg>
               </div>
             </button>
-            <div className="flex flex-row gap-3 mt-9 mb-4 relative">
-            <div
-              className="w-4 h-4 rounded-full shrink-0 absolute top-1"
-              style={{ backgroundColor: "#9A9CFF" }}
-            ></div>
-            <h2 className="text-xl font-semibold ml-6">
-              {selectedEvent.title}
-            </h2>
-          </div>
+            <div className="flex flex-row gap-3 mb-3 relative">
+              <div
+                className="w-4 h-4 rounded-full shrink-0 absolute top-10"
+                style={{ backgroundColor: "#FFD700" }}
+              ></div>
+              <h2 className="text-xl font-semibold ml-7 mt-9 mb-4">
+                {selectedEvent.title}
+              </h2>
+            </div>
+
             <div className="flex flex-row gap-3 mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -264,30 +287,62 @@ export default function Calendar() {
                 {selectedEvent.end.toLocaleString()}
               </p>
             </div>
-            <div className="flex flex-row gap-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="black"
-                className="size-5 shrink-0"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h16.5"
-                />
-              </svg>
-              <p className="mb-4">{selectedEvent.extendedProps.description}</p>
-            </div>
+
+            {selectedEvent.extendedProps.location && (
+              <div className="flex flex-row gap-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+                  />
+                </svg>
+                <p className="mb-4">{selectedEvent.extendedProps.location}</p>
+              </div>
+            )}
+
+            {selectedEvent.extendedProps.description && (
+              <div className="flex flex-row gap-3 mb-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="black"
+                  className="size-5 shrink-0"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h16.5"
+                  />
+                </svg>
+                <p className="mb-4">{selectedEvent.extendedProps.description}</p>
+              </div>
+            )}
+
           </div>
         </div>
       )}
 
       {isPopupDeleteOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <PopupDeleteEvent onClose={closePopupDelete} onDelete={handleDeleteClick} />
+          <PopupDeleteEvent
+            onClose={closePopupDelete}
+            onDelete={handleDeleteClick}
+          />
         </div>
       )}
     </div>

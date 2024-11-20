@@ -12,7 +12,7 @@ const nextConfig = {
   },
 
   // Configuration générale de Next.js
-  reactStrictMode: true,
+  reactStrictMode: false,
   output: 'standalone',  // Pour permettre l'exécution autonome dans Docker
 };
 

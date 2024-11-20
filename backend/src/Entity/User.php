@@ -4,6 +4,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiFilter;
+
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
@@ -12,6 +13,8 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -23,11 +26,16 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Filter\ArticleQueryFilter;
+
 
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Post(processor: UserPasswordHasher::class, validationContext: ['groups' => ['Default', 'user:create']]),
+        new Post(
+            processor: UserPasswordHasher::class,
+            validationContext: ['groups' => ['Default', 'user:create']]
+        ),
         new Get(),
         new Put(processor: UserPasswordHasher::class, security: "is_granted('ROLE_ADMIN') or object == user"),
         new Patch(processor: UserPasswordHasher::class, security: "is_granted('ROLE_ADMIN') or object == user"),
@@ -36,6 +44,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' => ['user:create', 'user:update']],
 )]
+// #[ApiFilter(SearchFilter::class, properties: ['email' => 'partial', 'firstName' => 'partial', 'lastName' => 'partial'])]
+#[ApiFilter(ArticleQueryFilter::class, strategy: 'partial')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[UniqueEntity('email')]
@@ -47,17 +57,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     private ?int $id = null;
 
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: ['user:create'])]
     #[Assert\Email]
     #[Groups(['user:read', 'user:create', 'user:update'])]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+
+    #[ORM\Column(nullable: true)]
     private ?string $password = null;
 
-    #[Assert\NotBlank(groups: ['user:create'])]
     #[Groups(['user:create', 'user:update'])]
+    #[ORM\Column(nullable: true)]
     private ?string $plainPassword = null;
 
     #[ORM\Column(type: 'json')]
@@ -66,12 +77,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'users')]
     private Collection $events;
 
-    #[Assert\NotBlank(groups: ['user:create'])]
     #[Groups(['user:create', 'user:update', 'user:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $firstName = null;
 
-    #[Assert\NotBlank(groups: ['user:create'])]
     #[Groups(['user:create', 'user:update', 'user:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $lastName = null;
@@ -80,10 +89,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $verificationToken = null;
+
+    /**
+     * @var Collection<int, Event>
+     */
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'creator', orphanRemoval: true)]
+    private Collection $event_created;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
-        $this->owned = new ArrayCollection();
+        $this->event_created = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -230,6 +248,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAvatar(?string $avatar): static
     {
         $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getVerificationToken(): ?string
+    {
+        return $this->verificationToken;
+    }
+
+    public function setVerificationToken(?string $verificationToken): static
+    {
+        $this->verificationToken = $verificationToken;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getEventCreated(): Collection
+    {
+        return $this->event_created;
+    }
+
+    public function addEventCreated(Event $eventCreated): static
+    {
+        if (!$this->event_created->contains($eventCreated)) {
+            $this->event_created->add($eventCreated);
+            $eventCreated->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventCreated(Event $eventCreated): static
+    {
+        if ($this->event_created->removeElement($eventCreated)) {
+            // set the owning side to null (unless already changed)
+            if ($eventCreated->getCreator() === $this) {
+                $eventCreated->setCreator(null);
+            }
+        }
 
         return $this;
     }
