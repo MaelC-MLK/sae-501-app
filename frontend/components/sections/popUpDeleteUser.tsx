@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { getBearerToken } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 
 export function PopUpDeleteUser({ user }) {
@@ -22,15 +21,11 @@ export function PopUpDeleteUser({ user }) {
     try {
       const api = "http://localhost:8080";
       const url = `${api}/api/users/${user.id}`;
-      const token = getBearerToken();
-      if (!token) {
-        throw new Error("No token found");
-      }
 
       const response = await fetch(url, {
         method: "DELETE",
+        credentials: "include",
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/ld+json",
         },
         body: JSON.stringify({id: user.sub}),

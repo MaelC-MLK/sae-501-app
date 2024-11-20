@@ -2,8 +2,6 @@
 
 import React, { use, useEffect, useState } from "react";
 import Image from "next/image";
-import { getBearerToken } from "@/lib/utils";
-import { getUserFromToken } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PopUpEditProfile } from "@/components/sections/popUpEditProfile";
 import { PopUpDeleteUser } from "@/components/sections/popUpDeleteUser";
@@ -11,20 +9,25 @@ import Link from "next/link";
 import { useUser } from "@/contexts/UserProvider";
 
 export default function Profile() {
-  const [user, setUser] = useState(null);
+  const userContext = useUser();
+  const [userData, setUserData] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-
+  
   useEffect(() => {
+    if (!userContext.user) {
+      return;
+    }
+
     const fetchUserData = async () => {
       try {
-        const user = useUser();
-
+        
         const api = "http://localhost:8080";
-        const url = `${api}/api/users/${user.id}`;
+        const url = `${api}/api/users/${userContext.user.id}`;
 
         const response = await fetch(url, {
           method: "GET",
+          credentials: "include",
           headers: {
             "Content-Type": "application/ld+json",
           },
@@ -35,7 +38,7 @@ export default function Profile() {
         }
 
         const data = await response.json();
-        setUser(data);
+        setUserData(data);
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -48,7 +51,7 @@ export default function Profile() {
     };
 
     fetchUserData();
-  }, []); // On ne veut pas que l'ID utilisateur change, donc [] comme dépendance.
+  }, [userContext.user]); // On ne veut pas que l'ID utilisateur change, donc [] comme dépendance.
 
   if (loading) {
     return (
@@ -76,19 +79,19 @@ export default function Profile() {
           <div className="lg:w-1/3 p-6 bg-gray-50">
             <div className="flex items-center justify-between mb-4">
               <div>
-                {user ? (
+                {userData ? (
                   <PopUpEditProfile
-                    user={user}
-                    onUpdate={(updatedUser) => setUser(updatedUser)}
+                    user={userData}
+                    onUpdate={(updatedUser) => setUserData(updatedUser)}
                   />
                 ) : (
                   <p>Chargement du profil...</p>
                 )}
               </div>
               <div>
-                {user ? (
+                {userData ? (
                   <PopUpDeleteUser
-                    user={user}
+                    user={userData}
                   />
                 ) : (
                   <p>...</p>
@@ -98,7 +101,7 @@ export default function Profile() {
             <div className="flex flex-col items-center">
               <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white">
                 <Image
-                  src="/images/profile-picture.webp"
+                  src={"http://localhost:8080/uploads/users/"+userData?.avatar}
                   alt="Profile Picture"
                   layout="fill"
                   objectFit="cover"
@@ -106,10 +109,10 @@ export default function Profile() {
                 />
               </div>
               <h2 className="mt-4 text-2xl font-semibold text-gray-800">
-                {user?.firstName} {user?.lastName}
+                {userData?.firstName} {userData?.lastName}
               </h2>
               <div className="flex items-center justify-between">
-                <p className="text-gray-700">{user?.email}</p>
+                <p className="text-gray-700">{userData?.email}</p>
               </div>
             </div>
           </div>
