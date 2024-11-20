@@ -29,12 +29,12 @@ export default function Page() {
     return (
         <div className="flex h-full">
             {loading ? (
-                <div className="flex items-center justify-center min-h-screen">
-                    <div className="text-center">
-                        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
-                        <p className="mt-4 text-gray-700">Authenticating...</p>
-                    </div>
-                </div>
+            <div className="flex items-center justify-center min-h-screen w-full">
+            <div className="text-center">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid border-4 border-gray-200"></div>
+                <p className="mt-4 text-gray-700">Authenticating...</p>
+            </div>
+        </div>
             ) : (
                 <div className="flex flex-col justify-center md:w-2/3 max-w-md mx-auto py-24">
                     <h1 className="text-3xl font-bold mb-6">Welcome back!</h1>
