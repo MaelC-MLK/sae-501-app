@@ -25,15 +25,15 @@ class CookieJwtAuthenticator extends AbstractAuthenticator
 
     public function supports(Request $request): ?bool
     {
-        // Vérifie si le cookie "TOKEN" existe
-        return $request->cookies->has('TOKEN');
+        // Vérifie si le cookie "eventify" existe
+        return $request->cookies->has('eventify');
     }
 
     public function authenticate(Request $request): SelfValidatingPassport
     {
         
 
-        $jwt = $request->cookies->get('TOKEN');
+        $jwt = $request->cookies->get('eventify');
 
         if (!$jwt) {
             throw new AuthenticationException('No JWT provided in the cookie.');

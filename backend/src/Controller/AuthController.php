@@ -11,6 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class AuthController
 {
@@ -51,7 +52,7 @@ class AuthController
 
         // Créer un cookie pour le token
         $cookie = new Cookie(
-            'TOKEN',          // Nom du cookie
+            'eventify',          // Nom du cookie
             $token,           // Valeur du cookie (le JWT)
             time() + 3600,    // Expiration (1 heure par exemple)
             '/',              // Chemin d'accès du cookie
@@ -87,7 +88,47 @@ class AuthController
     public function authMe (Request $request): JsonResponse
     {
         // Récupérer le token JWT depuis le cookie
-        $token = $request->cookies->get('TOKEN');
+        $token = $request->cookies->get('eventify');
+        
+        if (!$token) {
+            return new JsonResponse(['error' => 'Unauthorized'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+        
+        // Valider le token
+        $tokenParsed = $this->jwtManager->parse($token);
+        
+        if (!$tokenParsed) {
+            return new JsonResponse(['error' => 'Unauthorized'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        $user = $this->userProvider->loadUserByIdentifier($tokenParsed['username']);
+
+        if($user->getLogout()){
+            $tokenIssuedAtDateTime = (new \DateTime())->setTimestamp($tokenParsed['iat']);
+            if($user->getLogout()->getTimestamp() >  $tokenIssuedAtDateTime->getTimestamp()){
+                return new JsonResponse(['error' => 'You are logged out'], JsonResponse::HTTP_UNAUTHORIZED);
+            }
+        }
+
+        // Créer une réponse JSON avec les informations de l'utilisateur
+        $data = [
+            'id' => $user->getId(),
+            'email' => $user->getEmail(),
+            'firstname' => $user->getFirstname(),
+            'lastname' => $user->getLastname(),
+            'avatar' => $user->getAvatar(),
+        ];
+
+        // Retourner la réponse
+        return new JsonResponse($data);
+    }
+
+    #[Route('/api/auth/logout', name: 'api_auth_logout', methods: ['POST'])]
+    public function logout(EntityManagerInterface $em, Request $request): JsonResponse
+    {
+
+        // Récupérer le token JWT depuis le cookie
+        $token = $request->cookies->get('eventify');
 
         if (!$token) {
             return new JsonResponse(['error' => 'Unauthorized'], JsonResponse::HTTP_UNAUTHORIZED);
@@ -101,16 +142,33 @@ class AuthController
         }
 
         $user = $this->userProvider->loadUserByIdentifier($user['username']);
-        // Créer une réponse JSON avec les informations de l'utilisateur
-        $data = [
-            'id' => $user->getId(),
-            'email' => $user->getEmail(),
-            'firstname' => $user->getFirstname(),
-            'lastname' => $user->getLastname(),
-            'avatar' => $user->getAvatar(),
-        ];
 
+        $user->setLogout(new \DateTime());
+
+        $em->persist($user);
+        $em->flush();
+        
+        // Créer un cookie expiré
+        $cookie = new Cookie(
+            'eventify',
+            null,
+            1,
+            '/',
+            null,
+            false,
+            true,
+            false,
+            'lax'
+        );
+
+        // Créer une réponse JSON vide
+        $response = new JsonResponse(null);
+        
+        // Ajouter le cookie à la réponse
+        $response->headers->setCookie($cookie);
+        
         // Retourner la réponse
-        return new JsonResponse($data);
+        
+        return $response;
     }
 }
