@@ -3,14 +3,8 @@
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { getUserFromToken } from '@/lib/utils';
-
-type ButtonVariant = "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
-
-interface NavItem {
-    name: string;
-    path: string;
-    variant: ButtonVariant;
-}
+import { k2d } from '@/app/fonts/fonts';
+import Image from 'next/image';
 
 const Navbar = () => {
 
@@ -21,22 +15,18 @@ const Navbar = () => {
         user = getUserFromToken(token);
     }
 
-    const navItems: NavItem[] = user ? [
-        { name: 'Profil', path: '/profile', variant: 'default' },
-        { name: 'Déconnexion', path: '/logout', variant: 'outline' },
-    ]
-    : [
-        { name: 'Se connecter', path: '/login', variant: 'outline' },
-        { name: 'Créer un compte', path: '/register', variant: 'default' },
-    ]
-    ;
-
     return (
         <div className="flex flex-row items-center justify-between bg-background h-16 px-4 border-b-2 w-full fixed z-50">
             <Link href="/" className="text-2xl font-bold">
-                Event<span className='text-primary'>ify</span>
+                <Image 
+                    src="/images/logo_eventify.webp"
+                    alt='Eventify Logo'
+                    width={50}
+                    height={50}
+                ></Image>
+                
             </Link>
-            <div className="flex flex-row gap-2">
+            {/* <div className="flex flex-row gap-2">
                 {user && <p className='text-primary'>Hello, {user.username}</p>}
                 {navItems.map((item) => (
                     <Link key={item.path} href={item.path}>
@@ -45,7 +35,7 @@ const Navbar = () => {
                         </Button>
                     </Link>
                 ))}
-            </div>
+            </div> */}
         </div>
     );
 };
