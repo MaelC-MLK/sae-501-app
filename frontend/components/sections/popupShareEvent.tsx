@@ -1,8 +1,6 @@
 import { Copy } from "lucide-react"
 import { useState } from 'react';
-
-
-
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button"
 import {
@@ -23,7 +21,7 @@ export function PopupShareEvent({ eventUrl }: { eventUrl: string }) {
     const handleCopy = async () => {
         try {
             await navigator.clipboard.writeText(eventUrl);
-            setCopySuccess('Lien copié dans le presse-papiers !');
+            setCopySuccess('Lien copié dans le presse-papiers.');
         } catch (err) {
             setCopySuccess('Échec de la copie du lien.');
         }
@@ -31,13 +29,20 @@ export function PopupShareEvent({ eventUrl }: { eventUrl: string }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline">Share</Button>
+                <Button variant="outline" size={'icon'} className="h-full w-12">
+                    <Image
+                        src="/images/Share.svg"
+                        alt="share"
+                        width={24}
+                        height={24}
+                    />
+                </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Partager le lien</DialogTitle>
                     <DialogDescription>
-                        Anyone who has this link will be able to view this.
+                        Toute personne ayant ce lien pourra le consulter.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center space-x-2">
@@ -56,7 +61,7 @@ export function PopupShareEvent({ eventUrl }: { eventUrl: string }) {
                         <Copy />
                     </Button>
                 </div>
-                {copySuccess && <p className="mt-2 text-sm text-green-600">{copySuccess}</p>}
+                {copySuccess && <p className="text-sm opacity-50">{copySuccess}</p>}
                 <DialogFooter className="sm:justify-start">
                     <DialogClose asChild>
                         <Button type="button" variant="outline">
