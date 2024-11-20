@@ -17,6 +17,7 @@ class RefreshTokenMiddleware
 
     public function onKernelResponse(ResponseEvent $event)
     {
+        /*
         $request = $event->getRequest();
         $user = $request->getUser();
 
@@ -30,7 +31,7 @@ class RefreshTokenMiddleware
 
         $response->headers->setCookie(
             new Cookie(
-                'TOKEN',
+                'refresh',
                 $token,
                 time() + 3600,
                 '/',
@@ -40,5 +41,23 @@ class RefreshTokenMiddleware
                 'Strict'
             )
         );
+        */
+
+        $request = $event->getRequest();
+        $response = $event->getResponse();
+
+        $response->headers->setCookie(
+            new Cookie(
+                'refresh',
+                'merci',
+                time() + 3600,
+                '/',
+                null,
+                true,
+                true,
+                'Strict'
+            )
+        );
+
     }
 }

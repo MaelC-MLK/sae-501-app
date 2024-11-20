@@ -8,20 +8,29 @@ import { authenticate } from "@/lib/utils";
 import { useUser } from '@/contexts/UserProvider';
 import { UserProps } from "@/types/user";
 import { set } from 'date-fns';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const { setUser } = useUser();
+    const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
 
         try {
-            await authenticate(email, password, '/', setUser);
+            const login = await authenticate(email, password, setUser);
+            if (login) {
+                router.push('/');
+            }
+            else {
+                setError('Invalid email or password');
+            }
         } catch (err) {
+            console.log(err);
             setError('Invalid email or password');
         }
     };

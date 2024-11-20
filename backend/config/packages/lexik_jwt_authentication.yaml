@@ -6,7 +6,7 @@ lexik_jwt_authentication:
     token_extractors:
         cookie:
             enabled: true
-            name: TOKEN
+            name: eventify
 
     api_platform:
         check_path: /api/auth

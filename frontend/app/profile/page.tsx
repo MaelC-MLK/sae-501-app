@@ -5,23 +5,32 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { PopUpEditProfile } from "@/components/sections/popUpEditProfile";
 import { PopUpDeleteUser } from "@/components/sections/popUpDeleteUser";
+import { PopUpLogout } from "@/components/sections/popUpLogout";
 import Link from "next/link";
 import { useUser } from "@/contexts/UserProvider";
+import { useRouter } from "next/navigation";
 
 export default function Profile() {
   const userContext = useUser();
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
   
   useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (!userContext.user) {
+        setError("Timeout: User not found");
+        setLoading(false);
+      }
+    }, 10000); // Timeout de 10 secondes
+
     if (!userContext.user) {
-      return;
+      return () => clearTimeout(timeoutId);
     }
 
     const fetchUserData = async () => {
       try {
-        
         const api = "http://localhost:8080";
         const url = `${api}/api/users/${userContext.user.id}`;
 
@@ -51,7 +60,7 @@ export default function Profile() {
     };
 
     fetchUserData();
-  }, [userContext.user]); // On ne veut pas que l'ID utilisateur change, donc [] comme dépendance.
+  }, [userContext.user]); 
 
   if (loading) {
     return (
@@ -66,8 +75,9 @@ export default function Profile() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen flex-col gap-4">
         <p className="text-red-500">Erreur : {error}</p>
+        <Button onClick={() => router.push("/")}>Revenir à l'accueil</Button>
       </div>
     );
   }
@@ -90,7 +100,7 @@ export default function Profile() {
               </div>
               <div>
                 {userData ? (
-                  <PopUpDeleteUser
+                  <PopUpLogout
                     user={userData}
                   />
                 ) : (
@@ -101,7 +111,7 @@ export default function Profile() {
             <div className="flex flex-col items-center">
               <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white">
                 <Image
-                  src={"http://localhost:8080/uploads/users/"+userData?.avatar}
+                  src={userData ? "http://localhost:8080/uploads/users/"+userData?.avatar : "/images/profile-picture.webp"}
                   alt="Profile Picture"
                   layout="fill"
                   objectFit="cover"
