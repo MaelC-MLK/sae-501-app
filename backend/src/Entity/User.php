@@ -62,6 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Groups(['user:create', 'user:update'])]
     #[ORM\Column(nullable: true)]
+    #[ORM\Transient]
     private ?string $plainPassword = null;
 
     #[ORM\Column(type: 'json')]
@@ -81,6 +82,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:create', 'user:update', 'user:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $Logout = null;
 
     public function __construct()
     {
@@ -231,6 +235,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAvatar(?string $avatar): static
     {
         $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getLogout(): ?\DateTimeInterface
+    {
+        return $this->Logout;
+    }
+
+    public function setLogout(?\DateTimeInterface $Logout): static
+    {
+        $this->Logout = $Logout;
 
         return $this;
     }

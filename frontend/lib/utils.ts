@@ -9,7 +9,6 @@ export function cn(...inputs: ClassValue[]) {
 export async function authenticate(
     email: string, 
     password: string, 
-    redirect: string,
     setUser: (user: UserProps | null) => void
 ) 
 {
@@ -44,11 +43,9 @@ export async function authenticate(
         avatar: data.avatar || null ,
     };
 
-    console.log('Login user:', user);
-
     setUser(user);
 
-    // window.location.href = redirect;
+    return true;
 }
 
 
