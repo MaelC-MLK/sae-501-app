@@ -50,7 +50,7 @@ const Navbar = () => {
                                         className='rounded-full group-hover:ring-2 group-hover:ring-primary transition-all shrink-0 w-8 h-8'
                                     >
                                     </Image>
-                                    <p className='text-foreground capitalize truncate max-w-64 hidden sm:block'></p>
+                                    <p className='text-foreground capitalize truncate max-w-64 hidden sm:block'>{user.firstName} {user.lastName}</p>
                                 </Link>
                             }
 
@@ -59,11 +59,11 @@ const Navbar = () => {
                         </>
                     ) : (
                         <>
-                            <Link href="/register">
-                                <Button variant="secondary">S'inscrire</Button>
-                            </Link>
                             <Link href="/login">
-                                <Button variant="default">Se connecter</Button>
+                                <Button variant="outline">Se connecter</Button>
+                            </Link>
+                            <Link href="/register">
+                                <Button variant="default">S'inscrire</Button>
                             </Link>
                         </>
                     )}
