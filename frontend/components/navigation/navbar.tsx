@@ -17,7 +17,7 @@ const Navbar = () => {
     }
 
     return (
-        <div className="flex justify-center py-4 px-5 border-b-2 border-foreground/15 w-full fixed z-50 top-0 bg-background">
+        <div className="flex justify-center py-2 px-5 border-b-2 border-foreground/15 w-full fixed z-50 top-0 bg-background">
             <div className='flex items-center justify-between max-w-7xl w-full '>
 
             <Link href="/" className="flex items-center gap-3 text-xl font-bold">
@@ -63,7 +63,7 @@ const Navbar = () => {
                                         width={50}
                                         height={50}
                                         quality={100}
-                                        className='rounded-full group-hover:ring-2 group-hover:ring-primary transition-all shrink-0 w-10 h-10'
+                                        className='rounded-full group-hover:ring-2 group-hover:ring-primary transition-all shrink-0 w-8 h-8'
                                     >
                                     </Image>
                                     <p className='text-foreground capitalize truncate max-w-64 hidden sm:block'>{user.username}</p>
