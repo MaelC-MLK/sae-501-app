@@ -102,6 +102,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $Logout = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $Logout = null;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -294,6 +297,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $eventCreated->setCreator(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLogout(): ?\DateTimeInterface
+    {
+        return $this->Logout;
+    }
+
+    public function setLogout(?\DateTimeInterface $Logout): static
+    {
+        $this->Logout = $Logout;
 
         return $this;
     }
