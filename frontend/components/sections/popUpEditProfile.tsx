@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { getBearerToken } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 
 export function PopUpEditProfile({ user, onUpdate }) {
@@ -34,10 +33,6 @@ export function PopUpEditProfile({ user, onUpdate }) {
     try {
       const api = "http://localhost:8080";
       const url = `${api}/api/users/${user.id}`;
-      const token = getBearerToken();
-      if (!token) {
-        throw new Error("No token found");
-      }
 
       const updatedUser = {
         "@context": "string", // Remplace par le bon contexte
@@ -51,21 +46,18 @@ export function PopUpEditProfile({ user, onUpdate }) {
 
       const response = await fetch(url, {
         method: "PUT",
+        credentials: "include",
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/ld+json",
         },
         body: JSON.stringify(updatedUser),
       });
-
-      console.log("response", response);
 
       if (!response.ok) {
         throw new Error(`Erreur ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
-      console.log("Mise à jour réussie :", data);
       if (onUpdate) {
         onUpdate(data); // Appelle le callback pour mettre à jour le parent
       }

@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
-import { getUserFromToken } from '@/lib/utils';
+import { useUser } from '@/contexts/UserProvider';
+import Image from 'next/image';
 
 type ButtonVariant = "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
 
@@ -13,17 +14,9 @@ interface NavItem {
 }
 
 const Navbar = () => {
-
-    let user = null;
-
-    if(localStorage.getItem('token')) {
-        const token = localStorage.getItem('token');
-        user = getUserFromToken(token);
-    }
+    const { user, setUser } = useUser();
 
     const navItems: NavItem[] = user ? [
-        { name: 'Profile', path: '/profile', variant: 'default' },
-        { name: 'Logout', path: '/logout', variant: 'outline' },
     ]
     : [
         { name: 'Se connecter', path: '/login', variant: 'outline' },
@@ -37,7 +30,17 @@ const Navbar = () => {
                 Event<span className='text-primary'>ify</span>
             </Link>
             <div className="flex flex-row gap-2">
-                {user && <p className='text-primary'>Hello, {user.username}</p>}
+            {user && (
+                    <Link href="/profile" className="w-12 h-12 relative rounded-full overflow-hidden">
+                        <Image 
+                            src={user.avatar ? `http://localhost:8080/uploads/users/${user.avatar}` : '/images/profile-picture.webp'} 
+                            alt="Profile" 
+                            layout="fill" 
+                            className="object-cover" 
+                            unoptimized={true}
+                        />
+                    </Link>
+                )}
                 {navItems.map((item) => (
                     <Link key={item.path} href={item.path}>
                         <Button variant={item.variant}>

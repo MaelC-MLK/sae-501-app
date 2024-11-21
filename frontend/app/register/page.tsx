@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import Image from 'next/image';
 import { authenticate } from "@/lib/utils"
 import Link from 'next/link';
+import { useUser } from '@/contexts/UserProvider';
+import { useRouter } from 'next/navigation';
 
 
 export default function Page() {
@@ -17,6 +19,9 @@ export default function Page() {
     const [plainPassword, setPlainPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true);
+    const { setUser } = useUser();
+    const router = useRouter();
 
     const validateEmail = (email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -48,6 +53,7 @@ export default function Page() {
 
 
         try {
+            await new Promise((resolve) => setTimeout(resolve, 2000));
             const api = 'http://localhost:8080';
             const url = api + '/api/users';
 
@@ -67,7 +73,13 @@ export default function Page() {
                 throw new Error('Failed to create account');
             }
             else {
-                await authenticate(email, plainPassword, '/register/success');
+                const login = await authenticate(email, plainPassword, setUser);
+                if (login) {
+                    router.push('/');
+                }
+                else {
+                    setError('Invalid email or password');
+                }
             }
 
         } catch (err) {
@@ -76,6 +88,9 @@ export default function Page() {
             } else {
                 setError('An unknown error occurred');
             }
+        }
+        finally {
+            setLoading(false);
         }
     };
 

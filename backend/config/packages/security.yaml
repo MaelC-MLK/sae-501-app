@@ -23,14 +23,8 @@ security:
       pattern: ^/api # Exclure les requêtes vers /admin
       stateless: true
       provider: users
-      entry_point: jwt
-      json_login:
-        check_path: auth # The name in routes.yaml is enough for mapping
-        username_path: email
-        password_path: password
-        success_handler: lexik_jwt_authentication.handler.authentication_success
-        failure_handler: lexik_jwt_authentication.handler.authentication_failure
-      jwt: ~
+      custom_authenticators:
+          - App\Security\CookieJwtAuthenticator
       refresh_jwt: 
         check_path: gesdinet_jwt_refresh_token
         provider: users
@@ -53,6 +47,7 @@ security:
   access_control:
     - { path: ^/api/events/public, roles: PUBLIC_ACCESS }
     - { path: ^/api/user/email, roles: PUBLIC_ACCESS }
+    - { path: ^/api/verify-email/.*, roles: PUBLIC_ACCESS }
     - { path: ^/$, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
     - { path: ^/api/users, roles: PUBLIC_ACCESS, methods: [POST] } # Allows accessing the Swagger UI docs
     - { path: ^/api/docs, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI docs

@@ -6,13 +6,15 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import frLocale from "@fullcalendar/core/locales/fr";
 import "@/app/globals.css";
+
 import { fetchUserEvents, fetchEventsByCreator } from "@/lib/data";
 import { getUserIdFromToken } from "@/lib/utils";
 import PopupDeleteEvent from "@/components/sections/popupDeleteEvent";
 import PopupUpdateEvent from "@/components/sections/popUpUpdateEvent";
 import { deleteEvent } from "@/lib/actions"; // Importer la fonction deleteEvent
+import { useUser } from "@/contexts/UserProvider";
+import { useRouter } from "next/navigation";
 
-const userId = getUserIdFromToken();
 export default function Calendar() {
   const [calendarView, setCalendarView] = useState("timeGridWeek");
   const [headerToolbar, setHeaderToolbar] = useState({
@@ -29,12 +31,29 @@ export default function Calendar() {
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [filter, setFilter] = useState("all");
   const calendarRef = useRef<FullCalendar>(null);
+  const userContext = useUser();
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (!userContext.user) {
+        router.push("/login");
+        setLoading(false);
+      }
+    }, 10000); // Timeout de 10 secondes
+
+    if (!userContext.user) {
+      return () => clearTimeout(timeoutId);
+    }
     loadEvents();
-  }, []);
+  }, [userContext.user]);
+
+ 
 
   const loadEvents = async () => {
+    if (!userContext.user) return;
+    const userId = userContext.user.id
     if (userId) {
       try {
         const userEvents = await fetchUserEvents(userId);
@@ -45,6 +64,9 @@ export default function Calendar() {
           borderColor: event.creator_id == userId ? '#FFD700' : '#ADD8E6',
         }));
         setEvents(combinedEvents);
+
+    
+    }
       } catch (error) {
         console.error(
           "Erreur lors de la récupération des événements de l'utilisateur :",
@@ -139,6 +161,17 @@ export default function Calendar() {
     if (filter === "private") return event.isVisible === false;
     return true;
   });
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+          <p className="mt-4 text-gray-700">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="m-8 md:m-16 calendar-container">

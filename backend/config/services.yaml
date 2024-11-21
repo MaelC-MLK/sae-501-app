@@ -12,6 +12,10 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
     App\State\UserPasswordHasher:
         bind:
             $processor: '@api_platform.doctrine.orm.state.persist_processor'    
@@ -19,5 +23,9 @@ services:
     App\EventListener\JWTCreatedListener:
         tags:
             - { name: 'kernel.event_listener', event: 'lexik_jwt_authentication.on_jwt_created', method: 'onJWTCreated' }
+
+    App\EventListener\RefreshTokenMiddleware:
+        tags:
+            - { name: kernel.event_listener, event: kernel.response }
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

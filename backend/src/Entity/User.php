@@ -69,6 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Groups(['user:create', 'user:update'])]
     #[ORM\Column(nullable: true)]
+    #[ORM\Transient]
     private ?string $plainPassword = null;
 
     #[ORM\Column(type: 'json')]
@@ -89,11 +90,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $verificationToken = null;
+
     /**
      * @var Collection<int, Event>
      */
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'creator', orphanRemoval: true)]
     private Collection $event_created;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $tokenExpiry = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $Logout = null;
 
     public function __construct()
     {
@@ -249,6 +259,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getVerificationToken(): ?string
+    {
+        return $this->verificationToken;
+    }
+
+    public function setVerificationToken(?string $verificationToken): static
+    {
+        $this->verificationToken = $verificationToken;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Event>
      */
@@ -275,6 +297,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $eventCreated->setCreator(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTokenExpiry(): ?\DateTimeInterface
+    {
+        return $this->tokenExpiry;
+    }
+
+    public function setTokenExpiry(?\DateTimeInterface $tokenExpiry): static
+    {
+        $this->tokenExpiry = $tokenExpiry;
+
+        return $this;
+    }
+
+    public function getLogout(): ?\DateTimeInterface
+    {
+        return $this->Logout;
+    }
+
+    public function setLogout(?\DateTimeInterface $Logout): static
+    {
+        $this->Logout = $Logout;
 
         return $this;
     }

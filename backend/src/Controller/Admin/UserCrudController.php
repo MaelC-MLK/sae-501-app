@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use Symfony\Component\Validator\Constraints\Image;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 
 class UserCrudController extends AbstractCrudController
 {
@@ -93,6 +94,7 @@ class UserCrudController extends AbstractCrudController
                 ->setUploadedFileNamePattern(
                     fn (UploadedFile $file): string => sprintf('%s_%s.%s', date('YmdHis'), uniqid(), $file->guessExtension())
                 ),
+            DateTimeField::new('Logout')
         ];
     }
 }

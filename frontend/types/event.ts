@@ -24,5 +24,5 @@ export interface PopupUpdateEventProps {
 }
 
 export interface PopupJoinPublicEventProps {
-    eventId: number;
+    eventId: string;
 }
