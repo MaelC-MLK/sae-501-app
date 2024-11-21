@@ -98,6 +98,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'creator', orphanRemoval: true)]
     private Collection $event_created;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $tokenExpiry = null;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -290,6 +293,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $eventCreated->setCreator(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTokenExpiry(): ?\DateTimeInterface
+    {
+        return $this->tokenExpiry;
+    }
+
+    public function setTokenExpiry(?\DateTimeInterface $tokenExpiry): static
+    {
+        $this->tokenExpiry = $tokenExpiry;
 
         return $this;
     }
