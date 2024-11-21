@@ -2,11 +2,10 @@ import React from 'react';
 import Image from 'next/image';
 
 import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
 
 import { EventProps } from "@/types/event";
-import Link from 'next/link';
 import { PopupJoinPublicEvent } from '../sections/popupJoinPublicEvent';
+import { PopupShareEvent } from '../sections/popupShareEvent';
 
 
 interface CardEventDetailProps {
@@ -15,6 +14,7 @@ interface CardEventDetailProps {
 
 export function CardEventDetail({ event }: CardEventDetailProps) {
     const defaultImage = "/images/event.jpg";
+    const eventUrl = `http://localhost:8090/event/${event.id}`;
 
     return (
         <div className="w-full flex flex-col md:flex-row justify-between overflow-hidden">
@@ -38,16 +38,7 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
                 </div>
                 <div className="mt-4 flex space-x-3">
                     <PopupJoinPublicEvent eventId={event.id} />
-                    <Link href="/register">
-                        <Button variant={'outline'} size={'lg'} className="p-2 w-auto h-auto">
-                            <Image
-                                src="/images/Share.svg"
-                                alt="share"
-                                width={24}
-                                height={24}
-                            />
-                        </Button>
-                    </Link>
+                    <PopupShareEvent eventUrl={eventUrl} />
                 </div>
             </div>
             <div className="relative w-full md:w-1/3 h-64 md:h-auto">

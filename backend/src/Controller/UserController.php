@@ -49,6 +49,10 @@ class UserController extends AbstractController
         $token = Uuid::v4()->toRfc4122(); // Génération de token (UUID)
         $user->setVerificationToken($token);
 
+        // Définir la date d'expiration du token
+        $expiryDate = new \DateTime('+10 minutes');
+        $user->setTokenExpiry($expiryDate);
+
         // Envoyer l'email de vérification
         try {
             $this->emailService->sendVerificationEmail($email, $token, $eventId);
@@ -109,6 +113,11 @@ class UserController extends AbstractController
             return new JsonResponse(['error' => 'Token invalide ou déjà utilisé.'], 400);
         }
 
+        // Vérifier si le token a expiré
+        if ($user->getTokenExpiry() < new \DateTime()) {
+            return new JsonResponse(['error' => 'Token expiré.'], 400);
+        }
+
         // Rechercher l'événement par ID
         $event = $entityManager->getRepository(Event::class)->find($id);
         if (!$event) {
@@ -126,6 +135,7 @@ class UserController extends AbstractController
 
         // Supprimer le token après l'inscription
         $user->setVerificationToken(null);
+        $user->setTokenExpiry(null);
         $entityManager->flush();
 
         return new JsonResponse(['message' => 'Utilisateur inscrit à l\'événement avec succès.'], 200);

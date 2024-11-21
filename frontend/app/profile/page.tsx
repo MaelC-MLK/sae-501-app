@@ -1,42 +1,45 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { use, useEffect, useState } from "react";
 import Image from "next/image";
-import { getBearerToken } from "@/lib/utils";
-import { getUserFromToken } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PopUpEditProfile } from "@/components/sections/popUpEditProfile";
 import { PopUpDeleteUser } from "@/components/sections/popUpDeleteUser";
+import { PopUpLogout } from "@/components/sections/popUpLogout";
 import { PopUpJoinEventify } from "@/components/sections/popUpJoinEventify";
 import Link from "next/link";
+import { useUser } from "@/contexts/UserProvider";
+import { useRouter } from "next/navigation";
 
 export default function Profile() {
-  const [user, setUser] = useState(null);
+  const userContext = useUser();
+  const [userData, setUserData] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-
+  const router = useRouter();
+  
   useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (!userContext.user) {
+        setError("Timeout: User not found");
+        setLoading(false);
+      }
+    }, 10000); // Timeout de 10 secondes
+
+    if (!userContext.user) {
+      return () => clearTimeout(timeoutId);
+    }
+
     const fetchUserData = async () => {
       try {
-        const token = getBearerToken();
-        if (!token) {
-          throw new Error("No token found");
-        }
-
-        // Décodage du token pour obtenir l'ID utilisateur
-        const userId = getUserFromToken(token);
-        if (!userId) {
-          throw new Error("Invalid user ID");
-        }
-        console.log(userId.sub);
-
         const api = "http://localhost:8080";
-        const url = `${api}/api/users/${userId.sub}`;
+        const url = `${api}/api/users/${userContext.user.id}`;
 
         const response = await fetch(url, {
           method: "GET",
+          credentials: "include",
           headers: {
             "Content-Type": "application/ld+json",
-            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -45,7 +48,7 @@ export default function Profile() {
         }
 
         const data = await response.json();
-        setUser(data);
+        setUserData(data);
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -58,7 +61,7 @@ export default function Profile() {
     };
 
     fetchUserData();
-  }, []); // On ne veut pas que l'ID utilisateur change, donc [] comme dépendance.
+  }, [userContext.user]); 
 
   if (loading) {
     return (
@@ -73,8 +76,9 @@ export default function Profile() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen flex-col gap-4">
         <p className="text-red-500">Erreur : {error}</p>
+        <Button onClick={() => router.push("/")}>Revenir à l'accueil</Button>
       </div>
     );
   }
@@ -86,19 +90,19 @@ export default function Profile() {
           <div className="lg:w-1/3 p-6 bg-gray-50">
             <div className="flex items-center justify-between mb-4">
               <div>
-                {user ? (
+                {userData ? (
                   <PopUpEditProfile
-                    user={user}
-                    onUpdate={(updatedUser) => setUser(updatedUser)}
+                    user={userData}
+                    onUpdate={(updatedUser) => setUserData(updatedUser)}
                   />
                 ) : (
                   <p>Chargement du profil...</p>
                 )}
               </div>
               <div>
-                {user ? (
-                  <PopUpDeleteUser
-                    user={user}
+                {userData ? (
+                  <PopUpLogout
+                    user={userData}
                   />
                 ) : (
                   <p>...</p>
@@ -108,7 +112,7 @@ export default function Profile() {
             <div className="flex flex-col items-center">
               <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white">
                 <Image
-                  src="/images/profile-picture.webp"
+                  src={userData.avatar ? "http://localhost:8080/uploads/users/"+userData?.avatar : '/images/profile-picture.webp'}
                   alt="Profile Picture"
                   layout="fill"
                   objectFit="cover"
@@ -116,10 +120,10 @@ export default function Profile() {
                 />
               </div>
               <h2 className="mt-4 text-2xl font-semibold text-gray-800">
-                {user?.firstName} {user?.lastName}
+                {userData?.firstName} {userData?.lastName}
               </h2>
               <div className="flex items-center justify-between">
-                <p className="text-gray-700">{user?.email}</p>
+                <p className="text-gray-700">{userData?.email}</p>
               </div>
                 <PopUpJoinEventify>
                 </PopUpJoinEventify>
