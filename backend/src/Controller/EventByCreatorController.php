@@ -8,29 +8,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class EventByUserController extends AbstractController
-{ 
-    private $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+class EventByCreatorController extends AbstractController
+{
+    public function __invoke(Request $request, EntityManagerInterface $entityManager, int $creatorId): JsonResponse
     {
-        $this->entityManager = $entityManager;
-    }
-
-    public function __invoke(Request $request, int $userId): JsonResponse
-    {
-        // Utilisez une requête DQL pour récupérer les événements
-        $query = $this->entityManager->createQuery(
-            'SELECT e
-            FROM App\Entity\Event e
-            JOIN e.users u
-            WHERE u.id = :userId AND e.is_draft = :isDraft'
-        )->setParameters([
-            'userId' => $userId,
-            'isDraft' => '0',
-        ]);
-
-        $events = $query->getResult();
+        // Ajoutez la condition is_draft = 0 dans les critères de recherche
+        $criteria = ['creator' => $creatorId, 'is_draft' => '0'];
+        $events = $entityManager->getRepository(Event::class)->findBy($criteria);
 
         $data = array_map(function (Event $event) {
             return [
@@ -43,6 +27,7 @@ class EventByUserController extends AbstractController
                 'isVisible' => $event->isIsVisible(),
                 'image' => $event->getImage(),
                 'location' => $event->getLocation(),
+                'isRecommended' => $event->isRecommended(),
                 'users' => array_map(function ($user) {
                     return [
                         'id' => $user->getId(),
@@ -52,6 +37,7 @@ class EventByUserController extends AbstractController
                         'avatar' => $user->getAvatar(),
                     ];
                 }, $event->getUsers()->toArray()),
+                
             ];
         }, $events);
 
