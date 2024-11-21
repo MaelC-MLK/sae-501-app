@@ -59,3 +59,26 @@ export async function signUserInvite(email: any, eventId: any) {
     }
     return await responseJson;
 }
+
+
+export async function inviteFriend(email: string) {
+    const response = await fetch("http://localhost:8080/api/invite", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/ld+json",
+        },
+        body: JSON.stringify({
+            email: email,
+        }),
+    });
+
+    const responseJson = await response.json();
+
+    if (!response.ok) {
+        if (responseJson.error && responseJson.error.includes("déjà inscrit")) {
+            throw new Error("Cet utilisateur est déjà inscrit.");
+        }
+        throw new Error("Erreur lors de l'envoi de l'invitation. Veuillez réessayer.");
+    }
+    return responseJson;
+}

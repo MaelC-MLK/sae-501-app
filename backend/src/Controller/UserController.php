@@ -62,6 +62,43 @@ class UserController extends AbstractController
         return new JsonResponse(['message' => 'Utilisateur créé et email de vérification envoyé.'], 201);
     }
 
+    #[Route('/api/invite', name: 'invite_friend', methods: ['POST'])]
+    public function inviteFriend(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $friendEmail = $data['email'] ?? null;
+
+        if (!$friendEmail) {
+            return new JsonResponse(['error' => 'L\'adresse e-mail est requise.'], 400);
+        }
+
+        // Vérifier si l'utilisateur existe déjà
+        $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $friendEmail]);
+        if ($existingUser) {
+            return new JsonResponse(['error' => 'Cet utilisateur est déjà inscrit.'], 400);
+        }
+
+        // Générer un token unique pour l'invitation
+        $invitationToken = Uuid::v4()->toRfc4122();
+
+        // Envoyer l'e-mail d'invitation
+        try {
+            $this->emailService->sendInvitationEmail($friendEmail, $invitationToken);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Impossible d\'envoyer l\'invitation : ' . $e->getMessage()], 500);
+        }
+
+        // Créer un utilisateur temporaire pour suivre l'invitation
+        $user = new User();
+        $user->setEmail($friendEmail);
+        $user->setInvitationToken($invitationToken);
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Invitation envoyée avec succès.'], 201);
+    }
+
     #[Route('/api/verify-email/{token}/{id}', name: 'verify_email', methods: ['GET'])]
     public function verifyEmail(string $token, int $id, EntityManagerInterface $entityManager): JsonResponse
     {

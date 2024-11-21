@@ -58,14 +58,11 @@ export function PopUpEditProfile({ user, onUpdate }) {
         body: JSON.stringify(updatedUser),
       });
 
-      console.log("response", response);
-
       if (!response.ok) {
         throw new Error(`Erreur ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
-      console.log("Mise à jour réussie :", data);
       if (onUpdate) {
         onUpdate(data); // Appelle le callback pour mettre à jour le parent
       }

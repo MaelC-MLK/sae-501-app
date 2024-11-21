@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { getBearerToken } from "@/lib/utils";
@@ -7,6 +6,7 @@ import { getUserFromToken } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PopUpEditProfile } from "@/components/sections/popUpEditProfile";
 import { PopUpDeleteUser } from "@/components/sections/popUpDeleteUser";
+import { PopUpJoinEventify } from "@/components/sections/popUpJoinEventify";
 import Link from "next/link";
 
 export default function Profile() {
@@ -121,6 +121,8 @@ export default function Profile() {
               <div className="flex items-center justify-between">
                 <p className="text-gray-700">{user?.email}</p>
               </div>
+                <PopUpJoinEventify>
+                </PopUpJoinEventify>
             </div>
           </div>
 
