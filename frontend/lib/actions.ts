@@ -18,6 +18,25 @@ export async function createEvent(eventData: any) {
     return await response.json();
 }
 
+export async function UpdateEvent(eventData: any, eventId: string) {
+    const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
+        method: 'PATCH',
+        
+        headers: {
+            'Content-Type': 'application/merge-patch+json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(eventData),
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to update event');
+    }
+
+    return await response.json();
+}
+
 export async function deleteEvent(eventId: string) {
     const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
         method: 'DELETE',

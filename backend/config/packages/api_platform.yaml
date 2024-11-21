@@ -11,3 +11,7 @@ api_platform:
     html: ['text/html']
     multipart: ['multipart/form-data']
 
+  patch_formats:
+    json: ['application/merge-patch+json']
+    multipart: ['multipart/form-data']
+

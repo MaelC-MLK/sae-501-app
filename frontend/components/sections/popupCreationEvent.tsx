@@ -1,90 +1,100 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-    DialogClose,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
-import { CalendarIcon } from "@radix-ui/react-icons"
-import { ClockIcon } from "@radix-ui/react-icons"
-import { CrossCircledIcon } from "@radix-ui/react-icons"
+import { CalendarIcon } from "@radix-ui/react-icons";
+import { ClockIcon } from "@radix-ui/react-icons";
+import { CrossCircledIcon } from "@radix-ui/react-icons";
 
-import { addDays, format, set } from "date-fns"
-import { DateRange } from "react-day-picker"
+import { addDays, format, set } from "date-fns";
+import { DateRange } from "react-day-picker";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { z } from "zod"
-import { cn } from "@/lib/utils"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { z } from "zod";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
 import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Textarea } from "@/components/ui/textarea"
-import { Separator } from "@/components/ui/separator"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import UserSearchSkeleton from "@/components/skeletons/skeletons"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import UserSearchSkeleton from "@/components/skeletons/skeletons";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createEvent } from "@/lib/actions";
 import { fetchUserBy } from "@/lib/data";
 
 import { PopupCreationEventProps } from "@/types/event";
-import { fr } from 'date-fns/locale';
+import { fr } from "date-fns/locale";
 import ImageUpload from "@/components/sections/dropZoneEventPopup";
+
 import { useDebouncedCallback } from 'use-debounce';
 import { useUser } from "@/contexts/UserProvider";
 
+
 const FormSchema = z.object({
-    title: z.string().nonempty("Title is required"),
-    description: z.string().optional(),
-    location: z.string().optional(),
-    date_start: z.string(),
-    date_end: z.string(),
-    time_start: z.string().nonempty("Start time is required"),
-    time_end: z.string().nonempty("End time is required"),
-    users: z.array(z.object({
-        id: z.number(),
-        firstName: z.string(),
-        lastName: z.string(),
-        email: z.string(),
-        avatar: z.string().optional(),
-    })),
-    isVisible: z.boolean(),
-    is_draft: z.boolean(),
+  title: z.string().nonempty("Title is required"),
+  description: z.string().optional(),
+  location: z.string().optional(),
+  date_start: z.string(),
+  date_end: z.string(),
+  time_start: z.string().nonempty("Start time is required"),
+  time_end: z.string().nonempty("End time is required"),
+  users: z.array(
+    z.object({
+      id: z.number(),
+      firstName: z.string(),
+      lastName: z.string(),
+      email: z.string(),
+      avatar: z.string().optional(),
+    })
+  ),
+  isVisible: z.boolean(),
+  is_draft: z.boolean(),
 });
 
-export default function PopupCreationEvent({ className }: PopupCreationEventProps) {
-    const [date, setDate] = React.useState<DateRange | undefined>({
-        from: new Date(),
-        to: undefined,
+export default function PopupCreationEvent({
+  className,
+}: PopupCreationEventProps) {
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: new Date(),
+    to: undefined,
     });
     const [startTime, setStartTime] = useState<string>("");
     const [endTime, setEndTime] = useState<string>("");
@@ -377,328 +387,377 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
                                         </Label>
                                         <Popover>
                                             <PopoverTrigger asChild>
-                                                <Button
-                                                    id="date"
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "justify-start text-left font-normal capitalize",
-                                                        !date && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                                    {date?.from ? (
-                                                        date.to && date.from.getTime() !== date.to.getTime() ? (
-                                                            `${format(date.from, "dd MMMM yyyy", { locale: fr })} - ${format(date.to, "dd MMMM yyyy", { locale: fr })}`
-                                                        ) : (
-                                                            format(date.from, "dd MMMM yyyy", { locale: fr })
-                                                        )
-                                                    ) : (
-                                                        <span>Choisissez une date</span>
-                                                    )}
-                                                </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0" align="start">
-                                                <Calendar
-                                                    initialFocus
-                                                    mode="range"
-                                                    defaultMonth={date?.from}
-                                                    selected={date}
-                                                    onSelect={handleSelect}
-                                                    numberOfMonths={2}
-                                                    locale={fr}
-                                                    weekStartsOn={1}
-                                                    className="capitalize"
-                                                />
-                                            </PopoverContent>
-                                        </Popover>
-                                    </div>
+                                               
+                        <Button
+                          id="date"
+                          variant={"outline"}
+                          className={cn(
+                            "justify-start text-left font-normal capitalize",
+                            !date && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {date?.from ? (
+                            date.to &&
+                            date.from.getTime() !== date.to.getTime() ? (
+                              `${format(date.from, "dd MMMM yyyy", {
+                                locale: fr,
+                              })} - ${format(date.to, "dd MMMM yyyy", {
+                                locale: fr,
+                              })}`
+                            ) : (
+                              format(date.from, "dd MMMM yyyy", { locale: fr })
+                            )
+                          ) : (
+                            <span>Choisissez une date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          initialFocus
+                          mode="range"
+                          defaultMonth={date?.from}
+                          selected={date}
+                          onSelect={handleSelect}
+                          numberOfMonths={2}
+                          locale={fr}
+                          weekStartsOn={1}
+                          className="capitalize"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
 
-                                    <div className="flex gap-3 items-start">
-                                        <FormField
-                                            control={form.control}
-                                            name="time_start"
-                                            render={({ field }) => (
-                                                <FormItem className="flex flex-col">
-                                                    <FormLabel>Heure de début</FormLabel>
-                                                    <FormControl>
-                                                        <Select
-                                                            value={startTime}
-                                                            onValueChange={(value) => {
-                                                                setStartTime(value);
-                                                                field.onChange(value);
-                                                            }}
-                                                        >
-                                                            <SelectTrigger className="font-normal focus:ring-0 w-[120px]">
-                                                                <ClockIcon className="h-4 w-4" />
-                                                                <SelectValue />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <ScrollArea className="h-[15rem]">
-                                                                    {Array.from({ length: 96 }).map((_, i) => {
-                                                                        const hour = Math.floor(i / 4)
-                                                                            .toString()
-                                                                            .padStart(2, "0");
-                                                                        const minute = ((i % 4) * 15)
-                                                                            .toString()
-                                                                            .padStart(2, "0");
-                                                                        return (
-                                                                            <SelectItem key={i} value={`${hour}:${minute}`}>
-                                                                                {hour}:{minute}
-                                                                            </SelectItem>
-                                                                        );
-                                                                    })}
-                                                                </ScrollArea>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
+                  <div className="flex gap-3 items-start">
+                    <FormField
+                      control={form.control}
+                      name="time_start"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Heure de début</FormLabel>
+                          <FormControl>
+                            <Select
+                              value={startTime}
+                              onValueChange={(value) => {
+                                setStartTime(value);
+                                field.onChange(value);
+                              }}
+                            >
+                              <SelectTrigger className="font-normal focus:ring-0 w-[120px]">
+                                <ClockIcon className="h-4 w-4" />
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <ScrollArea className="h-[15rem]">
+                                  {Array.from({ length: 96 }).map((_, i) => {
+                                    const hour = Math.floor(i / 4)
+                                      .toString()
+                                      .padStart(2, "0");
+                                    const minute = ((i % 4) * 15)
+                                      .toString()
+                                      .padStart(2, "0");
+                                    return (
+                                      <SelectItem
+                                        key={i}
+                                        value={`${hour}:${minute}`}
+                                      >
+                                        {hour}:{minute}
+                                      </SelectItem>
+                                    );
+                                  })}
+                                </ScrollArea>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                                        <span className="mt-6">à</span>
+                    <span className="mt-6">à</span>
 
-                                        <FormField
-                                            control={form.control}
-                                            name="time_end"
-                                            render={({ field }) => (
-                                                <FormItem className="flex flex-col">
-                                                    <FormLabel>Heure de fin</FormLabel>
-                                                    <FormControl>
-                                                        <Select
-                                                            value={endTime}
-                                                            onValueChange={(value) => {
-                                                                setEndTime(value);
-                                                                field.onChange(value);
-                                                            }}
-                                                        >
-                                                            <SelectTrigger className="font-normal focus:ring-0 w-[120px]">
-                                                                <ClockIcon className="h-4 w-4" />
-                                                                <SelectValue />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <ScrollArea className="h-[15rem]">
-                                                                    {Array.from({ length: 96 }).map((_, i) => {
-                                                                        const hour = Math.floor(i / 4)
-                                                                            .toString()
-                                                                            .padStart(2, "0");
-                                                                        const minute = ((i % 4) * 15)
-                                                                            .toString()
-                                                                            .padStart(2, "0");
-                                                                        return (
-                                                                            <SelectItem key={i} value={`${hour}:${minute}`}>
-                                                                                {hour}:{minute}
-                                                                            </SelectItem>
-                                                                        );
-                                                                    })}
-                                                                </ScrollArea>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="flex flex-col mt-4">
-                                    <Label htmlFor="location" className="mb-2">
-                                        Localisation
-                                    </Label>
-                                    <FormField
-                                        control={form.control}
-                                        name="location"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormControl>
-                                                    <Input id="location" placeholder="Localisation de l'événement" autoComplete="off" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
+                    <FormField
+                      control={form.control}
+                      name="time_end"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Heure de fin</FormLabel>
+                          <FormControl>
+                            <Select
+                              value={endTime}
+                              onValueChange={(value) => {
+                                setEndTime(value);
+                                field.onChange(value);
+                              }}
+                            >
+                              <SelectTrigger className="font-normal focus:ring-0 w-[120px]">
+                                <ClockIcon className="h-4 w-4" />
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <ScrollArea className="h-[15rem]">
+                                  {Array.from({ length: 96 }).map((_, i) => {
+                                    const hour = Math.floor(i / 4)
+                                      .toString()
+                                      .padStart(2, "0");
+                                    const minute = ((i % 4) * 15)
+                                      .toString()
+                                      .padStart(2, "0");
+                                    return (
+                                      <SelectItem
+                                        key={i}
+                                        value={`${hour}:${minute}`}
+                                      >
+                                        {hour}:{minute}
+                                      </SelectItem>
+                                    );
+                                  })}
+                                </ScrollArea>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col mt-4">
+                  <Label htmlFor="location" className="mb-2">
+                    Localisation
+                  </Label>
+                  <FormField
+                    control={form.control}
+                    name="location"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            id="location"
+                            placeholder="Localisation de l'événement"
+                            autoComplete="off"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-                                <div className="flex flex-col mt-4">
-                                    <Label htmlFor="description" className="mb-2">
-                                        Description
-                                    </Label>
-                                    <FormField
-                                        control={form.control}
-                                        name="description"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormControl>
-                                                    <Textarea id="description" autoComplete="off" placeholder="Description de l'événement" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
+                <div className="flex flex-col mt-4">
+                  <Label htmlFor="description" className="mb-2">
+                    Description
+                  </Label>
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Textarea
+                            id="description"
+                            autoComplete="off"
+                            placeholder="Description de l'événement"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
+                <div className="flex flex-col mt-4 sm:absolute sm:top-2 sm:right-14">
+                  <Label htmlFor="visibility" className="mb-2 sm:hidden">
+                    Visibilité
+                  </Label>
+                  <Tabs
+                    defaultValue={isPrivate ? "private" : "public"}
+                    onValueChange={(value) => setIsPrivate(value === "private")}
+                  >
+                    <TabsList>
+                      <TabsTrigger value="private">Private</TabsTrigger>
+                      <TabsTrigger value="public">Public</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                </div>
 
-                                <div className="flex flex-col mt-4 sm:absolute sm:top-2 sm:right-14">
-                                    <Label htmlFor="visibility" className="mb-2 sm:hidden">
-                                        Visibilité
-                                    </Label>
-                                    <Tabs defaultValue={isPrivate ? "private" : "public"} onValueChange={(value) => setIsPrivate(value === "private")}>
-                                        <TabsList>
-                                            <TabsTrigger value="private">Private</TabsTrigger>
-                                            <TabsTrigger value="public">Public</TabsTrigger>
-                                        </TabsList>
-                                    </Tabs>
-                                </div>
+                <div className="flex flex-col mt-4">
+                  <Label htmlFor="image" className="mb-2">
+                    Ajouter une image
+                  </Label>
+                  <ImageUpload
+                    name="image"
+                    onFileSelect={(file) => setImageFile(file)}
+                  />
+                </div>
 
-                                <div className="flex flex-col mt-4">
-    <Label htmlFor="image" className="mb-2">
-        Ajouter une image
-    </Label>
-    <ImageUpload name="image" onFileSelect={(file) => setImageFile(file)} />
-</div>
+                <Separator className="my-4" />
 
-                                <Separator className="my-4" />
-
-                                <div className="flex flex-col mt-4">
-                                    <Label htmlFor="participants" className="mb-2">
-                                        Ajouter des participants
-                                    </Label>
-                                    <div className="relative">
-                                        <Input
-                                            id="participants"
-                                            placeholder="Rechercher des participants"
-                                            value={searchTerm}
-                                            onChange={handleInputChange}
-                                            className=""
-                                            ref={searchInputRef}
-                                            autoComplete="off"
-                                        />
-                                        {isPopoverOpen && (
-                                            <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 bottom-12 ">
-                                                <ScrollArea className="h-fit max-h-60 overflow-y-auto">
-                                                    {isLoading ? (
-                                                        <UserSearchSkeleton />
-                                                    ) : (
-                                                        searchResults.length > 0 ? (
-                                                            searchResults.map((result) => (
-                                                                <div
-                                                                    key={result.id}
-                                                                    className="flex items-center p-2 cursor-pointer hover:bg-gray-100"
-                                                                    onClick={(event) => handleAddParticipant(result, event)}
-                                                                >
-                                                                    <Avatar className="mr-2">
-                                                                        <AvatarImage src={result.avatar} alt={result.firstName} />
-                                                                        <AvatarFallback>{result.firstName.charAt(0)}</AvatarFallback>
-                                                                    </Avatar>
-                                                                    <span className="capitalize">{result.firstName} {result.lastName}</span>
-                                                                </div>
-                                                            ))
-                                                        ) : (
-                                                            <div className="p-4 text-center text-gray-500">
-                                                                Aucun résultats.
-                                                            </div>
-                                                        )
-                                                    )}
-                                                </ScrollArea>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-wrap mt-4 gap-2 mb-2">
-                                    {participants.map((participant) => (
-                                        <div key={participant.id} className="relative">
-                                            <Avatar className="">
-                                                <AvatarImage src={participant.avatar} alt={participant.firstName} />
-                                                <AvatarFallback>{participant.firstName.charAt(0)}</AvatarFallback>
-                                            </Avatar>
-                                            <CrossCircledIcon
-                                                className="absolute -top-0.5 -right-0.5 h-4 w-4 text-black cursor-pointer bg-white rounded-full"
-                                                onClick={() => handleRemoveParticipant(participant.id)}
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
+                <div className="flex flex-col mt-4">
+                  <Label htmlFor="participants" className="mb-2">
+                    Ajouter des participants
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="participants"
+                      placeholder="Rechercher des participants"
+                      value={searchTerm}
+                      onChange={handleInputChange}
+                      className=""
+                      ref={searchInputRef}
+                      autoComplete="off"
+                    />
+                    {isPopoverOpen && (
+                      <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 bottom-12 ">
+                        <ScrollArea className="h-fit max-h-60 overflow-y-auto">
+                          {isLoading ? (
+                            <UserSearchSkeleton />
+                          ) : searchResults.length > 0 ? (
+                            searchResults.map((result) => (
+                              <div
+                                key={result.id}
+                                className="flex items-center p-2 cursor-pointer hover:bg-gray-100"
+                                onClick={(event) =>
+                                  handleAddParticipant(result, event)
+                                }
+                              >
+                                <Avatar className="mr-2">
+                                  <AvatarImage
+                                    src={result.avatar}
+                                    alt={result.firstName}
+                                  />
+                                  <AvatarFallback>
+                                    {result.firstName.charAt(0)}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="capitalize">
+                                  {result.firstName} {result.lastName}
+                                </span>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="p-4 text-center text-gray-500">
+                              Aucun résultats.
                             </div>
-                            <DialogFooter className="gap-2 md:gap-0 mt-6 sm:mt-0">
-                                <DialogClose asChild>
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            if (areAllFieldsFilled()) {
-                                                setIsConfirmDialogOpen(true);
-                                            } else {
-                                                setIsMainDialogOpen(false); // Fermer le popup de création d'événement
-                                                form.reset({
-                                                    title: "",
-                                                    description: "",
-                                                    date_start: new Date().toISOString().replace("T", " ").substring(0, 19),
-                                                    date_end: new Date().toISOString().replace("T", " ").substring(0, 19),
-                                                    time_start: startTime,
-                                                    time_end: endTime,
-                                                    users: [],
-                                                    isVisible: false,
-                                                    is_draft: false,
-                                                });
-                                                setIsPrivate(true);
-                                            }
+                          )}
+                        </ScrollArea>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-                                        }}
-                                    >
-                                        Annuler
-                                    </Button>
-                                </DialogClose>
-                                <Button type="submit">Créer</Button>
-                            </DialogFooter>
-                        </form>
-                    </Form>
-                </DialogContent>
-            </Dialog>
+                <div className="flex flex-wrap mt-4 gap-2 mb-2">
+                  {participants.map((participant) => (
+                    <div key={participant.id} className="relative">
+                      <Avatar className="">
+                        <AvatarImage
+                          src={participant.avatar}
+                          alt={participant.firstName}
+                        />
+                        <AvatarFallback>
+                          {participant.firstName.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <CrossCircledIcon
+                        className="absolute -top-0.5 -right-0.5 h-4 w-4 text-black cursor-pointer bg-white rounded-full"
+                        onClick={() => handleRemoveParticipant(participant.id)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <DialogFooter className="gap-2 md:gap-0 mt-6 sm:mt-0">
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (areAllFieldsFilled()) {
+                        setIsConfirmDialogOpen(true);
+                      } else {
+                        setIsMainDialogOpen(false); // Fermer le popup de création d'événement
+                        form.reset({
+                          title: "",
+                          description: "",
+                          date_start: new Date()
+                            .toISOString()
+                            .replace("T", " ")
+                            .substring(0, 19),
+                          date_end: new Date()
+                            .toISOString()
+                            .replace("T", " ")
+                            .substring(0, 19),
+                          time_start: startTime,
+                          time_end: endTime,
+                          users: [],
+                          isVisible: false,
+                          is_draft: false,
+                        });
+                        setIsPrivate(true);
+                      }
+                    }}
+                  >
+                    Annuler
+                  </Button>
+                </DialogClose>
+                <Button type="submit">Créer</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
 
-            <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Enregistrer en brouillon ?</DialogTitle>
-                        <DialogDescription>
-                            Voulez-vous enregistrer cet événement en tant que brouillon ?
-                        </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                        <Button
-                            variant="outline"
-                            onClick={() => {
-                                setIsConfirmDialogOpen(false);
-                                setIsMainDialogOpen(false); // Fermer le popup de création d'événement
-                                form.reset({
-                                    title: "",
-                                    description: "",
-                                    date_start: new Date().toISOString().replace("T", " ").substring(0, 19),
-                                    date_end: new Date().toISOString().replace("T", " ").substring(0, 19),
-                                    time_start: startTime,
-                                    time_end: endTime,
-                                    users: [],
-                                    isVisible: false,
-                                    is_draft: false,
-                                });
-                                setIsPrivate(true);
-                            }}
-                        >
-                            Non
-                        </Button>
-                        <Button
-                            onClick={async () => {
-                                const data = form.getValues();
-                                await saveDraft(data);
-
-                            }}
-                        >
-                            Oui
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        </>
-    )
+      <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enregistrer en brouillon ?</DialogTitle>
+            <DialogDescription>
+              Voulez-vous enregistrer cet événement en tant que brouillon ?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsConfirmDialogOpen(false);
+                setIsMainDialogOpen(false); // Fermer le popup de création d'événement
+                form.reset({
+                  title: "",
+                  description: "",
+                  date_start: new Date()
+                    .toISOString()
+                    .replace("T", " ")
+                    .substring(0, 19),
+                  date_end: new Date()
+                    .toISOString()
+                    .replace("T", " ")
+                    .substring(0, 19),
+                  time_start: startTime,
+                  time_end: endTime,
+                  users: [],
+                  isVisible: false,
+                  is_draft: false,
+                });
+                setIsPrivate(true);
+              }}
+            >
+              Non
+            </Button>
+            <Button
+              onClick={async () => {
+                const data = form.getValues();
+                await saveDraft(data);
+              }}
+            >
+              Oui
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }

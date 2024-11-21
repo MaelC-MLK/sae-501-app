@@ -21,6 +21,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use App\Controller\EventByUserController;
+use App\Controller\EventByCreatorController;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[Vich\Uploadable]
@@ -34,27 +35,32 @@ use App\Controller\EventByUserController;
             description: 'Récupère tous les événements publics',
             controller: EventController::class,
         ),
-        // new Post(validationContext: ['groups' => ['Default', 'event:create']]),
         new Post(
             validationContext: ['groups' => ['Default', 'event:create']],
             outputFormats: ['jsonld' => ['application/ld+json']],
-            inputFormats: ['multipart' => ['multipart/form-data']]
+            inputFormats: ['multipart' => ['multipart/form-data']],
+            denormalizationContext: ['groups' => ['event:write']],
         ),
-         new GetCollection(
+        new GetCollection(
             uriTemplate: 'events/user/{userId}',
             normalizationContext: ['groups' => ['event:read']],
             description: 'Récupère tous les événements liés à un utilisateur spécifique',
             controller: EventByUserController::class,
             read: false,
         ),
-
+        new GetCollection(
+            uriTemplate: 'events/creator/{creatorId}',
+            normalizationContext: ['groups' => ['event:read']],
+            description: 'Récupère tous les événements créés par un utilisateur spécifique',
+            controller: EventByCreatorController::class,
+            read: false,
+        ),
         new Get(),
         new Put(),
         new Patch(),
         new Delete(),
     ]
 )]
-
 class Event
 {
     #[ORM\Id]
@@ -96,7 +102,7 @@ class Event
     private ?File $imageFile = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    // #[Groups(['event:read', 'event:write'])]
+    #[Groups(['event:read', 'event:write'])]
     private ?string $image = null;
 
     #[ORM\Column(nullable: true)]
@@ -104,7 +110,6 @@ class Event
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
-
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['event:read', 'event:write'])]
@@ -209,7 +214,6 @@ class Event
     
         return $this;
     }
-    
 
     /**
      * @return Collection<int, User>
@@ -234,7 +238,6 @@ class Event
 
         return $this;
     }
-
 
     public function getImage(): ?string
     {
@@ -304,7 +307,6 @@ class Event
         return $this;
     }
 
-  
     public function isRecommended(): ?bool
     {
         return $this->isRecommended;
@@ -332,6 +334,4 @@ class Event
 
         return $this;
     }
-
-
 }
