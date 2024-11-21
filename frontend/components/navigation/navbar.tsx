@@ -26,7 +26,18 @@ const Navbar = () => {
                 ></Image>
                 <span className={`${k2d.className}`}>Eventify</span>
             </Link>
-                <div className="flex flex-row gap-8">
+            {/* <div className="flex flex-row gap-2">
+                {user && <p className='text-primary'>Hello, {user.username}</p>}
+                {navItems.map((item) => (
+                    <Link key={item.path} href={item.path}>
+                        <Button variant={item.variant}>
+                            {item.name}
+                        </Button>
+                    </Link>
+                ))}
+            </div> */}
+
+                <div className="flex flex-row gap-4">
                     {user ? (
                         <>
                             <div className='flex items-center gap-4'>

@@ -1,8 +1,9 @@
 'use client'
 
 import * as React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { CardEvent } from "@/components/cards/cardEvent"
+import { SkeletonCard } from "@/components/skeletons/skeletons"
 import { EventProps } from "@/types/event";
 import {
     Pagination,
@@ -20,6 +21,7 @@ interface PaginatedEventsProps {
 
 export function PaginatedEvents({ events }: PaginatedEventsProps) {
     const [currentPage, setCurrentPage] = useState(1)
+    const [loading, setLoading] = useState(true)
     const eventsPerPage = 6
 
     const totalPages = Math.ceil(events.length / eventsPerPage)
@@ -28,6 +30,12 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
         (currentPage - 1) * eventsPerPage,
         currentPage * eventsPerPage
     )
+
+    useEffect(() => {
+        if (events.length > 0) {
+            setLoading(false)
+        }
+    }, [events])
 
     const handlePageClick = (page: number) => {
         if (page >= 1 && page <= totalPages) {
@@ -45,9 +53,15 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
             </h2>
 
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
-                {currentEvents.map((event, index) => (
-                    <CardEvent key={index} event={event} />
-                ))}
+                {loading ? (
+                    Array.from({ length: eventsPerPage }).map((_, index) => (
+                        <SkeletonCard key={index} />
+                    ))
+                ) : (
+                    currentEvents.map((event, index) => (
+                        <CardEvent key={index} event={event} />
+                    ))
+                )}
             </div>
 
             <Pagination className="mt-4">
