@@ -33,7 +33,7 @@ const Navbar = () => {
             {user && (
                     <Link href="/profile" className="w-12 h-12 relative rounded-full overflow-hidden">
                         <Image 
-                            src={`http://localhost:8080/uploads/users/${user.avatar}`} 
+                            src={user.avatar ? `http://localhost:8080/uploads/users/${user.avatar}` : '/images/profile-picture.webp'} 
                             alt="Profile" 
                             layout="fill" 
                             className="object-cover" 

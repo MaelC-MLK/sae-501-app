@@ -111,7 +111,7 @@ export default function Profile() {
             <div className="flex flex-col items-center">
               <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white">
                 <Image
-                  src={userData ? "http://localhost:8080/uploads/users/"+userData?.avatar : "/images/profile-picture.webp"}
+                  src={userData.avatar ? "http://localhost:8080/uploads/users/"+userData?.avatar : '/images/profile-picture.webp'}
                   alt="Profile Picture"
                   layout="fill"
                   objectFit="cover"
