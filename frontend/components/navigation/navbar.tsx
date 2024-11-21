@@ -42,7 +42,7 @@ const Navbar = () => {
                 ))}
             </div> */}
 
-                <div className="flex flex-row gap-4">
+                <div className="flex flex-row gap-8">
                     {user ? (
                         <>
                             <div className='flex items-center gap-4'>
@@ -56,7 +56,7 @@ const Navbar = () => {
                                 </Link>
 
                             { /*{user.email} */
-                                <Link href="/profile" className='flex items-center gap-4 group'>
+                                <Link href="/profile" className='flex items-center gap-2 group'>
                                     <Image
                                         src="/images/profile-picture.webp"
                                         alt='Profile Picture'
@@ -66,7 +66,7 @@ const Navbar = () => {
                                         className='rounded-full group-hover:ring-2 group-hover:ring-primary transition-all shrink-0 w-8 h-8'
                                     >
                                     </Image>
-                                    <p className='text-foreground capitalize truncate max-w-64 hidden sm:block'>{user.username}</p>
+                                    <p className='text-foreground capitalize truncate max-w-64 hidden sm:block'>Tom Boutin</p>
                                 </Link>
                             }
 

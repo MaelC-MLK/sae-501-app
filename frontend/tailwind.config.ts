@@ -57,7 +57,16 @@ const config: Config = {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+		spacing: {
+			'128': '32rem',
+			'144': '36rem'
+		},
+		blur: {
+			'4xl': '80px',
+			'5xl': '100px',
+			'6xl': '120px'
+		}
   	}
   },
   plugins: [require("tailwindcss-animate")],
