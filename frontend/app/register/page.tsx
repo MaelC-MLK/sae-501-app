@@ -9,6 +9,8 @@ import { authenticate } from "@/lib/utils"
 import Link from 'next/link';
 import { useUser } from '@/contexts/UserProvider';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/contexts/UserProvider';
+import { useRouter } from 'next/navigation';
 
 
 export default function Page() {
