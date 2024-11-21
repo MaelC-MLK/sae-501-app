@@ -55,6 +55,8 @@ class EventCrudController extends AbstractCrudController
             $entityInstance->setIsRecommended(false);
         }
 
+        $entityInstance->setCreator($this->getUser());
+
         parent::persistEntity($entityManager, $entityInstance);
     }
 
@@ -69,6 +71,8 @@ class EventCrudController extends AbstractCrudController
         if(!$entityInstance->isRecommended()){
             $entityInstance->setIsRecommended(false);
         }
+        
+        $entityInstance->setCreator($this->getUser());
 
         parent::updateEntity($entityManager, $entityInstance);
     }
