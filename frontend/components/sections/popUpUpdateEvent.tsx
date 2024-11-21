@@ -53,7 +53,7 @@ import { Separator } from "@/components/ui/separator";
 import { fetchUserBy } from "@/lib/data";
 import { PopupUpdateEventProps } from "@/types/event";
 import { fr } from "date-fns/locale";
-import { getUserIdFromToken } from "@/lib/utils";
+import { useUser } from "@/contexts/UserProvider";
 import { useDebouncedCallback } from "use-debounce";
 
 const FormSchema = z.object({
@@ -109,6 +109,8 @@ export default function PopupUpdateEvent({
   );
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isMainDialogOpen, setIsMainDialogOpen] = useState<boolean>(false);
+  const userContext = useUser();
+
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -226,6 +228,10 @@ export default function PopupUpdateEvent({
   };
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    if (userContext.user === null) {
+      console.error("User not found");
+      return;
+    }
     const formData = {
       title: data.title,
       description: data.description || "",
@@ -239,7 +245,7 @@ export default function PopupUpdateEvent({
       ).toString(),
       isVisible: isPrivate ? "false" : "true",
       location: data.location || "",
-      creator: `/api/users/${getUserIdFromToken()}`,
+      creator: `/api/users/${userContext.user.id}`,
       users: participants.map((participant) => `/api/users/${participant.id}`),
     };  
   

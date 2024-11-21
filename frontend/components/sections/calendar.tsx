@@ -6,9 +6,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import frLocale from "@fullcalendar/core/locales/fr";
 import "@/app/globals.css";
-
 import { fetchUserEvents, fetchEventsByCreator } from "@/lib/data";
-import { getUserIdFromToken } from "@/lib/utils";
 import PopupDeleteEvent from "@/components/sections/popupDeleteEvent";
 import PopupUpdateEvent from "@/components/sections/popUpUpdateEvent";
 import { deleteEvent } from "@/lib/actions"; // Importer la fonction deleteEvent
@@ -34,6 +32,7 @@ export default function Calendar() {
   const userContext = useUser();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const userId = userContext.user ? userContext.user.id : null;
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -41,7 +40,7 @@ export default function Calendar() {
         router.push("/login");
         setLoading(false);
       }
-    }, 10000); // Timeout de 10 secondes
+    }, 10); // Timeout de 10 secondes
 
     if (!userContext.user) {
       return () => clearTimeout(timeoutId);
@@ -54,27 +53,25 @@ export default function Calendar() {
   const loadEvents = async () => {
     if (!userContext.user) return;
     const userId = userContext.user.id
-    if (userId) {
-      try {
-        const userEvents = await fetchUserEvents(userId);
-        const creatorEvents = await fetchEventsByCreator(userId);
-        const combinedEvents = [...userEvents, ...creatorEvents].map(event => ({
-          ...event,
-          backgroundColor: event.creator_id == userId ? '#FFD700' : '#ADD8E6',
-          borderColor: event.creator_id == userId ? '#FFD700' : '#ADD8E6',
-        }));
-        setEvents(combinedEvents);
-
-    
-    }
-      } catch (error) {
-        console.error(
-          "Erreur lors de la récupération des événements de l'utilisateur :",
-          error
-        );
+      if (userId) {
+        try {
+          const userEvents = await fetchUserEvents(userId);
+          const creatorEvents = await fetchEventsByCreator(userId);
+          const combinedEvents = [...userEvents, ...creatorEvents].map(event => ({
+            ...event,
+            backgroundColor: event.creator_id == userId ? '#FFD700' : '#ADD8E6',
+            borderColor: event.creator_id == userId ? '#FFD700' : '#ADD8E6',
+          }));
+          setEvents(combinedEvents);
+        } catch (error) {
+          console.error(
+            "Erreur lors de la récupération des événements de l'utilisateur :",
+            error
+          );
+        }
       }
     }
-  };
+
 
   const handleWindowResize = () => {
     const { innerWidth } = window;
