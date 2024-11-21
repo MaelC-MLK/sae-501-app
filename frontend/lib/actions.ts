@@ -61,9 +61,9 @@ export async function signUserInvite(email: any, eventId: any) {
 export async function inviteFriend(email: string) {
     const response = await fetch("http://localhost:8080/api/invite", {
         method: "POST",
+        credentials: 'include',
         headers: {
             "Content-Type": "application/ld+json",
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
             email: email,
