@@ -23,15 +23,11 @@ const response = await fetch(`http://localhost:8080/api/events/user/${userId}`, 
 
 
 export async function fetchUserBy(value: string) {
-    const token = getBearerToken();
-    if (!token) {
-        throw new Error('JWT Token not found');
-    }
 
     const response = await fetch(`http://localhost:8080/api/users?query=${value}`, {
         method: 'GET',
+        credentials: 'include',
         headers: {
-            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
         },
     });

@@ -59,8 +59,8 @@ import { fetchUserBy } from "@/lib/data";
 import { PopupCreationEventProps } from "@/types/event";
 import { fr } from 'date-fns/locale';
 import ImageUpload from "@/components/sections/dropZoneEventPopup";
-import { getUserIdFromToken } from "@/lib/utils";
 import { useDebouncedCallback } from 'use-debounce';
+import { useUser } from "@/contexts/UserProvider";
 
 const FormSchema = z.object({
     title: z.string().nonempty("Title is required"),
@@ -98,6 +98,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
     const searchInputRef = useRef<HTMLInputElement>(null);
     const [isMainDialogOpen, setIsMainDialogOpen] = useState<boolean>(false);
     const [imageFile, setImageFile] = useState<File | null>(null);
+    const userContext = useUser();
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -260,6 +261,10 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
     };
 
     const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+        if (userContext.user === null) {
+            console.error("User not found");
+            return;
+        }
         const formData = new FormData();
         formData.append('title', data.title);
         formData.append('description', data.description || "");
@@ -269,7 +274,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         formData.append('isVisible', isPrivate ? "false" : "true");
         formData.append('is_draft', "false");
         formData.append('location', data.location || "");
-        formData.append('creator', `/api/users/${getUserIdFromToken()}`);
+        formData.append('creator', `/api/users/${userContext.user.id}`);
 
         
         if (imageFile) {
@@ -295,6 +300,10 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
     };
     
     const saveDraft = async (data: z.infer<typeof FormSchema>) => {
+        if (userContext.user === null) {
+            console.error("User not found");
+            return;
+        }
         const formData = new FormData();
         formData.append('title', data.title);
         formData.append('description', data.description || "");
@@ -304,7 +313,7 @@ export default function PopupCreationEvent({ className }: PopupCreationEventProp
         formData.append('isVisible', "false");
         formData.append('is_draft', "true");
         formData.append('location', data.location || "");
-        formData.append('creator', `/api/users/${getUserIdFromToken()}`);
+        formData.append('creator', `/api/users/${userContext.user.id}`);
 
         
         if (imageFile) {
