@@ -34,4 +34,28 @@ class EmailService
 
         $this->mailer->send($email);
     }
+
+    public function sendInvitationEmail(string $recipientEmail): void
+    {
+        // URL statique pour l'inscription
+        $invitationLink = 'http://localhost:8090/register';
+    
+        // Rendre le template Twig
+        $htmlContent = $this->twig->render('emails/invitation_email.html.twig', [
+            'invitation_link' => $invitationLink,
+        ]);
+    
+        $email = (new Email())
+            ->from('eventifyverif.noreply@gmail.com')
+            ->to($recipientEmail)
+            ->subject('Invitation à rejoindre Eventify')
+            ->html($htmlContent);
+    
+        $this->mailer->send($email);
+    }
+    
+
+
+
+
 }

@@ -63,6 +63,7 @@ export async function inviteFriend(email: string) {
         method: "POST",
         headers: {
             "Content-Type": "application/ld+json",
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
             email: email,
@@ -72,10 +73,8 @@ export async function inviteFriend(email: string) {
     const responseJson = await response.json();
 
     if (!response.ok) {
-        if (responseJson.error && responseJson.error.includes("déjà inscrit")) {
-            throw new Error("Cet utilisateur est déjà inscrit.");
-        }
-        throw new Error("Erreur lors de l'envoi de l'invitation. Veuillez réessayer.");
+        const errorMessage = responseJson.error || "Erreur lors de l'envoi de l'invitation. Veuillez réessayer.";
+        throw new Error(errorMessage);
     }
     return responseJson;
 }

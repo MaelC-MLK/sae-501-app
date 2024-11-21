@@ -41,10 +41,10 @@ export function PopUpJoinEventify() {
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={handleClose}>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
                 <Button variant="default" size="lg" className="w-full sm:w-auto">
-                    Invitez vos amisddd
+                    Invitez vos amis
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
