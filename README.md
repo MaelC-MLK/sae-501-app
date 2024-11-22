@@ -29,10 +29,10 @@ Voici la liste des fonctionnalités disponibles (22/11/2024) :
 - Envoi d'un mail de validation à l'utilisateur après inscription par adresse mail
 - Interface de partage d'un évènement
 - Ajout de loaders pour la page connexion et inscription
-- Refonte design interface
 - Mail d'invitation d'ami
 - Possibilité de modifier un événement pour un utilisateur
-- Ajout pour pouvoir faire la différence entre de l'utilisateur et ceux ou il est inscrit
+- Faire la différence entre les événements que l'utilisateur a créés de ceux où il est inscrit
+- Pouvoir ajouter des participants avec une barre de recherche dans la création d'événement 
 
 ## Installation
 
@@ -80,6 +80,14 @@ email : demo@gmail.com <br/>
 mot de passe : azertyuiop
 <br/><br/>
 Et des événements publics visibles sur la page d'accueil.
+<br/>
+
+### Si roblème d'upload d'image : 
+
+Il se peut que le dossier qui reçoit l'upload des images n'ait pas de permissions par défaut, dans ce cas effectuer cette commande à la racine du projet :
+```
+sudo chmod 777 -R ./backend/public/uploads
+```
 
 ### Si problème avec les migrations : 
 
