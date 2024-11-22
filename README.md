@@ -32,7 +32,9 @@ Voici la liste des fonctionnalités disponibles (22/11/2024) :
 - Mail d'invitation d'ami
 - Possibilité de modifier un événement pour un utilisateur
 - Faire la différence entre les événements que l'utilisateur a créés de ceux où il est inscrit
-- Pouvoir ajouter des participants avec une barre de recherche dans la création d'événement 
+- Pouvoir ajouter des participants avec une barre de recherche dans la création d'événement
+- Amélirotation du système d'authentification par token placé en cookie
+- Mise à jour des blocages des routes qui nécessite une authentification en front
 
 ## Installation
 
