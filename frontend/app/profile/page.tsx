@@ -93,6 +93,7 @@ export default function Profile() {
                   <PopUpEditProfile
                     user={userData}
                     onUpdate={(updatedUser) => setUserData(updatedUser)}
+                    userContext={userContext}
                   />
                 ) : (
                   <p>Chargement du profil...</p>
