@@ -76,7 +76,7 @@ php bin/console lexik:jwt:generate-keypair
 
 [Export de la base](./SAE501.sql)<br/><br/>
 Cette export contient un utilisateur déjà inscrit à des événements :<br/>
-email : demo@gmail.com <br/>
+email : test@gmail.com <br/>
 mot de passe : azertyuiop
 <br/><br/>
 Et des événements publics visibles sur la page d'accueil.
