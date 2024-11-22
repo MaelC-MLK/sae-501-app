@@ -21,11 +21,10 @@ export async function createEvent(eventData: any) {
 export async function UpdateEvent(eventData: any, eventId: string) {
     const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
         method: 'PATCH',
-        
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/merge-patch+json',
             'Accept': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify(eventData),
     });

@@ -74,6 +74,7 @@ export default function Calendar() {
     }
 
 
+    
   const handleWindowResize = () => {
     const { innerWidth } = window;
     if (innerWidth < 768) {
