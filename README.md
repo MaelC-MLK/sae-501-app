@@ -28,9 +28,11 @@ Voici la liste des fonctionnalités disponibles (22/11/2024) :
 - Pouvoir s'inscrire avec une adresse mail à un évènement public
 - Envoi d'un mail de validation à l'utilisateur après inscription par adresse mail
 - Interface de partage d'un évènement
--  Ajout de loaders pour la page connexion et inscription
+- Ajout de loaders pour la page connexion et inscription
 - Refonte design interface
 - Mail d'invitation d'ami
+- Possibilité de modifier un événement pour un utilisateur
+- Ajout pour pouvoir faire la différence entre de l'utilisateur et ceux ou il est inscrit
 
 ## Installation
 
