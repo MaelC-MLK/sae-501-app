@@ -63,6 +63,7 @@ export default function Calendar() {
             borderColor: event.creator_id == userId ? '#FFD700' : '#ADD8E6',
           }));
           setEvents(combinedEvents);
+          setLoading(false);
         } catch (error) {
           console.error(
             "Erreur lors de la récupération des événements de l'utilisateur :",
