@@ -24,6 +24,11 @@ Voici la liste des fonctionnalités disponibles (15/11/2024) :
 - Afficher des évènements publics dans les recommandations de la page d'accueil
 - Pouvoir s'inscrire avec une adresse mail à un évènement public
 
+Voici la liste des fonctionnalités disponibles (22/11/2024) :
+- Pouvoir s'inscrire avec une adresse mail à un évènement public
+- Envoi d'un mail de validation à l'utilisateur après inscription par adresse mail
+- Interface de partage d'un évènement
+
 ## Installation
 
 Il faut ensuite exécuter ces commandes :
