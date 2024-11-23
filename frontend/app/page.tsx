@@ -10,9 +10,12 @@ import { PaginatedEvents } from "@/components/sections/paginatedEvents"
 import { Button } from "@/components/ui/button"
 import { k2d } from "@/app/fonts/fonts"
 import Link from 'next/link'
+import { useUser } from '@/contexts/UserProvider'
 
 export default function Home() {
   const [events, setEvents] = useState([]);
+  const { user, setUser } = useUser();
+
 
   useEffect(() => {
     fetch('http://localhost:8080/api/events/public')
@@ -70,10 +73,9 @@ export default function Home() {
         <h2 className="font-bold max-w-7xl justify-self-center mt-7 w-full px-5 md:px-10 text-xl md:text-2xl md:mt-20 mb-5">Nos recommandations !</h2>
         <CarouselRecom events={events}/> 
 
+      {!user && <SignUpCallToAction />}
 
-      <ScrollButton />
       <PaginatedEvents events={events} />
-      <SignUpCallToAction />
     </div>
   );
 }

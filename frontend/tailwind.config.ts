@@ -66,6 +66,9 @@ const config: Config = {
 			'4xl': '80px',
 			'5xl': '100px',
 			'6xl': '120px'
+		},
+		boxShadow: {
+			'cta-custom': '0px 0px 300px 0px var(--primary-foreground) ',
 		}
   	}
   },
