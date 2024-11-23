@@ -46,13 +46,12 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
     return (
         <div
             id="events-list"
-            className="flex flex-col justify-center items-center bg-background mx-4 sm:mx-20 border-2 rounded-xl p-4 gap-3 shadow my-12"
-        >
-            <h2 className="w-full items-start text-2xl font-bold border-b-2">
-                Tous les évènements publiques !
+            className="flex flex-col justify-center items-center my-14">
+            <h2 className="font-bold max-w-7xl justify-self-center w-full px-5 md:px-10 text-xl md:text-2xl  mb-5">
+                Tous les événements publics !
             </h2>
 
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+            <div className="w-full justify-self-center max-w-7xl flex flex-wrap gap-4 mt-2 items-center justify-center px-5">
                 {loading ? (
                     Array.from({ length: eventsPerPage }).map((_, index) => (
                         <SkeletonCard key={index} />

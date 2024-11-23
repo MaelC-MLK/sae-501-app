@@ -7,7 +7,7 @@ import { k2d } from"@/app/fonts/fonts";
 
 export function SignUpCallToAction() {
     return (
-        <div className="relative flex flex-row justify-start bg-primary text-primary-foreground px-4 py-10 sm:py-20 overflow-hidden my-14 max-w-7xl justify-self-center w-full lg:rounded-2xl lg:px-16">
+        <div className="relative flex flex-row justify-start bg-primary text-primary-foreground px-4 py-10 sm:py-20 overflow-hidden mt-14 max-w-7xl justify-self-center w-full lg:rounded-2xl lg:px-16">
             <div className="z-20 flex flex-col gap-6 sm:gap-10 w-2/3 sm:w-3/5">
                 <h3 className={`${k2d.className} text-3xl font-medium tracking-wide`}>Connectez-vous ou créez un compte pour <br />profiter de toutes les fonctionnalités !</h3>
                 <Link href="/register">
