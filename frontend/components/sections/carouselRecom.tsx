@@ -1,5 +1,7 @@
 import * as React from "react";
 import { CardEvent } from "@/components/cards/cardEvent";
+import { CardCarouselEvent } from "@/components/cards/cardCarouselEvent";
+
 import { EventProps } from "@/types/event";
 import {
     Carousel,
@@ -16,18 +18,16 @@ interface CarouselRecomProps {
 export function CarouselRecom({ events }: CarouselRecomProps) {
     const recommendedEvents = events.filter(event => event.isRecommended);
     return (
-        <Carousel className="w-full">
-            <CarouselContent className="-ml-1">
+        <Carousel className="w-full max-w-7xl justify-self-center px-5 sm:px-16">
+            <CarouselContent className="">
                 {recommendedEvents.map((event, index) => (
-                    <CarouselItem key={index} className="pl-1 md:basis-1/2 lg:basis-1/3">
-                        <div className="p-1">
-                            <CardEvent event={event} />
-                        </div>
+                    <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                        <CardCarouselEvent event={event} />
                     </CarouselItem>
                 ))}
             </CarouselContent>
-            <CarouselPrevious className="hover:scale-125 transition-transform duration-200" />
-            <CarouselNext className="hover:scale-125 transition-transform duration-200" />
+            <CarouselPrevious className="hover:scale-125 transition-transform duration-200 ml-10" />
+            <CarouselNext className="hover:scale-125 transition-transform duration-200 mr-10" />
         </Carousel>
     );
 }

@@ -15,7 +15,7 @@ const Navbar = () => {
         <div className="flex justify-center py-2 px-5 border-b-2 border-foreground/15 w-full fixed z-50 top-0 bg-background">
             <div className='flex items-center justify-between max-w-7xl w-full '>
 
-            <Link href="/" className="flex items-center gap-3 text-xl font-bold">
+            <Link href="/" className="flex items-center gap-3 text-xl font-bold shrink-0">
                 <Image 
                     src="/images/logo_eventify.webp"
                     alt='Eventify Logo'
@@ -24,7 +24,7 @@ const Navbar = () => {
                     className='shrink-0 w-8 h-8'
 
                 ></Image>
-                <span className={`${k2d.className}`}>Eventify</span>
+                <span className={`${k2d.className} hidden sm:block`}>Eventify</span>
             </Link>
             {/* <div className="flex flex-row gap-2">
                 {user && <p className='text-primary'>Hello, {user.username}</p>}

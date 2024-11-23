@@ -67,10 +67,10 @@ export default function Home() {
         </div>
       </div>
 
-      <div className='relative flex flex-col justify-center items-center bg-background top-44 mx-4 sm:mx-20 border-2 rounded-xl p-4 gap-3 shadow'>
-        <h2 className="w-full items-start text-2xl font-bold border-b-2">Nos recommandations !</h2>
-        <CarouselRecom events={events}/>
-      </div>
+        <h2 className="font-bold max-w-7xl justify-self-center mt-7 w-full px-5 md:px-10 text-xl md:text-2xl md:mt-20 mb-5">Nos recommandations !</h2>
+        <CarouselRecom events={events}/> 
+
+
       <ScrollButton />
       <PaginatedEvents events={events} />
       <SignUpCallToAction />
