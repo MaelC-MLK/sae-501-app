@@ -1,3 +1,5 @@
+import { UserProps } from './user';
+
 export interface EventProps {
     id: string;
     title: string;
@@ -10,6 +12,7 @@ export interface EventProps {
     badge: string;
     location: string;
     isRecommended: number;
+    users: Array<UserProps>;
 }
 
 export interface PopupCreationEventProps {

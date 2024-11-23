@@ -31,7 +31,7 @@ export default function RootLayout({
         <UserProvider>
           <Navbar />
           <EventProvider>
-            <main className="flex-grow">{children}</main>
+            <main className="flex-grow min-h-screen">{children}</main>
           </EventProvider>
           <Footer />
         </UserProvider>
