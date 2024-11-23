@@ -46,7 +46,7 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
     return (
         <div
             id="events-list"
-            className="flex flex-col justify-center items-center my-14">
+            className="flex flex-col justify-center items-center my-14 scroll-mt-20">
             <h2 className="font-bold max-w-7xl justify-self-center w-full px-5 md:px-10 text-xl md:text-2xl  mb-5">
                 Tous les événements publics !
             </h2>
