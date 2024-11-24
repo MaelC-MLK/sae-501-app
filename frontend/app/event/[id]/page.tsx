@@ -15,6 +15,7 @@ import { PopupShareEvent } from '@/components/sections/popupShareEvent';
 import { k2d } from '@/app/fonts/fonts';
 import { format, parse } from "date-fns";
 import { fr } from "date-fns/locale";
+import { SkeletonEventDetails } from "@/components/skeletons/skeletons";
 
 export default function Event() {
     const { id } = useParams();
@@ -28,7 +29,9 @@ export default function Event() {
     }, [events]);
 
     if (loading) {
-        return <div>Chargement des données de l'événement...</div>;
+        return (
+            <SkeletonEventDetails />
+        );
     }
 
     const event = events.find((event: EventProps) => event.id === Number(id));
@@ -221,44 +224,5 @@ export default function Event() {
 
         </div>
 
-        // <div>
-        //     <div className='flex flex-col justify-center items-center bg-background mx-4 sm:mx-20 border-2 rounded-xl p-4 gap-3 shadow'>
-        //         <div className="w-full flex flex-col md:flex-row justify-between overflow-hidden">
-        //             <div className="pb-6 md:p-6 flex flex-col gap-4 justify-between w-full md:w-2/3">
-        //                 <div className='flex flex-row border-b-2'>
-        //                     <h2 className="w-full items-start text-2xl font-bold">{event.title}</h2>
-        //                     <Badge variant="default" className="h-fit">Public</Badge>
-        //                 </div>
-        //                 <div>
-        //                     {event.date_start.substring(0, 10) === event.date_end.substring(0, 10) ? (
-        //                         <span className="text-md font-medium">
-        //                             {event.date_start.substring(0, 10)} | {event.date_start.substring(13)} - {event.date_end.substring(13)}
-        //                         </span>
-        //                     ) : (
-        //                         <span className="text-md font-medium">
-        //                             {event.date_start} au {event.date_end}
-        //                         </span>
-        //                     )}
-        //                     <p className='mt-2 font-semibold text-gray-700'>{event.location}</p>
-        //                     <p className="mt-4 text-gray-700">{event.description}</p>
-        //                 </div>
-        //                 <div className="mt-4 flex space-x-3">
-        //                     <PopupJoinPublicEvent eventId={event.id} />
-        //                     <PopupShareEvent eventUrl={eventUrl} />
-        //                 </div>
-        //             </div>
-        //             <div className="relative w-full md:w-1/3 h-64 md:h-auto">
-        //                 <Image
-        //                     src={event.image ? `http://localhost:8080/uploads/events/${event.image}` : defaultImage}
-        //                     alt={event.title}
-        //                     layout="fill"
-        //                     objectFit="cover"
-        //                     className="rounded-xl"
-        //                     unoptimized={true}
-        //                 />
-        //             </div>
-        //         </div>
-        //     </div>
-        // </div>
     );
 }
