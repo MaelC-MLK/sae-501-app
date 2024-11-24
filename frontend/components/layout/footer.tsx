@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator';
 
 const Footer: React.FC = () => {
     return (
-        <footer className="bg-darkColor text-background px-4 justify-items-center relative overflow-hidden z-0">
+        <footer className="bg-darkColor text-primary-foreground px-4 justify-items-center relative overflow-hidden z-0">
             <div className='flex flex-col md:flex-row items-center justify-between max-w-7xl w-full py-7'>
                 <Link href="/" className="flex items-center gap-3 text-xl font-bold mb-6 md:mb-0">
                     <Image 

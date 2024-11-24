@@ -13,6 +13,7 @@ export interface EventProps {
     location: string;
     isRecommended: number;
     users: Array<UserProps>;
+    creator: UserProps;
 }
 
 export interface PopupCreationEventProps {

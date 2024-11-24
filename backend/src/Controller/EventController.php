@@ -19,6 +19,13 @@ class EventController extends AbstractController
         $data = array_map(function (Event $event) {
             return [
                 'id' => $event->getId(),
+                'creator' => [
+                    'id' => $event->getCreator()->getId(),
+                    'email' => $event->getCreator()->getEmail(),
+                    'firstName' => $event->getCreator()->getFirstName(),
+                    'lastName' => $event->getCreator()->getLastName(),
+                    'avatar' => $event->getCreator()->getAvatar(),
+                ],
                 'title' => $event->getTitle(),
                 'description' => $event->getDescription(),
                 'date_start' => $event->getDateStart()->format('d/m/Y - H:i'),
