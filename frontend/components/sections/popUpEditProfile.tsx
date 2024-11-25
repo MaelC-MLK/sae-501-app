@@ -14,18 +14,17 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
 
-export function PopUpEditProfile({ user, onUpdate }) {
+export function PopUpEditProfile({ user, onUpdate, userContext : { userContextUser, setUser } }) {
   const [name, setName] = useState(user?.firstName || "");
   const [username, setUsername] = useState(user?.lastName || "");
-  const [email, setEmail] = useState(user?.email || "");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [open, setOpen] = useState(false); 
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (user) {
       setName(user.firstName || "");
       setUsername(user.lastName || "");
-      setEmail(user.email || "");
     }
   }, [user]);
 
@@ -39,7 +38,6 @@ export function PopUpEditProfile({ user, onUpdate }) {
         "@id": `http://localhost:8080/api/users/${user.id}`,
         "@type": "string",
         "id": user.id,
-        "email": email,
         "firstName": name,
         "lastName": username,
       };
@@ -53,20 +51,31 @@ export function PopUpEditProfile({ user, onUpdate }) {
         body: JSON.stringify(updatedUser),
       });
 
+
       if (!response.ok) {
-        throw new Error(`Erreur ${response.status}: ${response.statusText}`);
+        if (response.status === 401) {
+          throw new Error("Vous n'êtes pas autorisé à effectuer cette action");
+        }
+        if (response.status === 404) {
+          throw new Error("Utilisateur non trouvé");
+        }
+        if (response.status === 422) {
+          throw new Error("Contenu non valide");
+        }
+
+        throw new Error("Erreur lors de la mise à jour du profil");
       }
 
       const data = await response.json();
       if (onUpdate) {
         onUpdate(data); // Appelle le callback pour mettre à jour le parent
+        setUser(data); // Met à jour le contexte utilisateur
       }
 
       setOpen(false); // Ferme le pop-up après la mise à jour
 
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour :", error);
-      alert(`Erreur : ${error.message}`);
+    } catch (error: any) {
+      setError(error.message);
     }
   };
 
@@ -82,6 +91,7 @@ export function PopUpEditProfile({ user, onUpdate }) {
             Apportez des modifications à votre profil ici. Cliquez sur enregistrer lorsque vous avez terminé.
           </DialogDescription>
         </DialogHeader>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
@@ -102,17 +112,6 @@ export function PopUpEditProfile({ user, onUpdate }) {
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right">
-              Adresse e-mail
-            </Label>
-            <Input
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               className="col-span-3"
             />
           </div>
