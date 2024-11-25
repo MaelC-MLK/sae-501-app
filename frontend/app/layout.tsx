@@ -27,12 +27,12 @@ export default function RootLayout({
         <link rel="icon" href="/images/logo_eventify.ico" />
       </head>
       <body
-        className={`${inter.className} antialiased min-h-screen`}
+        className={`${inter.className} antialiased min-h-dvh`}
       >
         <UserProvider>
           <Navbar />
           <EventProvider>
-            <main className="flex-grow min-h-screen">{children}</main>
+            <main className="flex-grow min-h-dvh">{children}</main>
           </EventProvider>
           {!isProfileCalendarRoute && <Footer />}
         </UserProvider>
