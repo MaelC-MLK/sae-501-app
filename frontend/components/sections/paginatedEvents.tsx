@@ -1,8 +1,9 @@
 'use client'
 
 import * as React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { CardEvent } from "@/components/cards/cardEvent"
+import { SkeletonCard } from "@/components/skeletons/skeletons"
 import { EventProps } from "@/types/event";
 import {
     Pagination,
@@ -20,6 +21,7 @@ interface PaginatedEventsProps {
 
 export function PaginatedEvents({ events }: PaginatedEventsProps) {
     const [currentPage, setCurrentPage] = useState(1)
+    const [loading, setLoading] = useState(true)
     const eventsPerPage = 6
 
     const totalPages = Math.ceil(events.length / eventsPerPage)
@@ -28,6 +30,12 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
         (currentPage - 1) * eventsPerPage,
         currentPage * eventsPerPage
     )
+
+    useEffect(() => {
+        if (events.length > 0) {
+            setLoading(false)
+        }
+    }, [events])
 
     const handlePageClick = (page: number) => {
         if (page >= 1 && page <= totalPages) {
@@ -38,16 +46,21 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
     return (
         <div
             id="events-list"
-            className="flex flex-col justify-center items-center bg-background mx-4 sm:mx-20 border-2 rounded-xl p-4 gap-3 shadow my-12"
-        >
-            <h2 className="w-full items-start text-2xl font-bold border-b-2">
-                Tous les évènements publiques !
+            className="flex flex-col justify-center items-center my-14 scroll-mt-20">
+            <h2 className="font-bold max-w-7xl justify-self-center w-full px-5 md:px-10 text-xl md:text-2xl  mb-5">
+                Tous les événements publics !
             </h2>
 
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
-                {currentEvents.map((event, index) => (
-                    <CardEvent key={index} event={event} />
-                ))}
+            <div className="w-full justify-self-center max-w-7xl flex flex-wrap gap-4 mt-2 items-center justify-center px-5">
+                {loading ? (
+                    Array.from({ length: eventsPerPage }).map((_, index) => (
+                        <SkeletonCard key={index} />
+                    ))
+                ) : (
+                    currentEvents.map((event, index) => (
+                        <CardEvent key={index} event={event} />
+                    ))
+                )}
             </div>
 
             <Pagination className="mt-4">

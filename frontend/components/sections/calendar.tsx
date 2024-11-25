@@ -12,6 +12,15 @@ import PopupUpdateEvent from "@/components/sections/popUpUpdateEvent";
 import { deleteEvent } from "@/lib/actions"; // Importer la fonction deleteEvent
 import { useUser } from "@/contexts/UserProvider";
 import { useRouter } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 export default function Calendar() {
   const [calendarView, setCalendarView] = useState("timeGridWeek");
@@ -150,39 +159,44 @@ export default function Calendar() {
     setIsPopupDeleteOpen(false);
   };
 
-  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilter(event.target.value);
-  };
+const handleFilterChange = (value: string) => {
+    setFilter(value);
+};
 
-  const filteredEvents = events.filter((event) => {
-    if (filter === "all") return true;
-    if (filter === "public") return event.isVisible === true;
-    if (filter === "private") return event.isVisible === false;
-    return true;
-  });
+const filteredEvents = events.filter((event) => {
+  if (filter === "all") return true;
+  if (filter === "public") return event.isVisible === true;
+  if (filter === "private") return event.isVisible === false;
+  return true;
+});
 
-  if (loading) {
-    return (
+if (loading) {
+  return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
-          <p className="mt-4 text-gray-700">Chargement...</p>
-        </div>
+          <div className="text-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+              <p className="mt-4 text-gray-700">Chargement...</p>
+          </div>
       </div>
-    );
-  }
+  );
+}
 
   return (
-    <div className="m-8 md:m-16 calendar-container">
-      <div className="mb-4">
-        <label htmlFor="filter" className="mr-2">
-          Filtrer les événements :
-        </label>
-        <select id="filter" value={filter} onChange={handleFilterChange}>
-          <option value="all">Tous</option>
-          <option value="public">Publics</option>
-          <option value="private">Privés</option>
-        </select>
+    <div className="calendar-container">
+      <div className="fixed bottom-5 right-20 z-50">
+        <Select value={filter} onValueChange={handleFilterChange}>
+          <SelectTrigger className="w-24">
+            <SelectValue placeholder="Visibilité" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Visibilité</SelectLabel>
+              <SelectItem value="all">Tous</SelectItem>
+              <SelectItem value="public">Publics</SelectItem>
+              <SelectItem value="private">Privés</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+      </Select>
       </div>
       <FullCalendar
         ref={calendarRef}

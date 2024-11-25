@@ -7,7 +7,7 @@ import { fr } from "date-fns/locale";
 import { EventProps } from "@/types/event";
 import { Badge } from "@/components/ui/badge"
 
-export function CardEvent({ event }: { event: EventProps }) {
+export function CardCarouselEvent({ event }: { event: EventProps }) {
     const defaultImage = "/images/event_default.webp";
     const image = event.image ? `http://localhost:8080/uploads/events/${event.image}` : defaultImage;
 
@@ -21,7 +21,7 @@ export function CardEvent({ event }: { event: EventProps }) {
 
 
     return (
-        <Link href={`/event/${event.id}`} passHref className="border-2 rounded-xl overflow-hidden p-2 w-96 group bg-background relative h-fit">
+        <Link href={`/event/${event.id}`} passHref className="rounded-xl overflow-hidden group relative">
             <Badge variant="secondary" className="absolute top-4 right-4 z-20 gap-1">
 
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">

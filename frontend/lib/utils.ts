@@ -47,6 +47,3 @@ export async function authenticate(
 
     return true;
 }
-
-
-

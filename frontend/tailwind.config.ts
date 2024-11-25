@@ -49,13 +49,27 @@ const config: Config = {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
+  			},
+			darkColor: "hsl(var(--dark-color))"
+
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+		spacing: {
+			'128': '32rem',
+			'144': '36rem'
+		},
+		blur: {
+			'4xl': '80px',
+			'5xl': '100px',
+			'6xl': '120px'
+		},
+		boxShadow: {
+			'cta-custom': '0px 0px 300px 0px var(--primary-foreground) ',
+		}
   	}
   },
   plugins: [require("tailwindcss-animate")],
