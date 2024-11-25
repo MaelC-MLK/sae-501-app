@@ -43,9 +43,14 @@ class AuthController
         // Récupérer l'utilisateur par email
         $user = $this->userProvider->loadUserByIdentifier($credentials['email']);
 
+        if($user->isActive() === false){
+            return new JsonResponse(['error' => 'Your account is not active'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         if (!$user || !$this->passwordHasher->isPasswordValid($user, $credentials['password'])) {
             return new JsonResponse(['error' => 'Invalid credentials'], JsonResponse::HTTP_UNAUTHORIZED);
         }
+
 
         // Générer un token JWT
         $token = $this->jwtManager->create($user);
@@ -102,6 +107,14 @@ class AuthController
         }
 
         $user = $this->userProvider->loadUserByIdentifier($tokenParsed['username']);
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Unauthorized'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        if($user->isActive() === false){
+            return new JsonResponse(['error' => 'Your account is not active'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
 
         if($user->getLogout()){
             $tokenIssuedAtDateTime = (new \DateTime())->setTimestamp($tokenParsed['iat']);

@@ -17,6 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use Symfony\Component\Validator\Constraints\Image;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 
 class UserCrudController extends AbstractCrudController
 {
@@ -34,12 +35,21 @@ class UserCrudController extends AbstractCrudController
 
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if ($entityInstance instanceof User && !empty($entityInstance->getPassword())) {
-            $entityInstance->setPassword(
-                $this->passwordHasher->hashPassword($entityInstance, $entityInstance->getPassword())
-            );
-        }
+        if ($entityInstance instanceof User) {
+            if (!empty($entityInstance->getPassword())) {
+                $entityInstance->setPassword(
+                    $this->passwordHasher->hashPassword($entityInstance, $entityInstance->getPassword())
+                );
+            } else {
+                $currentPassword = $entityManager->getUnitOfWork()->getOriginalEntityData($entityInstance)['password'];
+                $entityInstance->setPassword($currentPassword);
+            }
 
+            if(!$entityInstance->isActive()){
+                $entityInstance->setActive(false);
+            }
+        }
+        
         parent::persistEntity($entityManager, $entityInstance);
     }
 
@@ -53,6 +63,10 @@ class UserCrudController extends AbstractCrudController
             } else {
                 $currentPassword = $entityManager->getUnitOfWork()->getOriginalEntityData($entityInstance)['password'];
                 $entityInstance->setPassword($currentPassword);
+            }
+
+            if(!$entityInstance->isActive()){
+                $entityInstance->setActive(false);
             }
         }
 
@@ -94,7 +108,9 @@ class UserCrudController extends AbstractCrudController
                 ->setUploadedFileNamePattern(
                     fn (UploadedFile $file): string => sprintf('%s_%s.%s', date('YmdHis'), uniqid(), $file->guessExtension())
                 ),
-            DateTimeField::new('Logout')
+            DateTimeField::new('Logout'),
+            BooleanField::new('active', 'Active')->setRequired(false)->OnlyOnForms(),
+
         ];
     }
 }
