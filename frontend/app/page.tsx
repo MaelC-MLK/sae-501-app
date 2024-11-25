@@ -12,6 +12,7 @@ import { k2d } from "@/app/fonts/fonts"
 import Link from 'next/link'
 import { useUser } from '@/contexts/UserProvider'
 
+
 export default function Home() {
   const [events, setEvents] = useState([]);
   const { user, setUser } = useUser();
