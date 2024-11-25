@@ -129,6 +129,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $Logout = null;
 
+    #[Groups(['user:create', 'user:update', 'user:read'])]
+    #[ORM\Column]
+    private ?bool $active = null;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -371,6 +375,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLogout(?\DateTimeInterface $Logout): static
     {
         $this->Logout = $Logout;
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): static
+    {
+        $this->active = $active;
 
         return $this;
     }
