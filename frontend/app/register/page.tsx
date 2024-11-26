@@ -62,7 +62,7 @@ export default function Page() {
                 headers: {
                     'Content-Type': "application/ld+json",
                 },
-                body: JSON.stringify({ email, plainPassword, firstName, lastName, active: true }),
+                body: JSON.stringify({ email, plainPassword, firstName, lastName }),
             });
 
             if (!response.ok) {
