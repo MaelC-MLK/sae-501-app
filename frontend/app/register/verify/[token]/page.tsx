@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export default function VerifyEmailPage({ params }: { params: { token: string } }) {
-    const { token, id } = params;
+    const { token } = params;
     const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'alreadyVerified' | null>('loading');
     const [message, setMessage] = useState<string | null>(null);
     const hasFetched = useRef(false); // Référentiel pour suivre l'état de la requête
@@ -38,7 +38,7 @@ export default function VerifyEmailPage({ params }: { params: { token: string } 
         };
 
         verifyToken();
-    }, [token, id]);
+    }, [token]);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
