@@ -102,14 +102,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?File $imageFile = null;
 
-    #[Vich\UploadableField(mapping: 'users_image', fileNameProperty: 'avatar', size: 'imageSize')]
-    #[Groups(['user:create', 'user:update', 'user:read'])]
-    #[Assert\Image(
-        mimeTypes: ["image/jpeg", "image/png", "image/webp"],
-        mimeTypesMessage: "Format d'image invalide (JPEG, PNG, WEBP)."
-    )]
-    private ?File $imageFile = null;
-
     #[Groups(['user:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
