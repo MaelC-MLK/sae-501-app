@@ -37,7 +37,7 @@ class EmailService
 
     public function sendRegisterEmail(string $recipientEmail, string $token): void
     {
-        $verificationLink = sprintf('http://localhost:8090/verify-email/%s', $token);
+        $verificationLink = sprintf('http://localhost:8090/verify-email-register/%s', $token);
 
         // Rendre le template Twig
         $htmlContent = $this->twig->render('emails/verification_email.html.twig', [

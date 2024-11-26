@@ -5,10 +5,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import Image from 'next/image';
-import { authenticate } from "@/lib/utils"
 import Link from 'next/link';
-import { useUser } from '@/contexts/UserProvider';
 import { useRouter } from 'next/navigation';
+import { PopUpEmailRegister } from '@/components/sections/popUpEmailRegister';
 
 
 export default function Page() {
@@ -20,7 +19,8 @@ export default function Page() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
-    const { setUser } = useUser();
+    const [open, setOpen] = useState(false);
+    const [user, setUser] = useState({email: '', plainPassword: '', firstName: '', lastName: ''});
     const router = useRouter();
 
     const validateEmail = (email: string) => {
@@ -55,38 +55,38 @@ export default function Page() {
         try {
             await new Promise((resolve) => setTimeout(resolve, 2000));
             const api = 'http://localhost:8080';
-            const url = api + '/api/users';
+            const url = api + '/api/user/register';
+
+            setUser({ email: email,
+                plainPassword: plainPassword, 
+                firstName: firstName,
+                lastName: lastName 
+        });
 
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': "application/ld+json",
                 },
-                body: JSON.stringify({ email, plainPassword, firstName, lastName }),
+                body: JSON.stringify(user),
             });
 
+            
             if (!response.ok) {
                 if (response.status === 422) {
-                    throw new Error('Email already exists');
+                    throw new Error('Cette adresse email existe déjà');
                 }
-
-                throw new Error('Failed to create account');
+                
+                throw new Error('Echec de la création du compte');
             }
             else {
-                const login = await authenticate(email, plainPassword, setUser);
-                if (login) {
-                    router.push('/');
-                }
-                else {
-                    setError('Invalid email or password');
-                }
+                setOpen(true);
             }
-
         } catch (err) {
             if (err instanceof Error) {
                 setError(err.message);
             } else {
-                setError('An unknown error occurred');
+                setError('Une erreur est survenue');
             }
         }
         finally {
@@ -183,6 +183,9 @@ export default function Page() {
                         S'incrire
                     </Button>
                 </form>
+
+                <PopUpEmailRegister user={user} open={open} setOpen={setOpen}></PopUpEmailRegister>
+
 
                 <p className="text-center text-sm text-gray-500 mt-6">
                     Vous avez déjà un compte? <Link href="/login" className="text-blue-500 hover:underline">Connectez-vous</Link>
