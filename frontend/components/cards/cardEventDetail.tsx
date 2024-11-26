@@ -1,12 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
-
 import { Badge } from '../ui/badge';
-
 import { EventProps } from "@/types/event";
 import { PopupJoinPublicEvent } from '../sections/popupJoinPublicEvent';
 import { PopupShareEvent } from '../sections/popupShareEvent';
-
 
 interface CardEventDetailProps {
     event: EventProps;
@@ -56,3 +53,11 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
 };
 
 export default CardEventDetail;
+function setError(arg0: string) {
+    throw new Error('Function not implemented.');
+}
+
+function setLoading(arg0: boolean) {
+    throw new Error('Function not implemented.');
+}
+

@@ -3,7 +3,6 @@
 import * as React from "react";
 import { useEffect } from "react";
 import Image from 'next/image';
-import CardEventDetail from "@/components/cards/cardEventDetail";
 import { notFound } from "next/navigation";
 import { useParams } from "next/navigation";
 import { useEvents } from "@/components/EventContext";
@@ -11,16 +10,20 @@ import { EventProps } from "@/types/event";
 import { Badge } from '@/components/ui/badge';
 
 import { PopupJoinPublicEvent } from '@/components/sections/popupJoinPublicEvent';
+import { PopupJoin } from '@/components/sections/popupJoin';
 import { PopupShareEvent } from '@/components/sections/popupShareEvent';
 import { k2d } from '@/app/fonts/fonts';
 import { format, parse } from "date-fns";
 import { fr } from "date-fns/locale";
 import { SkeletonEventDetails } from "@/components/skeletons/skeletons";
+import { useUser } from '@/contexts/UserProvider';
+import { Button } from "@/components/ui/button";
 
 export default function Event() {
     const { id } = useParams();
     const events = useEvents();
     const [loading, setLoading] = React.useState(true);
+    const { user } = useUser();
 
     useEffect(() => {
         if (events.length > 0) {
@@ -216,7 +219,7 @@ export default function Event() {
                 </div>
 
                 <div className="mb-16 flex space-x-3">
-                    <PopupJoinPublicEvent eventId={event.id} />
+                    {user ? <Button variant={'default'} size={'lg'}>S'inscrire</Button> : <PopupJoinPublicEvent eventId={event.id} />}
                     <PopupShareEvent eventUrl={eventUrl} />
                 </div>
 
