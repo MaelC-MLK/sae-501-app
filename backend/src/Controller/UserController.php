@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Uuid;
-use Symfony\Component\Security\Core\Encoder\UserPasswordHasherInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends AbstractController
 {
@@ -141,22 +141,40 @@ class UserController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? null;
-        $firstName = $data['firstName'] ?? null;
-        $lastName = $data['lastName'] ?? null;
-        $plainPassword = $data['plainPassword'] ?? null;
 
-        if (empty($email) || empty($firstName) || empty($lastName) || empty($plainPassword)) {
-            return new JsonResponse(['error' => 'Informations incomplètes'], 400);
+        if(empty($email)){
+            return new JsonResponse(['error' => 'Email est requis.'], 400);
         }
 
-        $user = new User();
-        $user->setEmail($email);
-        $user->setFirstName($firstName);
-        $user->setLastName($lastName);
+        // Vérifier si l'utilisateur existe déjà
+        $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
-        // Hasher le mot de passe
-        $password = $passwordHasher->hashPassword($user, $plainPassword);
-        $user->setPassword($password);
+        if($existingUser){
+            if($existingUser->isActive() === false || $existingUser->getVerificationToken() !== null){
+                $user = $existingUser;
+            }
+            else {
+                return new JsonResponse(["error" => "L'utilisateur existe déjà"], 422);
+            }
+        }
+        else{
+            $firstName = $data['firstName'] ?? null;
+            $lastName = $data['lastName'] ?? null;
+            $plainPassword = $data['plainPassword'] ?? null;
+
+            if (empty($firstName) || empty($lastName) || empty($plainPassword)) {
+                return new JsonResponse(['error' => 'Informations incomplètes'], 400);
+            }
+
+            $user = new User();
+            $user->setEmail($email);
+            $user->setFirstName($firstName);
+            $user->setLastName($lastName);
+    
+            // Hasher le mot de passe
+            $password = $passwordHasher->hashPassword($user, $plainPassword);
+            $user->setPassword($password);
+        }
 
         // Générer un token de vérification
         $token = Uuid::v4()->toRfc4122(); // Génération de token (UUID)
@@ -174,12 +192,10 @@ class UserController extends AbstractController
 
         // Envoyer l'email de vérification
         try {
-            $this->emailService->sendVerificationEmail($email, $token);
+            $this->emailService->sendRegisterEmail($email, $token);
         } catch (\Exception $e) {
             return new JsonResponse(['error' => 'Impossible d\'envoyer l\'email : ' . $e->getMessage()], 500);
         }
-
-
 
         return new JsonResponse(['message' => 'Utilisateur créé et email de vérification envoyé.'], 201);
     }
