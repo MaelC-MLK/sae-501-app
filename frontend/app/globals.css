@@ -105,6 +105,8 @@
   font-weight: bold;
 }
 
+
+
 /* calendar.css */
 .fc-view-harness {
   height: 100% !important;
@@ -147,7 +149,11 @@
     margin-left: 3rem !important;
     margin-right: 3rem !important;
   }
+  .calendar-container {
+    bottom: .5rem !important;
+  }
 }
+
 
 
 .fc-today-button {
@@ -301,6 +307,7 @@
 .fc-scrollgrid, .fc-scrollgrid-liquid {
   border-top-left-radius: 1rem !important; 
   border-top-right-radius: 1rem !important; 
+  
 }
 
 .fc-direction-ltr .fc-toolbar > * > :not(:first-child) {
