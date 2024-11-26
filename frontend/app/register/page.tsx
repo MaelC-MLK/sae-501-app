@@ -70,7 +70,7 @@ export default function Page() {
                 headers: {
                     'Content-Type': "application/ld+json",
                 },
-                body: JSON.stringify(user),
+                body: JSON.stringify({ email, plainPassword, firstName, lastName }),
             });
 
             
