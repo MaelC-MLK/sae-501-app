@@ -70,7 +70,7 @@ export default function Page() {
                 headers: {
                     'Content-Type': "application/ld+json",
                 },
-                body: JSON.stringify({ email, plainPassword, firstName, lastName }),
+                body: JSON.stringify(user),
             });
 
             
@@ -173,9 +173,7 @@ export default function Page() {
                     </Button>
                 </form>
 
-
                 <PopUpEmailRegister user={user} open={open} setOpen={setOpen}></PopUpEmailRegister>
-
 
                 <p className="text-center text-sm text-gray-500 mt-2">
                     Vous avez déjà un compte? <Link href="/login" className="text-primary hover:underline">Connectez-vous</Link>
