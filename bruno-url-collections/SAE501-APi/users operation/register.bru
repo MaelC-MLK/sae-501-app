@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: http://localhost:8080/api/users
+  url: http://localhost:8080/api/user/register
   body: json
   auth: none
 }
@@ -16,10 +16,9 @@ headers {
 
 body:json {
   {
-    "email": "robert@mail.Com",
-    "password": "robert",
-    "firstName": "robert",
-    "lastName": "robert",
-    "active" : true
+    "email": "mathis.micheau14@gmail.com",
+    "plainPassword": "mathismicheau",
+    "firstName": "mathis",
+    "lastName": "micheau"
   }
 }
