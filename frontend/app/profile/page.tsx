@@ -8,66 +8,84 @@ import { PopUpDeleteUser } from "@/components/sections/popUpDeleteUser";
 import { PopUpLogout } from "@/components/sections/popUpLogout";
 import { PopUpJoinEventify } from "@/components/sections/popUpJoinEventify";
 import Link from "next/link";
+import { k2d } from "@/app/fonts/fonts"
 import { useUser } from "@/contexts/UserProvider";
 import { useRouter } from "next/navigation";
+import { PaginatedEvents } from "@/components/sections/paginatedEvents";
+import { CarouselInscris } from "@/components/sections/carouselInscris";
+import { fetchUserEvents } from "@/lib/data";
 
 export default function Profile() {
   const userContext = useUser();
+  const [events, setEvents] = useState([]);
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loadingEvents, setLoadingEvents] = useState(true);
+const [loadingUserData, setLoadingUserData] = useState(true);
   const router = useRouter();
-  
+
+
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (!userContext.user) {
-        setError("Timeout: User not found");
-        setLoading(false);
-      }
-    }, 10000); // Timeout de 10 secondes
+  if (!userContext.user) return;
 
-    if (!userContext.user) {
-      return () => clearTimeout(timeoutId);
+  const fetchEvents = async () => {
+    try {
+      if (userContext.user) {
+        console.log(userContext.user.id);
+        const data = await fetchUserEvents(userContext.user.id);
+        setEvents(data);
+        console.log(data);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération des événements :", error);
+      setError("Erreur lors de la récupération des événements");
+    } finally {
+      setLoadingEvents(false);
     }
+  };
 
-    const fetchUserData = async () => {
-      try {
-        const api = "http://localhost:8080";
-        const url = `${api}/api/users/${userContext.user.id}`;
+  fetchEvents();
+}, [userContext.user]);
 
-        const response = await fetch(url, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/ld+json",
-          },
-        });
+useEffect(() => {
+  if (!userContext.user) return;
 
-        if (!response.ok) {
-          throw new Error("Erreur lors de la récupération des données utilisateur");
-        }
+  const fetchUserData = async () => {
+    try {
+      const api = "http://localhost:8080";
+      const url = `${api}/api/users/${userContext.user.id}`;
 
-        const data = await response.json();
-        setUserData(data);
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unknown error occurred");
-        }
-      } finally {
-        setLoading(false);
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/ld+json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des données utilisateur");
       }
-    };
 
-    fetchUserData();
-  }, [userContext.user]); 
+      const data = await response.json();
+      setUserData(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Une erreur inconnue est survenue");
+    } finally {
+      setLoadingUserData(false);
+    }
+  };
+
+  fetchUserData();
+}, [userContext.user]);
+
+const loading = loadingEvents || loadingUserData;
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-primary"></div>
           <p className="mt-4 text-gray-700">Chargement...</p>
         </div>
       </div>
@@ -84,11 +102,11 @@ export default function Profile() {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen p-10 pt-24">
+    <div className=" min-h-screen p-10 pt-24">
       <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="flex flex-col lg:flex-row">
-          <div className="lg:w-1/3 p-6 bg-gray-50">
-            <div className="flex items-center justify-between mb-4">
+          <div className="lg:w-1/3 p-4 bg-primary">
+            <div className="flex items-center justify-end gap-3 mb-4">
               <div>
                 {userData ? (
                   <PopUpEditProfile
@@ -120,37 +138,31 @@ export default function Profile() {
                   unoptimized={true}
                 />
               </div>
-              <h2 className="mt-4 text-2xl font-semibold text-gray-800">
+              <h2 className={`${k2d.className} mt-4 text-2xl capitalize font-semibold text-white`}>
                 {userData?.firstName} {userData?.lastName}
               </h2>
               <div className="flex items-center justify-between">
-                <p className="text-gray-700">{userData?.email}</p>
+                <p className="text-white">{userData?.email}</p>
               </div>
                 <PopUpJoinEventify>
                 </PopUpJoinEventify>
             </div>
           </div>
 
-          <div className="lg:w-2/3 p-6">
-            <h3 className="text-2xl font-bold text-gray-800">Mes Événements</h3>
-            <div className="mt-4 space-y-4">
-              <div className="p-4 bg-gray-100 rounded">
-                <p className="text-gray-700">Mes événements à venir</p>
-              </div>
-              <div className="p-4 bg-gray-100 rounded">
-                <p className="text-gray-700">Mes événements favoris</p>
-              </div>
-            </div>
-
-            <Link href="/profile/calendar" >
-                <Button variant="default" className="mt-10">
-                    Mon calendrier
-                </Button>
-            </Link>
-
+          <div className="flex flex-col gap-6  lg:w-2/3 p-6">
+            <div className="flex justify-items justify-between items-center">
+              <h3 className={`${k2d.className} text-2xl font-bold text-gray-800`}>Mes événements à venir</h3>
+              <Link href="/profile/calendar" >
+                  <Button variant="default" className="text-lg px-6">
+                      Mon calendrier
+                  </Button>
+              </Link>
+                </div>
+              <CarouselInscris events={events}/> 
           </div>
         </div>
       </div>
+      <div className="w-144 h-144 bg-primary rounded-full blur-6xl absolute -right-52 -top-64 -z-10" />
     </div>
   );
 }

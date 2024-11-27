@@ -27,6 +27,8 @@
     --radius: 0.5rem; /* 8px */
 
     --dark-color: 224 71.4% 4.1%; /* hsl(224 71.4% 4.1%) */
+
+    
   }
 
   .dark {
@@ -85,19 +87,35 @@
 /* Path: frontend/app/calendar.css */
 /* CSS personnalisé pour le calendrier car besoin de surcharger la librairie*/
 
+
+.calendar-container {
+  position: absolute !important;
+  top: 8rem !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  overflow: hidden;
+}
+
+.fc.fc-media-screen {
+  height: 100% !important;
+}
+
 .fc-timegrid-slot {
   font-weight: bold;
 }
 
+
+
 /* calendar.css */
 .fc-view-harness {
-  max-height: 80vh; 
+  height: 100% !important;
   overflow-y: auto;
   margin-top: 0.5rem;
 }
 
 .fc-day{
-  padding: 8px !important;
+  padding: 2px 2px !important;
 }
 
 .fc-timegrid-slot-label{
@@ -108,44 +126,78 @@
 .fc-toolbar-chunk{
   display: flex;
   flex-direction: row;
-  gap: 1rem;
+  gap: .5rem;
 }
 
 .fc-toolbar-title {
   font-weight: 500;
   text-transform: capitalize;
-}
-
-@media (max-width: 768px) {
-  .fc-toolbar-title {
-    font-size: 12px;
-  }
+  font-size: 1rem !important;
+  text-align: center !important;
+  align-self: center !important;
 }
 
 .fc-header-toolbar{
-  margin-top: 1.5rem;
+  margin-top: .5rem;
+  margin-bottom: .5rem !important;
+  margin-left: 1rem !important;
+  margin-right: 1rem !important;
 }
+
+@media (min-width: 1024px) {
+  .fc-header-toolbar{
+    margin-left: 3rem !important;
+    margin-right: 3rem !important;
+  }
+  .calendar-container {
+    bottom: .5rem !important;
+  }
+}
+
+
 
 .fc-today-button {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  gap: 0.5rem !important; /* 2 (gap-2 en Tailwind) */
   white-space: nowrap !important;
-  border-radius: 8px !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  transition: background-color 0.3s, color 0.3s !important;
-  padding: 8px 16px !important;
-  background-color: hsl(221 83% 53%) !important; 
-  color: #ffffff !important; 
-  border: none !important;
-  cursor: pointer !important;
-  outline: none !important; 
+  border-radius: 0.375rem !important; /* rounded-md */
+  font-size: 0.875rem !important; /* text-sm */
+  font-weight: 500 !important; /* font-medium */
+  transition-property: all !important;
+  transition-duration: 0.2s !important; /* transition-colors */
+  outline: none !important; /* focus-visible:outline-none */
+  border: 1px solid hsl(var(--input, currentColor)) !important; /* border border-input */
+  background-color: hsl(var(--background, transparent)) !important; /* bg-background */
+  color: hsl(var(--foreground, currentColor)) !important; /* text-foreground */
+}
+.fc-today-button:hover {
+
+  background-color: hsl(var(--primary, currentColor)) !important; /* hover:bg-accent */
+  color: hsl(var(--primary-foreground, currentColor)) !important; /* hover:text-accent-foreground */
 }
 
-.fc-today-button:hover {
-  background-color: #0056b3 !important; 
-  color: #e0e0e0 !important; 
+.fc-today-button:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.5) !important; /* focus-visible:ring-ring (remplacer la couleur si nécessaire) */
+  outline-offset: 2px !important; /* focus-visible:ring-offset-2 */
+}
+
+.fc-today-button:focus-visible {
+  box-shadow: 0 0 0 2px hsl(var(--ring-color, currentColor)), 0 0 0 var(--ring-offset-width, 0) var(--ring-offset-color, hsl(var(--background, transparent))) !important;
+}
+
+.fc-today-button:disabled {
+  pointer-events: none !important; /* disabled:pointer-events-none */
+  opacity: 0.5 !important; /* disabled:opacity-50 */
+}
+
+/* SVG-specific styles */
+.fc-today-button svg {
+  pointer-events: none !important; /* [&_svg]:pointer-events-none */
+  width: 1rem !important; /* [&_svg]:size-4 */
+  height: 1rem !important; /* [&_svg]:size-4 */
+  flex-shrink: 0 !important; /* [&_svg]:shrink-0 */
 }
 
 .fc-today-button:focus,
@@ -184,54 +236,86 @@
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  gap: 0.5rem !important; /* 2 (gap-2 en Tailwind) */
   white-space: nowrap !important;
-  border-radius: 8px 0px 0px 8px!important;;
-  transition: background-color 0.3s, color 0.3s !important;
-  padding: 8px 16px !important;
-  background-color: hsl(221 83% 58%) !important; 
-  color: #ffffff !important;  
-  border: none !important;
-  cursor: pointer !important;
-  outline: none !important; 
+  border-radius: 0.375rem 0 0 0.375rem !important; /* rounded-md */
+  font-size: 0.875rem !important; /* text-sm */
+  font-weight: 500 !important; /* font-medium */
+  transition-property: all !important;
+  transition-duration: 0.2s !important; /* transition-colors */
+  outline: none !important; /* focus-visible:outline-none */
+  border: 1px solid hsl(var(--input, currentColor)) !important; /* border border-input */
+  background-color: hsl(var(--background, transparent)) !important; /* bg-background */
+  color: hsl(var(--muted-foreground, currentColor)) !important; /* text-foreground */
 }
 .fc-timeGridWeek-button{
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  gap: 0.5rem !important; /* 2 (gap-2 en Tailwind) */
   white-space: nowrap !important;
-  border-radius: 0px 0px 0px 0px!important;;
-  transition: background-color 0.3s, color 0.3s !important;
-  padding: 8px 16px !important;
-  background-color: hsl(221 83% 58%) !important; 
-  color: #ffffff !important;  
-  border: none !important;
-  cursor: pointer !important;
-  outline: none !important; 
+  border-radius: 0 !important; /* rounded-md */
+  font-size: 0.875rem !important; /* text-sm */
+  font-weight: 500 !important; /* font-medium */
+  transition-property: all !important;
+  transition-duration: 0.2s !important; /* transition-colors */
+  outline: none !important; /* focus-visible:outline-none */
+  border: 1px solid hsl(var(--input, currentColor)) !important; /* border border-input */
+  background-color: hsl(var(--background, transparent)) !important; /* bg-background */
+  color: hsl(var(--muted-foreground, currentColor)) !important; /* text-foreground */
 }
 .fc-dayGridMonth-button{
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  gap: 0.5rem !important; /* 2 (gap-2 en Tailwind) */
   white-space: nowrap !important;
-  border-radius: 0px 8px 8px 0px!important;;
-  transition: background-color 0.3s, color 0.3s !important;
-  padding: 8px 16px !important;
-  background-color: hsl(221 83% 58%) !important; 
-  color: #ffffff !important;  
-  border: none !important;
-  cursor: pointer !important;
-  outline: none !important; 
+  border-radius: 0 0.375rem 0.375rem 0 !important; /* rounded-md */
+  font-size: 0.875rem !important; /* text-sm */
+  font-weight: 500 !important; /* font-medium */
+  transition-property: all !important;
+  transition-duration: 0.2s !important; /* transition-colors */
+  outline: none !important; /* focus-visible:outline-none */
+  border: 1px solid hsl(var(--input, currentColor)) !important; /* border border-input */
+  background-color: hsl(var(--background, transparent)) !important; /* bg-background */
+  color: hsl(var(--muted-foreground, currentColor)) !important; /* text-foreground */
 }
 .fc-timeGridDay-button:hover,
 .fc-timeGridWeek-button:hover,
 .fc-dayGridMonth-button:hover {
-  background-color: hsl(221 83% 53%) !important; 
-  color: #ffffff !important; 
+  color: hsl(var(--primary-background, currentColor)) !important; /* active:text-secondary-foreground */
 }
 
 .fc-timeGridDay-button.fc-button-active,
 .fc-timeGridWeek-button.fc-button-active,
 .fc-dayGridMonth-button.fc-button-active {
-  background-color: hsl(221 83% 53%) !important; 
-  color: #ffffff !important; 
+  background-color: hsl(var(--muted, currentColor)) !important; /* active:bg-secondary */
+  font-weight: 600 !important; /* font-semibold */
+  color: hsl(var(--primary-background, currentColor)) !important; /* active:text-secondary-foreground */
+}
+
+.fc-timegrid-slot-label-cushion {
+  font-size: .7rem !important;
+  color: hsl(var(--muted-foreground)) !important;
+
+}
+
+.fc-theme-standard td, .fc-theme-standard th {
+  border-color: hsl(var(--border)) !important;
+}
+
+.fc-scrollgrid, .fc-scrollgrid-liquid {
+  border-top-left-radius: 1rem !important; 
+  border-top-right-radius: 1rem !important; 
+  
+}
+
+.fc-direction-ltr .fc-toolbar > * > :not(:first-child) {
+  margin-left: 0rem !important;
+}
+
+@media (max-width: 768px) {
+  .fc-toolbar-title {
+    font-size: 12px;
+  }
 }

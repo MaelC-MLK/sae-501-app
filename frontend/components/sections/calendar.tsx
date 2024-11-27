@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {k2d} from "@/app/fonts/fonts";
 
 export default function Calendar() {
   const [calendarView, setCalendarView] = useState("timeGridWeek");
@@ -42,6 +43,14 @@ export default function Calendar() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const userId = userContext.user ? userContext.user.id : null;
+  const [customButtons, setCustomButtons] = useState({
+    myCustomButton: {
+      text: 'custom!',
+      click: function() {
+        alert('clicked the custom button!');
+      }
+    }
+  });
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -89,22 +98,24 @@ export default function Calendar() {
     if (innerWidth < 768) {
       setCalendarView("timeGridDay");
       setHeaderToolbar({
-        left: "prev,next",
+        left: "today,prev",
         center: "title",
-        right: "today",
+        right: "next",
+
       });
+
     } else if (innerWidth < 1024) {
       setCalendarView("timeGridWeek");
       setHeaderToolbar({
-        left: "title prev,next today",
+        left: "today,prev title next,timeGridDay,timeGridWeek,dayGridMonth",
         center: "",
-        right: "timeGridDay,timeGridWeek,dayGridMonth",
+        right: "",
       });
     } else {
       setHeaderToolbar({
-        left: "title prev,next today",
+        left: "today,prev title next,timeGridDay,timeGridWeek,dayGridMonth",
         center: "",
-        right: "timeGridDay,timeGridWeek,dayGridMonth",
+        right: "",
       });
     }
   };
@@ -183,7 +194,7 @@ if (loading) {
 
   return (
     <div className="calendar-container">
-      <div className="fixed bottom-5 right-20 z-50">
+      <div className="fixed bottom-5 right-20 z-50 bg-background rounded sm:right-32 md:right-5 lg:absolute lg:top-2 lg:bottom-auto lg:right-32">
         <Select value={filter} onValueChange={handleFilterChange}>
           <SelectTrigger className="w-24">
             <SelectValue placeholder="Visibilité" />
@@ -196,7 +207,7 @@ if (loading) {
               <SelectItem value="private">Privés</SelectItem>
             </SelectGroup>
           </SelectContent>
-      </Select>
+        </Select>
       </div>
       <FullCalendar
         ref={calendarRef}
@@ -216,8 +227,8 @@ if (loading) {
           const dayNumber = date.getDate();
           return (
             <div className="flex flex-col text-center">
-              <div className="capitalize font-normal">{day}</div>
-              <div className="text-2xl font-semibold">{dayNumber}</div>
+              <div className="capitalize text-sm font-semibold text-muted-foreground">{day}</div>
+              <div className={`${k2d.className} text-xl font-semibold text-foreground`}>{dayNumber}</div>
             </div>
           );
         }}
