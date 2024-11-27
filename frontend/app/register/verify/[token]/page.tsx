@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-export default function VerifyEmailPage({ params }: { params: { token: string, id: string } }) {
+export default function VerifyEmailPage({ params }: { params: { token: string } }) {
     const { token, id } = params;
     const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'alreadyVerified' | null>('loading');
     const [message, setMessage] = useState<string | null>(null);
@@ -16,10 +16,10 @@ export default function VerifyEmailPage({ params }: { params: { token: string, i
 
         const verifyToken = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/api/verify-email/${token}/${id}`);
+                const res = await fetch(`http://localhost:8080/api/verify-email-register/${token}`);
                 if (res.ok) {
                     const data = await res.json();
-                    if (data.message === 'Utilisateur déjà inscrit à l\'événement.') {
+                    if (data.message === 'Utilisateur déjà inscrit') {
                         setStatus('alreadyVerified');
                         setMessage(data.message);
                     } else {
