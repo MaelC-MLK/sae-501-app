@@ -20,7 +20,7 @@ export default function Page() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
-    const [user, setUser] = useState({email: '', plainPassword: '', firstName: '', lastName: ''});
+    const [user, setUser] = useState({email: email, plainPassword: plainPassword, firstName: firstName, lastName: lastName});
     const router = useRouter();
 
     const validateEmail = (email: string) => {
@@ -30,6 +30,11 @@ export default function Page() {
 
     const validatePassword = (password: string) => {
         return password.length >= 8 && password.length <= 30;
+    };
+
+    const validateNoNumbersOrSpecialChars = (str: string) => {
+        const noNumbersOrSpecialCharsRegex = /^[a-zA-Z\s-]+$/;
+        return noNumbersOrSpecialCharsRegex.test(str);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -51,6 +56,15 @@ export default function Page() {
             return;
         }
 
+        if (!validateNoNumbersOrSpecialChars(firstName)) {
+            setError('Le prénom doit contenir uniquement des lettres ou - ');
+            return;
+        }
+
+        if (!validateNoNumbersOrSpecialChars(lastName)) {
+            setError('Le nom doit contenir uniquement des lettres ou - ');
+            return;
+        }
 
         try {
             await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -61,14 +75,14 @@ export default function Page() {
                 plainPassword: plainPassword, 
                 firstName: firstName,
                 lastName: lastName 
-        });
+            });
 
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': "application/ld+json",
                 },
-                body: JSON.stringify(user),
+                body: JSON.stringify({email: email, plainPassword: plainPassword, firstName: firstName, lastName: lastName}),
             });
 
             
