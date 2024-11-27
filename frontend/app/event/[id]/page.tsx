@@ -1,14 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from 'next/image';
 import { notFound } from "next/navigation";
 import { useParams } from "next/navigation";
 import { useEvents } from "@/components/EventContext";
 import { EventProps } from "@/types/event";
 import { Badge } from '@/components/ui/badge';
-
 import { PopupJoinPublicEvent } from '@/components/sections/popupJoinPublicEvent';
 import { PopupShareEvent } from '@/components/sections/popupShareEvent';
 import { k2d } from '@/app/fonts/fonts';
@@ -17,12 +16,16 @@ import { fr } from "date-fns/locale";
 import { SkeletonEventDetails } from "@/components/skeletons/skeletons";
 import { useUser } from '@/contexts/UserProvider';
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast"
 
 export default function Event() {
     const { id } = useParams();
     const events = useEvents();
     const [loading, setLoading] = React.useState(true);
     const { user } = useUser();
+    const { toast } = useToast();
+    const [isRegistered, setIsRegistered] = useState<boolean | null>(null);
 
     useEffect(() => {
         if (events.length > 0) {
@@ -30,13 +33,42 @@ export default function Event() {
         }
     }, [events]);
 
+    const event = events.find((event: EventProps) => event.id === Number(id));
+
+    useEffect(() => {
+        const checkRegistration = async () => {
+            if (user && event) {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/events/${event.id}/is-registered`, {
+                        method: 'GET',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        setIsRegistered(data.isRegistered);
+                    }
+                } catch (error) {
+                    console.error('An error occurred while checking registration', error);
+                }
+            }
+        };
+
+        checkRegistration();
+    }, [user, event]);
+
     if (loading) {
         return (
             <SkeletonEventDetails />
         );
     }
 
-    const event = events.find((event: EventProps) => event.id === Number(id));
+    if (!event) {
+        notFound();
+    }
 
     const defaultImage = "/images/event_default.webp";
     const eventUrl = `http://localhost:8090/event/${event.id}`;
@@ -52,13 +84,58 @@ export default function Event() {
             });
 
             if (response.ok) {
-                alert('Vous êtes inscrit à l\'événement avec succès.');
+                setIsRegistered(true);
+                const description = formattedDateStart === formattedDateEnd
+                    ? `Le ${formattedDateStart} de ${startTime} à ${endTime}`
+                    : `Du ${formattedDateStart} à ${startTime} au ${formattedDateEnd} à ${endTime}`;
+
+                toast({
+                    title: "Événement planifié !",
+                    description: description,
+                    action: (
+                        <ToastAction onClick={handleUnregisterEvent} altText="Aller à l'horaire pour annuler">Annuler</ToastAction>
+                    ),
+                });
             } else {
-                alert('Une erreur est survenue lors de l\'inscription à l\'événement.');
+                toast({
+                    title: "Oups... Inscription impossible",
+                    description: "Une erreur est survenue lors de l\'inscription à l\'événement.",
+                    // action: (
+                    //     <ToastAction altText="Aller à l'horaire pour annuler">Annuler</ToastAction>
+                    // ),
+                });
             }
         } catch (error) {
             console.error('An error occurred while joining the event', error);
             alert('Une erreur est survenue lors de l\'inscription à l\'événement.');
+        }
+    };
+
+    const handleUnregisterEvent = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/events/${event.id}/unregister`, {
+                method: 'PATCH',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                setIsRegistered(false);
+                toast({
+                    title: "Désinscription réussie",
+                    description: "Vous avez été désinscrit de l'événement.",
+                    // action: (
+                    //     <ToastAction altText="Aller à l'horaire pour annuler">Annuler</ToastAction>
+                    // ),
+                });
+            } else {
+                alert('Une erreur est survenue lors de la désinscription de l\'événement.');
+            }
+        } catch (error) {
+            console.error('An error occurred while unregistering from the event', error);
+            alert('Une erreur est survenue lors de la désinscription de l\'événement.');
         }
     };
 
@@ -72,9 +149,7 @@ export default function Event() {
     const startTime = format(dateStart, "HH:mm", { locale: fr });
     const endTime = format(dateEnd, "HH:mm", { locale: fr });
 
-    if (!event) {
-        notFound();
-    }
+
 
     return (
 
@@ -239,10 +314,22 @@ export default function Event() {
                 </div>
 
                 <div className="mb-16 flex space-x-3">
-                    {user ? (
-                        <Button variant={'default'} size={'lg'} onClick={handleJoinEvent}>
-                            S'inscrire
-                        </Button>
+                    {user && isRegistered !== null ? (
+                        isRegistered ? (
+                            <Button
+                                variant={'default'}
+                                onClick={handleUnregisterEvent}
+                            >
+                                Se désinscrire
+                            </Button>
+                        ) : (
+                            <Button
+                                variant={'default'}
+                                onClick={handleJoinEvent}
+                            >
+                                Ajouter au calendrier
+                            </Button>
+                        )
                     ) : (
                         <PopupJoinPublicEvent eventId={event.id} />
                     )}

@@ -10,6 +10,7 @@ import { UserProvider } from "@/contexts/UserProvider";
 
 import { inter } from '@/app/fonts/fonts';
 import { k2d } from '@/app/fonts/fonts';
+import { Toaster } from "@/components/ui/toaster"
 
 export default function RootLayout({
   children,
@@ -33,6 +34,7 @@ export default function RootLayout({
           <Navbar />
           <EventProvider>
             <main className="flex-grow min-h-screen">{children}</main>
+            <Toaster />
           </EventProvider>
           {!isProfileCalendarRoute && <Footer />}
         </UserProvider>
