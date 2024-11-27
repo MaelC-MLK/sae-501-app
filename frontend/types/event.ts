@@ -1,7 +1,7 @@
 import { UserProps } from './user';
 
 export interface EventProps {
-    id: string;
+    id: number;
     title: string;
     date_start: string;
     date_end: string;
@@ -28,5 +28,5 @@ export interface PopupUpdateEventProps {
 }
 
 export interface PopupJoinPublicEventProps {
-    eventId: string;
+    eventId: number;
 }
