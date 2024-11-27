@@ -18,6 +18,7 @@ import { useUser } from '@/contexts/UserProvider';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast"
+import { checkUserRegistration, joinEvent, unregisterEvent } from "@/lib/data";
 
 export default function Event() {
     const { id } = useParams();
@@ -36,28 +37,18 @@ export default function Event() {
     const event = events.find((event: EventProps) => event.id === Number(id));
 
     useEffect(() => {
-        const checkRegistration = async () => {
-            if (user && event) {
+        if (user && event) {
+            const fetchRegistrationStatus = async () => {
                 try {
-                    const response = await fetch(`http://localhost:8080/api/events/${event.id}/is-registered`, {
-                        method: 'GET',
-                        credentials: 'include',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        setIsRegistered(data.isRegistered);
-                    }
+                    const status = await checkUserRegistration(user.id, event.id);
+                    setIsRegistered(status);
                 } catch (error) {
-                    console.error('An error occurred while checking registration', error);
+                    console.error("Failed to fetch registration status", error);
                 }
-            }
-        };
+            };
 
-        checkRegistration();
+            fetchRegistrationStatus();
+        }
     }, [user, event]);
 
     if (loading) {
@@ -75,67 +66,48 @@ export default function Event() {
 
     const handleJoinEvent = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/events/${event.id}/join`, {
-                method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            await joinEvent(event.id);
+            setIsRegistered(true);
+            const description = formattedDateStart === formattedDateEnd
+                ? `Le ${formattedDateStart} de ${startTime} à ${endTime}`
+                : `Du ${formattedDateStart} à ${startTime} au ${formattedDateEnd} à ${endTime}`;
+            toast({
+                title: "Événement planifié !",
+                description: description,
+                action: (
+                    <ToastAction onClick={handleUnregisterEvent} altText="Annuler">Annuler</ToastAction>
+                ),
             });
-
-            if (response.ok) {
-                setIsRegistered(true);
-                const description = formattedDateStart === formattedDateEnd
-                    ? `Le ${formattedDateStart} de ${startTime} à ${endTime}`
-                    : `Du ${formattedDateStart} à ${startTime} au ${formattedDateEnd} à ${endTime}`;
-
-                toast({
-                    title: "Événement planifié !",
-                    description: description,
-                    action: (
-                        <ToastAction onClick={handleUnregisterEvent} altText="Aller à l'horaire pour annuler">Annuler</ToastAction>
-                    ),
-                });
-            } else {
-                toast({
-                    title: "Oups... Inscription impossible",
-                    description: "Une erreur est survenue lors de l\'inscription à l\'événement.",
-                    // action: (
-                    //     <ToastAction altText="Aller à l'horaire pour annuler">Annuler</ToastAction>
-                    // ),
-                });
-            }
         } catch (error) {
-            console.error('An error occurred while joining the event', error);
-            alert('Une erreur est survenue lors de l\'inscription à l\'événement.');
+            toast({
+                title: "Oups... Inscription impossible",
+                description: "Une erreur est survenue lors de l\'inscription à l\'événement.",
+                action: (
+                    <ToastAction onClick={handleJoinEvent} altText="Réessayer">Réessayer</ToastAction>
+                ),
+            });
         }
     };
 
     const handleUnregisterEvent = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/events/${event.id}/unregister`, {
-                method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            await unregisterEvent(event.id);
+            setIsRegistered(false);
+            toast({
+                title: "Désinscription réussie !",
+                description: "Vous avez été désinscrit de l'événement.",
+                action: (
+                    <ToastAction onClick={handleJoinEvent} altText="Annuler">Annuler</ToastAction>
+                ),
             });
-
-            if (response.ok) {
-                setIsRegistered(false);
-                toast({
-                    title: "Désinscription réussie",
-                    description: "Vous avez été désinscrit de l'événement.",
-                    // action: (
-                    //     <ToastAction altText="Aller à l'horaire pour annuler">Annuler</ToastAction>
-                    // ),
-                });
-            } else {
-                alert('Une erreur est survenue lors de la désinscription de l\'événement.');
-            }
         } catch (error) {
-            console.error('An error occurred while unregistering from the event', error);
-            alert('Une erreur est survenue lors de la désinscription de l\'événement.');
+            toast({
+                title: "Oups... Désinscription impossible",
+                description: "Une erreur est survenue lors de la désinscription à l\'événement.",
+                action: (
+                    <ToastAction onClick={handleJoinEvent} altText="Réessayer">Réessayer</ToastAction>
+                ),
+            });
         }
     };
 
@@ -317,7 +289,7 @@ export default function Event() {
                     {user && isRegistered !== null ? (
                         isRegistered ? (
                             <Button
-                                variant={'default'}
+                                variant={'outline'}
                                 onClick={handleUnregisterEvent}
                             >
                                 Se désinscrire
