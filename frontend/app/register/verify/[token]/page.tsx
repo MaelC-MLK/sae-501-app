@@ -24,7 +24,7 @@ export default function VerifyEmailPage({ params }: { params: { token: string } 
                         setMessage(data.message);
                     } else {
                         setStatus('success');
-                        setMessage('Votre inscription a été validée avec succès !');
+                        setMessage('Votre inscription a été validée avec succès ! Vous pouvez maintenant vous connecter.');
                     }
                 } else {
                     const data = await res.json();

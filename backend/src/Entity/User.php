@@ -78,7 +78,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?string $password = null;
 
-    #[Groups(['user:create', 'user:update'])]
     private ?string $plainPassword = null;
 
     #[ORM\Column(type: 'json')]
