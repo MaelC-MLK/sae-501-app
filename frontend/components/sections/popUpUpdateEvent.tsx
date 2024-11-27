@@ -1,5 +1,6 @@
 "use client";
 
+import { revalidatePath } from 'next/cache'
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
@@ -253,6 +254,7 @@ export default function PopupUpdateEvent({
       const response = await UpdateEvent(formData, eventData.id);
       console.log("Event updated:", response);
       setIsMainDialogOpen(false);
+      revalidatePath('/profile/calendar');
     } catch (error) {
       console.error("Failed to update event:", error);
     }

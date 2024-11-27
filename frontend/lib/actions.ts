@@ -1,6 +1,7 @@
 // /lib/action.ts
 
 import { error } from "console";
+import { loadEvents } from "@/components/sections/calendar";
 
 export async function createEvent(eventData: any) {
     const response = await fetch('http://localhost:8080/api/events', {
@@ -10,12 +11,12 @@ export async function createEvent(eventData: any) {
         },
         body: eventData,
     });
-
     if (!response.ok) {
         throw new Error('Failed to create event');
     }
-
-    return await response.json();
+    const newEvent = await response.json();
+    await loadEvents();
+    return newEvent;
 }
 
 export async function UpdateEvent(eventData: any, eventId: string) {
@@ -28,12 +29,12 @@ export async function UpdateEvent(eventData: any, eventId: string) {
         },
         body: JSON.stringify(eventData),
     });
-
     if (!response.ok) {
         throw new Error('Failed to update event');
     }
-
-    return await response.json();
+    const updatedEvent = await response.json();
+    await loadEvents(); // Recharger les événements après la mise à jour
+    return updatedEvent;
 }
 
 export async function deleteEvent(eventId: string) {

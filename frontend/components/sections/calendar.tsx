@@ -24,6 +24,35 @@ import {
 import { UpdateEvent } from "@/lib/actions";
 import { format } from "date-fns";
 
+let userContext: ReturnType<typeof useUser>;
+let setEvents: React.Dispatch<React.SetStateAction<any[]>>;
+let setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+
+export async function loadEvents() {
+  if (!userContext.user) return;
+  const userId = userContext.user.id;
+  if (userId) {
+    try {
+      const userEvents = await fetchUserEvents(userId);
+      const creatorEvents = await fetchEventsByCreator(userId);
+      const combinedEvents = [...userEvents, ...creatorEvents].map(
+        (event) => ({
+          ...event,
+          backgroundColor: event.creator_id == userId ? "#FFD700" : "#ADD8E6",
+          borderColor: event.creator_id == userId ? "#FFD700" : "#ADD8E6",
+        })
+      );
+      setEvents(combinedEvents);
+      setLoading(false);
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération des événements de l'utilisateur :",
+        error
+      );
+    }
+  }
+}
+
 export default function Calendar() {
   const [calendarView, setCalendarView] = useState("timeGridWeek");
   const [headerToolbar, setHeaderToolbar] = useState({
@@ -31,7 +60,7 @@ export default function Calendar() {
     center: "",
     right: "timeGridDay,timeGridWeek,dayGridMonth",
   });
-  const [events, setEvents] = useState<
+  const [events, setEventsState] = useState<
     {
       id: string;
       title: string;
@@ -47,10 +76,13 @@ export default function Calendar() {
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [filter, setFilter] = useState("all");
   const calendarRef = useRef<FullCalendar>(null);
-  const userContext = useUser();
+  userContext = useUser();
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoadingState] = useState(true);
   const userId = userContext.user ? userContext.user.id : null;
+
+  setEvents = setEventsState;
+  setLoading = setLoadingState;
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
+import { revalidatePath } from 'next/cache'
 
 import { Button } from "@/components/ui/button";
 import {
@@ -304,6 +305,7 @@ export default function PopupCreationEvent({
       console.log("Event created successfully:", response);
       setIsMainDialogOpen(false);
       resetForm();
+      revalidatePath('/profile/calendar');
     } catch (error) {
       console.error("Failed to create event:", error);
     }
