@@ -150,7 +150,7 @@ class UserController extends AbstractController
         $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
         if($existingUser){
-            if($existingUser->isActive() === false && $existingUser->getVerificationToken() !== null){
+            if($existingUser->isActive() === false && $existingUser->getVerificationToken() !== null && $existingUser->getLogout() == null){
                 $user = $existingUser;
             }
             else {
