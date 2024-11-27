@@ -33,7 +33,8 @@ export default function RootLayout({
         <UserProvider>
           <Navbar />
           <EventProvider>
-            <main className="flex-grow min-h-dvh">{children}</main>
+            <main className="flex-grow min-h-screen">{children}</main>
+            <Toaster />
           </EventProvider>
           {!isProfileCalendarRoute && <Footer />}
         </UserProvider>
