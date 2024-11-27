@@ -42,7 +42,7 @@ export function CardCarouselEvent({ event }: { event: EventProps }) {
                 />
             </div>
 
-            <div className="group flex flex-col mt-2">
+            <div className="group flex flex-col mt-2 overflow-hidden">
                 <p className={`${k2d.className} text-lg font-medium truncate`}>{event.title}</p>
                 <div className="text-muted-foreground flex items-center gap-3">
                     {formattedDateStart === formattedDateEnd ? (

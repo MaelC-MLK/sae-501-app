@@ -47,7 +47,7 @@ export default function Page() {
             <div className="flex items-center justify-center min-h-screen w-full">
             <div className="text-center">
                 <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid border-4 border-gray-200"></div>
-                <p className="mt-4 text-gray-700">Authenticating...</p>
+                <p className="mt-4 text-gray-700">Authentification...</p>
             </div>
         </div>
             ) : (
@@ -62,7 +62,7 @@ export default function Page() {
                                 <Input
                                     type="email"
                                     id="email"
-                                    placeholder="Email"
+                                    placeholder="Adresse mail"
                                     name="email"
                                     required
                                     className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"
@@ -75,7 +75,7 @@ export default function Page() {
                                 <Input
                                     type="password"
                                     id="password"
-                                    placeholder="Password"
+                                    placeholder="Mot de passe"
                                     name="password"
                                     required
                                     className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"

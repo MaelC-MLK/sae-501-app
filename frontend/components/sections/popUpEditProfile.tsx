@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
+import Image from 'next/image';
 
 export function PopUpEditProfile({ user, onUpdate }) {
   const [name, setName] = useState(user?.firstName || "");
@@ -73,7 +74,9 @@ export function PopUpEditProfile({ user, onUpdate }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Modifier le profil</Button>
+        <Button variant="outline" className="px-2.5">
+          <Image src="/images/edit.svg" alt="Edit Icon" width={21} height={20} />
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
