@@ -189,8 +189,8 @@ export default function Page() {
 
                 <PopUpEmailRegister user={user} open={open} setOpen={setOpen}></PopUpEmailRegister>
 
-                <p className="text-center text-sm text-gray-500 mt-2">
-                    Vous avez déjà un compte? <Link href="/login" className="text-primary hover:underline">Connectez-vous</Link>
+                <p className="text-center text-sm text-gray-500 mt-6">
+                    Vous avez déjà un compte? <Link href="/login" className="text-blue-500 hover:underline">Connectez-vous</Link>
                 </p>
             </div>
 
