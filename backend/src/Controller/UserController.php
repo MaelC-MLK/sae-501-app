@@ -201,7 +201,7 @@ class UserController extends AbstractController
     }
     
     #[Route('/api/verify-email-register/{token}', name: 'verify_email_register', methods: ['GET'])]
-    public function verifyEmailRegister(string $token, int $id, EntityManagerInterface $entityManager): JsonResponse
+    public function verifyEmailRegister(string $token, EntityManagerInterface $entityManager): JsonResponse
     {
         // Rechercher l'utilisateur par token
         $user = $entityManager->getRepository(User::class)->findOneBy(['verificationToken' => $token]);

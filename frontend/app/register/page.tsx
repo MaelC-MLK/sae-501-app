@@ -20,7 +20,7 @@ export default function Page() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
-    const [user, setUser] = useState({email: '', plainPassword: '', firstName: '', lastName: ''});
+    const [user, setUser] = useState({email: email, plainPassword: plainPassword, firstName: firstName, lastName: lastName});
     const router = useRouter();
 
     const validateEmail = (email: string) => {
@@ -61,14 +61,14 @@ export default function Page() {
                 plainPassword: plainPassword, 
                 firstName: firstName,
                 lastName: lastName 
-        });
+            });
 
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': "application/ld+json",
                 },
-                body: JSON.stringify(user),
+                body: JSON.stringify({email: email, plainPassword: plainPassword, firstName: firstName, lastName: lastName}),
             });
 
             
