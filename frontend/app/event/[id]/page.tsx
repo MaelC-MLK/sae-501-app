@@ -10,7 +10,6 @@ import { EventProps } from "@/types/event";
 import { Badge } from '@/components/ui/badge';
 
 import { PopupJoinPublicEvent } from '@/components/sections/popupJoinPublicEvent';
-import { PopupJoin } from '@/components/sections/popupJoin';
 import { PopupShareEvent } from '@/components/sections/popupShareEvent';
 import { k2d } from '@/app/fonts/fonts';
 import { format, parse } from "date-fns";
@@ -41,6 +40,27 @@ export default function Event() {
 
     const defaultImage = "/images/event_default.webp";
     const eventUrl = `http://localhost:8090/event/${event.id}`;
+
+    const handleJoinEvent = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/events/${event.id}/join`, {
+                method: 'PATCH',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                alert('Vous êtes inscrit à l\'événement avec succès.');
+            } else {
+                alert('Une erreur est survenue lors de l\'inscription à l\'événement.');
+            }
+        } catch (error) {
+            console.error('An error occurred while joining the event', error);
+            alert('Une erreur est survenue lors de l\'inscription à l\'événement.');
+        }
+    };
 
     const dateStart = parse(event.date_start, "dd/MM/yyyy - HH:mm", new Date());
     const dateEnd = parse(event.date_end, "dd/MM/yyyy - HH:mm", new Date());
@@ -219,7 +239,13 @@ export default function Event() {
                 </div>
 
                 <div className="mb-16 flex space-x-3">
-                    {user ? <Button variant={'default'} size={'lg'}>S'inscrire</Button> : <PopupJoinPublicEvent eventId={event.id} />}
+                    {user ? (
+                        <Button variant={'default'} size={'lg'} onClick={handleJoinEvent}>
+                            S'inscrire
+                        </Button>
+                    ) : (
+                        <PopupJoinPublicEvent eventId={event.id} />
+                    )}
                     <PopupShareEvent eventUrl={eventUrl} />
                 </div>
 
