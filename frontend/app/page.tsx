@@ -42,7 +42,7 @@ export default function Home() {
         <div className="relative rounded-2xl overflow-hidden before:w-full before:h-full before:bg-black before:absolute before:opacity-15">
           <Image
           alt="Image d'illustration"
-          src="/images/image_illustration.webp"
+          src="/images/image_illustration_small.webp"
           width={500}
           height={500}
           className="w-96 lg:w-128"

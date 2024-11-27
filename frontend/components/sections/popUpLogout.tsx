@@ -16,6 +16,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { setDefaultResultOrder } from "dns";
 import { useUser } from "@/contexts/UserProvider";
+import Image from "next/image";
 
 export function PopUpLogout() {
   const [open, setOpen] = useState(false); 
@@ -50,7 +51,9 @@ export function PopUpLogout() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="destructive">Se déconnecter</Button>
+        <Button variant="destructive" className="px-">
+          <Image src="/images/delete.svg" alt="Edit Icon" width={16} height={18} />
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

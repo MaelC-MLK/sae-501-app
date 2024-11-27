@@ -59,6 +59,7 @@ const config: Config = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
 		spacing: {
+			'34': '8.5rem',
 			'128': '32rem',
 			'144': '36rem'
 		},

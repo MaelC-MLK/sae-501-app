@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { inviteFriend } from "@/lib/actions";
+import Image from "next/image";
 
 export function PopUpJoinEventify() {
     const [email, setEmail] = useState("");
@@ -43,8 +44,9 @@ export function PopUpJoinEventify() {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button variant="default" size="lg" className="w-full sm:w-auto">
+                <Button variant="outline" size="lg" className="flex gap-2 my-4 text-md w-full sm:w-auto text-primary hover:text-primary px-4">
                     Invitez vos amis
+                    <Image src="/images/share-friends.png" alt="Share with friends" width={16} height={16} />
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">

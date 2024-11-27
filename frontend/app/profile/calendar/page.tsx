@@ -42,7 +42,7 @@ export default function Page() {
         <>
             <div className="pt-14">
                 <div className="border-b relative overflow-hidden">
-                        <div className="w-144 h-144 bg-primary rounded-full blur-6xl absolute -right-52 -top-64 -z-10 opacity-30 hidden md:block" />
+                    <div className="w-144 h-144 bg-primary rounded-full blur-6xl absolute -right-52 -top-64 -z-10 opacity-30 hidden md:block" />
 
                     <div className="flex max-w-7xl justify-self-center w-full overflow-hidden ">
                         <button
