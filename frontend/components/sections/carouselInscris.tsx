@@ -22,7 +22,7 @@ export function CarouselInscris({ events }: CarouselRecomProps) {
     <Carousel className="w-full max-w-7xl justify-self-center px-5 sm:px-16">
       <CarouselContent>
         {loading ? (
-          Array.from({ length: 2 }).map((_, index) => (
+          Array.from({ length: 3 }).map((_, index) => (
             <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
               <SkeletonCardCarousel />
             </CarouselItem>
