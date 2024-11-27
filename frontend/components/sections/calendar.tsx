@@ -9,7 +9,7 @@ import "@/app/globals.css";
 import { fetchUserEvents, fetchEventsByCreator } from "@/lib/data";
 import PopupDeleteEvent from "@/components/sections/popupDeleteEvent";
 import PopupUpdateEvent from "@/components/sections/popUpUpdateEvent";
-import { deleteEvent } from "@/lib/actions"; // Importer la fonction deleteEvent
+import { deleteEvent } from "@/lib/actions";
 import { useUser } from "@/contexts/UserProvider";
 import { useRouter } from "next/navigation";
 import {
@@ -20,7 +20,9 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+import { UpdateEvent } from "@/lib/actions";
+import { format } from "date-fns";
 
 export default function Calendar() {
   const [calendarView, setCalendarView] = useState("timeGridWeek");
@@ -30,7 +32,14 @@ export default function Calendar() {
     right: "timeGridDay,timeGridWeek,dayGridMonth",
   });
   const [events, setEvents] = useState<
-    { id: string; title: string; start: Date; end: Date; isVisible: boolean; creator_id: string }[]
+    {
+      id: string;
+      title: string;
+      start: Date;
+      end: Date;
+      isVisible: boolean;
+      creator_id: string;
+    }[]
   >([]);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -57,33 +66,31 @@ export default function Calendar() {
     loadEvents();
   }, [userContext.user]);
 
- 
-
   const loadEvents = async () => {
     if (!userContext.user) return;
-    const userId = userContext.user.id
-      if (userId) {
-        try {
-          const userEvents = await fetchUserEvents(userId);
-          const creatorEvents = await fetchEventsByCreator(userId);
-          const combinedEvents = [...userEvents, ...creatorEvents].map(event => ({
+    const userId = userContext.user.id;
+    if (userId) {
+      try {
+        const userEvents = await fetchUserEvents(userId);
+        const creatorEvents = await fetchEventsByCreator(userId);
+        const combinedEvents = [...userEvents, ...creatorEvents].map(
+          (event) => ({
             ...event,
-            backgroundColor: event.creator_id == userId ? '#FFD700' : '#ADD8E6',
-            borderColor: event.creator_id == userId ? '#FFD700' : '#ADD8E6',
-          }));
-          setEvents(combinedEvents);
-          setLoading(false);
-        } catch (error) {
-          console.error(
-            "Erreur lors de la récupération des événements de l'utilisateur :",
-            error
-          );
-        }
+            backgroundColor: event.creator_id == userId ? "#FFD700" : "#ADD8E6",
+            borderColor: event.creator_id == userId ? "#FFD700" : "#ADD8E6",
+          })
+        );
+        setEvents(combinedEvents);
+        setLoading(false);
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération des événements de l'utilisateur :",
+          error
+        );
       }
     }
+  };
 
-
-    
   const handleWindowResize = () => {
     const { innerWidth } = window;
     if (innerWidth < 768) {
@@ -109,6 +116,45 @@ export default function Calendar() {
     }
   };
 
+  const handleUnsubscribeClick = async () => {
+    if (selectedEvent) {
+      try {
+        const formattedStartDate = format(
+          new Date(selectedEvent.start),
+          "yyyy-MM-dd HH:mm:ss"
+        );
+        const formattedEndDate = format(
+          new Date(selectedEvent.end),
+          "yyyy-MM-dd HH:mm:ss"
+        );
+
+        const updatedEventData = {
+          ...selectedEvent.extendedProps,
+          users: selectedEvent.extendedProps.users.filter(
+            (user: any) => user.id !== userId
+          ),
+          date_start: formattedStartDate,
+          date_end: formattedEndDate,
+        };
+
+        console.log(JSON.stringify(updatedEventData));
+
+        await UpdateEvent(updatedEventData, selectedEvent.id);
+        await loadEvents();
+        closeModal();
+      } catch (error) {
+        console.error(
+          "Erreur lors de la désinscription de l'événement :",
+          error
+        );
+      }
+    }
+  };
+
+  const isUserParticipant = selectedEvent?.extendedProps.users.some(
+    (user: any) => user.id === userId
+  );
+
   useEffect(() => {
     window.addEventListener("resize", handleWindowResize);
     handleWindowResize();
@@ -125,8 +171,8 @@ export default function Calendar() {
   const handleEventClick = (clickInfo: any) => {
     setSelectedEvent(clickInfo.event);
     setModalPosition({
-        top: clickInfo.jsEvent.clientY,
-        left: clickInfo.jsEvent.clientX,
+      top: clickInfo.jsEvent.clientY,
+      left: clickInfo.jsEvent.clientX,
     });
     setIsModalOpen(true);
   };
@@ -159,27 +205,27 @@ export default function Calendar() {
     setIsPopupDeleteOpen(false);
   };
 
-const handleFilterChange = (value: string) => {
+  const handleFilterChange = (value: string) => {
     setFilter(value);
-};
+  };
 
-const filteredEvents = events.filter((event) => {
-  if (filter === "all") return true;
-  if (filter === "public") return event.isVisible === true;
-  if (filter === "private") return event.isVisible === false;
-  return true;
-});
+  const filteredEvents = events.filter((event) => {
+    if (filter === "all") return true;
+    if (filter === "public") return event.isVisible === true;
+    if (filter === "private") return event.isVisible === false;
+    return true;
+  });
 
-if (loading) {
-  return (
+  if (loading) {
+    return (
       <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
-              <p className="mt-4 text-gray-700">Chargement...</p>
-          </div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+          <p className="mt-4 text-gray-700">Chargement...</p>
+        </div>
       </div>
-  );
-}
+    );
+  }
 
   return (
     <div className="calendar-container">
@@ -196,7 +242,7 @@ if (loading) {
               <SelectItem value="private">Privés</SelectItem>
             </SelectGroup>
           </SelectContent>
-      </Select>
+        </Select>
       </div>
       <FullCalendar
         ref={calendarRef}
@@ -260,6 +306,59 @@ if (loading) {
               </div>
             </button>
 
+            {selectedEvent.extendedProps.isVisible && (
+              <>
+                <a className="relative group text-gray-500 hover:text-gray-700 px-1 float-right" href={`http://localhost:8090/event/${selectedEvent.id}`}                >
+                  <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2">
+                    Page détail public
+                  </div>
+                  <div className="rounded-full p-2 group-hover:bg-gray-200">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="black"
+                      className="size-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6"
+                      />
+                    </svg>
+                  </div>
+                </a>
+              </>
+            )}
+
+            {isUserParticipant && (
+              <button
+                className="relative group text-gray-500 hover:text-gray-700 px-1 float-right"
+                onClick={handleUnsubscribeClick}
+              >
+                <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2">
+                  Se désinscrire
+                </div>
+                <div className="rounded-full p-2 group-hover:bg-gray-200">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="black"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
+                    />
+                  </svg>
+                </div>
+              </button>
+            )}
+
             {selectedEvent.extendedProps.creator_id == userId && (
               <>
                 <button
@@ -287,10 +386,7 @@ if (loading) {
                   </div>
                 </button>
 
-              
-                <PopupUpdateEvent eventData={selectedEvent}/>
-
-
+                <PopupUpdateEvent eventData={selectedEvent} />
               </>
             )}
 
@@ -367,7 +463,9 @@ if (loading) {
                     d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h16.5"
                   />
                 </svg>
-                <p className="mb-4">{selectedEvent.extendedProps.description}</p>
+                <p className="mb-4">
+                  {selectedEvent.extendedProps.description}
+                </p>
               </div>
             )}
           </div>
@@ -376,10 +474,12 @@ if (loading) {
 
       {isPopupDeleteOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <PopupDeleteEvent onClose={closePopupDelete} onDelete={handleDeleteClick} />
+          <PopupDeleteEvent
+            onClose={closePopupDelete}
+            onDelete={handleDeleteClick}
+          />
         </div>
       )}
-
     </div>
   );
 }

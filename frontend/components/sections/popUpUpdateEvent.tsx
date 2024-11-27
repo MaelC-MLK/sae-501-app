@@ -251,6 +251,7 @@ export default function PopupUpdateEvent({
   
     try {
       const response = await UpdateEvent(formData, eventData.id);
+      console.log("Event updated:", response);
       setIsMainDialogOpen(false);
     } catch (error) {
       console.error("Failed to update event:", error);
