@@ -201,10 +201,16 @@ export default function Calendar() {
   }, [calendarView]);
 
   const handleEventClick = (clickInfo: any) => {
+    const { clientX, clientY } = clickInfo.jsEvent;
+    const { innerWidth, innerHeight } = window;
+  
+    const isLeftHalf = clientX < innerWidth / 2;
+    const isBottomQuarter = clientY > (innerHeight * 3) / 4;
+  
     setSelectedEvent(clickInfo.event);
     setModalPosition({
-      top: clickInfo.jsEvent.clientY,
-      left: clickInfo.jsEvent.clientX,
+      top: isBottomQuarter ? clientY - 200 : clientY,
+      left: isLeftHalf ? clientX + 20 : clientX - 320,
     });
     setIsModalOpen(true);
   };
