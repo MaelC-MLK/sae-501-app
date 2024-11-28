@@ -1,26 +1,32 @@
 "use client";
 
 import * as React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from 'next/image';
-import CardEventDetail from "@/components/cards/cardEventDetail";
 import { notFound } from "next/navigation";
 import { useParams } from "next/navigation";
 import { useEvents } from "@/components/EventContext";
 import { EventProps } from "@/types/event";
 import { Badge } from '@/components/ui/badge';
-
 import { PopupJoinPublicEvent } from '@/components/sections/popupJoinPublicEvent';
 import { PopupShareEvent } from '@/components/sections/popupShareEvent';
 import { k2d } from '@/app/fonts/fonts';
 import { format, parse } from "date-fns";
 import { fr } from "date-fns/locale";
 import { SkeletonEventDetails } from "@/components/skeletons/skeletons";
+import { useUser } from '@/contexts/UserProvider';
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast"
+import { checkUserRegistration, joinEvent, unregisterEvent } from "@/lib/data";
 
 export default function Event() {
     const { id } = useParams();
     const events = useEvents();
     const [loading, setLoading] = React.useState(true);
+    const { user } = useUser();
+    const { toast } = useToast();
+    const [isRegistered, setIsRegistered] = useState<boolean | null>(null);
 
     useEffect(() => {
         if (events.length > 0) {
@@ -28,16 +34,82 @@ export default function Event() {
         }
     }, [events]);
 
+    const event = events.find((event: EventProps) => event.id === Number(id));
+
+    useEffect(() => {
+        if (user && event) {
+            const fetchRegistrationStatus = async () => {
+                try {
+                    const status = await checkUserRegistration(user.id, event.id);
+                    setIsRegistered(status);
+                } catch (error) {
+                    console.error("Failed to fetch registration status", error);
+                }
+            };
+
+            fetchRegistrationStatus();
+        }
+    }, [user, event]);
+
     if (loading) {
         return (
             <SkeletonEventDetails />
         );
     }
 
-    const event = events.find((event: EventProps) => event.id === Number(id));
+    if (!event) {
+        notFound();
+    }
 
     const defaultImage = "/images/event_default.webp";
     const eventUrl = `http://localhost:8090/event/${event.id}`;
+
+    const handleJoinEvent = async () => {
+        try {
+            await joinEvent(event.id);
+            setIsRegistered(true);
+            const description = formattedDateStart === formattedDateEnd
+                ? `Le ${formattedDateStart} de ${startTime} à ${endTime}`
+                : `Du ${formattedDateStart} à ${startTime} au ${formattedDateEnd} à ${endTime}`;
+            toast({
+                title: "Événement planifié !",
+                description: description,
+                action: (
+                    <ToastAction onClick={handleUnregisterEvent} altText="Annuler">Annuler</ToastAction>
+                ),
+            });
+        } catch (error) {
+            toast({
+                title: "Oups... Inscription impossible",
+                description: "Une erreur est survenue lors de l\'inscription à l\'événement.",
+                action: (
+                    <ToastAction onClick={handleJoinEvent} altText="Réessayer">Réessayer</ToastAction>
+                ),
+            });
+        }
+    };
+
+    const handleUnregisterEvent = async () => {
+        try {
+            await unregisterEvent(event.id);
+            setIsRegistered(false);
+            toast({
+                title: "Désinscription réussie !",
+                description: "Vous avez été désinscrit de l'événement.",
+                action: (
+                    <ToastAction onClick={handleJoinEvent} altText="Annuler">Annuler</ToastAction>
+                ),
+            });
+        } catch (error) {
+            toast({
+                title: "Oups... Désinscription impossible",
+                description: "Une erreur est survenue lors de la désinscription à l\'événement.",
+                action: (
+                    <ToastAction onClick={handleJoinEvent} altText="Réessayer">Réessayer</ToastAction>
+                ),
+            });
+        }
+    };
 
     const dateStart = parse(event.date_start, "dd/MM/yyyy - HH:mm", new Date());
     const dateEnd = parse(event.date_end, "dd/MM/yyyy - HH:mm", new Date());
@@ -49,9 +121,7 @@ export default function Event() {
     const startTime = format(dateStart, "HH:mm", { locale: fr });
     const endTime = format(dateEnd, "HH:mm", { locale: fr });
 
-    if (!event) {
-        notFound();
-    }
+
 
     return (
 
@@ -216,7 +286,25 @@ export default function Event() {
                 </div>
 
                 <div className="mb-16 flex space-x-3">
-                    <PopupJoinPublicEvent eventId={event.id} />
+                    {user && isRegistered !== null ? (
+                        isRegistered ? (
+                            <Button
+                                variant={'outline'}
+                                onClick={handleUnregisterEvent}
+                            >
+                                Se désinscrire
+                            </Button>
+                        ) : (
+                            <Button
+                                variant={'default'}
+                                onClick={handleJoinEvent}
+                            >
+                                Ajouter au calendrier
+                            </Button>
+                        )
+                    ) : (
+                        <PopupJoinPublicEvent eventId={event.id} />
+                    )}
                     <PopupShareEvent eventUrl={eventUrl} />
                 </div>
 

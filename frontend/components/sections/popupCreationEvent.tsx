@@ -353,13 +353,13 @@ export default function PopupCreationEvent({
     <>
       <Dialog open={isMainDialogOpen} onOpenChange={setIsMainDialogOpen}>
         <DialogTrigger asChild className={`${className}`}>
-          <Button onClick={() => setIsMainDialogOpen(true)} size="lg" className="flex items-center gap-1 p-2 fixed bottom-5 right-5 z-50 md:static">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-7">
+          <Button onClick={() => setIsMainDialogOpen(true)} size="lg" className="flex items-center h-fit py-2 gap-1 px-2 sm:px-4 md:p-2 lg:px-4 fixed bottom-5 right-5 z-50 md:absolute md:top-34 ">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-7 sm:size-5 md:size-6 lg:size-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            <p className="hidden sm:block">
+            <span className="hidden sm:block md:hidden lg:block">
               Créer
-            </p>
+            </span>
             </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-xl max-h-dvh overflow-y-auto">
