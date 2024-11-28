@@ -2,7 +2,7 @@ import { parse } from 'date-fns';
 
 export async function fetchUserBy(value: string) {
 
-    const response = await fetch(`http://localhost:8080/api/users?query=${value}`, {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/users?query=${value}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -18,7 +18,7 @@ export async function fetchUserBy(value: string) {
 }
 
 export async function fetchUserEvents(userId: string) {
-    const response = await fetch(`http://localhost:8080/api/events/user/${userId}`, {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/user/${userId}`, {
             method: 'GET',
             credentials: 'include',
             headers: {
@@ -40,7 +40,7 @@ export async function fetchUserEvents(userId: string) {
 
 export async function fetchEventsByCreator(creatorId: string) {
 
-    const response = await fetch(`http://localhost:8080/api/events/creator/${creatorId}`, {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/creator/${creatorId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -64,7 +64,7 @@ export const checkUserRegistration = async (user: any, eventId: number): Promise
     if (!user || !eventId) return null;
 
     try {
-        const response = await fetch(`http://localhost:8080/api/events/${eventId}/is-registered`, {
+        const response = await fetch(`${process.env.API_BASE_URL}/api/events/${eventId}/is-registered`, {
             method: 'GET',
             credentials: 'include',
             headers: {
@@ -86,7 +86,7 @@ export const checkUserRegistration = async (user: any, eventId: number): Promise
 };
 
 export async function joinEvent(eventId: number) {
-    const response = await fetch(`http://localhost:8080/api/events/${eventId}/join`, {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/${eventId}/join`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -102,7 +102,7 @@ export async function joinEvent(eventId: number) {
 }
 
 export async function unregisterEvent(eventId: number) {
-    const response = await fetch(`http://localhost:8080/api/events/${eventId}/unregister`, {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/${eventId}/unregister`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -118,7 +118,7 @@ export async function unregisterEvent(eventId: number) {
 }
 
 export async function fetchUserById(userId: string) {
-    const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/users/${userId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {

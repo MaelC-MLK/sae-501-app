@@ -19,7 +19,7 @@ export function PopUpDeleteUser({ user }) {
 
   const handleSubmit = async () => {
     try {
-      const api = "http://localhost:8080";
+      const api = process.env.API_BASE_URL;
       const url = `${api}/api/users/${user.id}`;
 
       const response = await fetch(url, {

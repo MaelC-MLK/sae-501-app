@@ -16,7 +16,7 @@ export default function VerifyEmailPage({ params }: { params: { token: string, i
 
         const verifyToken = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/api/verify-email/${token}/${id}`);
+                const res = await fetch(`${process.env.API_BASE_URL}/api/verify-email/${token}/${id}`);
                 if (res.ok) {
                     const data = await res.json();
                     if (data.message === 'Utilisateur déjà inscrit à l\'événement.') {

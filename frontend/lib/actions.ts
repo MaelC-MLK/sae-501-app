@@ -4,7 +4,7 @@ import { error } from "console";
 import { loadEvents } from "@/components/sections/calendar";
 
 export async function createEvent(eventData: any) {
-    const response = await fetch('http://localhost:8080/api/events', {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -20,7 +20,7 @@ export async function createEvent(eventData: any) {
 }
 
 export async function UpdateEvent(eventData: any, eventId: string) {
-    const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/${eventId}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -38,7 +38,7 @@ export async function UpdateEvent(eventData: any, eventId: string) {
 }
 
 export async function deleteEvent(eventId: string) {
-    const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/${eventId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -53,7 +53,7 @@ export async function deleteEvent(eventId: string) {
 
 
 export async function signUserInvite(email: any, eventId: any) {
-    const response = await fetch("http://localhost:8080/api/user/email", {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/user/email`, {
         method: "POST",
         credentials: 'include',
         headers: {
@@ -78,7 +78,7 @@ export async function signUserInvite(email: any, eventId: any) {
 
 
 export async function inviteFriend(email: string) {
-    const response = await fetch("http://localhost:8080/api/invite", {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/invite`, {
         method: "POST",
         credentials: 'include',
         headers: {
@@ -99,7 +99,7 @@ export async function inviteFriend(email: string) {
 }
 
 export async function UpdateUser(user: any) {
-    const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/users/${user.id}`, {
         method: 'PUT',
         credentials: 'include',
         headers: {
@@ -115,7 +115,7 @@ export async function UpdateUser(user: any) {
 }
 
 export async function UpdateUserImage(user: any, image: any) {
-    const response = await fetch(`http://localhost:8080/api/users/${user.id}/update-image`, {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/users/${user.id}/update-image`, {
         method: 'POST',
         credentials: 'include',
         body: image,
@@ -128,7 +128,7 @@ export async function UpdateUserImage(user: any, image: any) {
 }
 
 export async function UpdateEventImage(id: any, image: any) {
-    const response = await fetch(`http://localhost:8080/api/events/${id}/update-image`, {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/${id}/update-image`, {
         method: 'POST',
         credentials: 'include',
         body: image,

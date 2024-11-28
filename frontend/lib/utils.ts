@@ -16,7 +16,7 @@ export async function authenticate(
         throw new Error('Invalid email or password');
     }
 
-    const api = 'http://localhost:8080';
+    const api = process.env.API_BASE_URL;
     const url = api + '/api/auth';
 
     const response = await fetch(url, {

@@ -38,7 +38,7 @@ export function PopUpEditProfile({ user, onUpdate, userContext : { userContextUs
   
       var updatedUser = {
         "@context": "string", // Remplace par le bon contexte
-        "@id": `http://localhost:8080/api/users/${user.id}`,
+        "@id": `${process.env.API_BASE_URL}/api/users/${user.id}`,
         "@type": "string",
         "id": user.id,
         "firstName": name,

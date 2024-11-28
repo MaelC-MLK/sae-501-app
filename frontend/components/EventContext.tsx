@@ -13,7 +13,7 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
     const [events, setEvents] = useState<EventProps[]>([]); // Replace EventProps with your actual type
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/events/public')
+        fetch(`${process.env.API_BASE_URL}/api/events/public`)
             .then(response => response.json())
             .then(data => setEvents(data))
             .catch(error => console.error("Erreur lors de la récupération des événements :", error));

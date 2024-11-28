@@ -21,7 +21,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
     const fetchUser = async () => {
         try {
-            const api = 'http://localhost:8080';
+            const api = process.env.API_BASE_URL;
             const url = api + '/api/auth/me';
 
             const response = await fetch(url, {
