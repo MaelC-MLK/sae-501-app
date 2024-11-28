@@ -22,6 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use App\Controller\EventByUserController;
 use App\Controller\EventByCreatorController;
+use App\Controller\UpdateEventImageController;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[Vich\Uploadable]
@@ -59,6 +60,13 @@ use App\Controller\EventByCreatorController;
         new Put(),
         new Patch(),
         new Delete(),
+        new Post(
+            uriTemplate: 'events/{id}/update-image',
+            controller: UpdateEventImageController::class,
+            inputFormats: ['multipart' => ['multipart/form-data']],
+            denormalizationContext: ['groups' => ['event:write']],
+            validationContext: ['groups' => ['Default', 'event:update']],
+        ),
     ]
 )]
 class Event

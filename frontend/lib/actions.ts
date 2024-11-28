@@ -126,3 +126,16 @@ export async function UpdateUserImage(user: any, image: any) {
     const updatedUser = await response.json();
     return updatedUser;
 }
+
+export async function UpdateEventImage(id: any, image: any) {
+    const response = await fetch(`http://localhost:8080/api/events/${id}/update-image`, {
+        method: 'POST',
+        credentials: 'include',
+        body: image,
+    });
+    if (!response.ok) {
+        throw new Error('Erreur lors de la mise à jour de l\'image');
+    }
+    const updatedEvent = await response.json();
+    return updatedEvent;
+}
