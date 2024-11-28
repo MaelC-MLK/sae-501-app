@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { PaginatedEvents } from "@/components/sections/paginatedEvents";
 import { CarouselInscris } from "@/components/sections/carouselInscris";
 import { fetchUserEvents } from "@/lib/data";
+import { fetchUserById } from "@/lib/data";
 
 export default function Profile() {
   const userContext = useUser();
@@ -21,65 +22,44 @@ export default function Profile() {
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState("");
   const [loadingEvents, setLoadingEvents] = useState(true);
-const [loadingUserData, setLoadingUserData] = useState(true);
+  const [loadingUserData, setLoadingUserData] = useState(true);
   const router = useRouter();
 
 
   useEffect(() => {
-  if (!userContext.user) return;
+    if (!userContext.user) return;
 
-  const fetchEvents = async () => {
-    try {
-      if (userContext.user) {
-        console.log(userContext.user.id);
-        const data = await fetchUserEvents(userContext.user.id);
-        setEvents(data);
-        console.log(data);
+    const fetchEvents = async () => {
+      try {
+        if (userContext.user) {
+          const data = await fetchUserEvents(userContext.user.id);
+          setEvents(data);
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des événements :", error);
+        setError("Erreur lors de la récupération des événements");
+      } finally {
+        setLoadingEvents(false);
       }
-    } catch (error) {
-      console.error("Erreur lors de la récupération des événements :", error);
-      setError("Erreur lors de la récupération des événements");
-    } finally {
-      setLoadingEvents(false);
-    }
-  };
+    };
 
-  fetchEvents();
-}, [userContext.user]);
-
-useEffect(() => {
-  if (!userContext.user) return;
-
-  const fetchUserData = async () => {
-    try {
-      const api = "http://localhost:8080";
-      const url = `${api}/api/users/${userContext.user.id}`;
-
-      const response = await fetch(url, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/ld+json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Erreur lors de la récupération des données utilisateur");
+    const fetchUserData = async () => {
+      try {
+        const data = await fetchUserById(userContext.user.id);
+        setUserData(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Une erreur inconnue est survenue");
+      } finally {
+        setLoadingUserData(false);
       }
+    };
 
-      const data = await response.json();
-      setUserData(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Une erreur inconnue est survenue");
-    } finally {
-      setLoadingUserData(false);
-    }
-  };
+    fetchEvents();
+    fetchUserData();
 
-  fetchUserData();
-}, [userContext.user]);
+  }, [userContext.user]);
 
-const loading = loadingEvents || loadingUserData;
+  const loading = loadingEvents || loadingUserData;
 
   if (loading) {
     return (
@@ -131,7 +111,7 @@ const loading = loadingEvents || loadingUserData;
             <div className="flex flex-col items-center">
               <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white">
                 <Image
-                  src={userData.avatar ? "http://localhost:8080/uploads/users/"+userData?.avatar : '/images/profile-picture.webp'}
+                  src={userData.avatar ? "http://localhost:8080/uploads/users/" + userData?.avatar : '/images/profile-picture.webp'}
                   alt="Profile Picture"
                   layout="fill"
                   objectFit="cover"
@@ -144,8 +124,8 @@ const loading = loadingEvents || loadingUserData;
               <div className="flex items-center justify-between">
                 <p className="text-white">{userData?.email}</p>
               </div>
-                <PopUpJoinEventify>
-                </PopUpJoinEventify>
+              <PopUpJoinEventify>
+              </PopUpJoinEventify>
             </div>
           </div>
 
@@ -153,12 +133,12 @@ const loading = loadingEvents || loadingUserData;
             <div className="flex justify-items justify-between items-center">
               <h3 className={`${k2d.className} text-2xl font-bold text-gray-800`}>Mes événements à venir</h3>
               <Link href="/profile/calendar" >
-                  <Button variant="default" className="text-lg px-6">
-                      Mon calendrier
-                  </Button>
+                <Button variant="default" className="text-lg px-6">
+                  Mon calendrier
+                </Button>
               </Link>
-                </div>
-              <CarouselInscris events={events}/> 
+            </div>
+            <CarouselInscris events={events} />
           </div>
         </div>
       </div>

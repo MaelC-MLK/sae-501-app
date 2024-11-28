@@ -49,7 +49,7 @@ export async function fetchEventsByCreator(creatorId: string) {
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch events');
+        throw new Error('Erreur lors de la récupération des événements');
     }
 
     const data = await response.json();
@@ -80,7 +80,7 @@ export const checkUserRegistration = async (user: any, eventId: number): Promise
             return null;
         }
     } catch (error) {
-        console.error('An error occurred while checking registration', error);
+        console.error('Une erreur est survenue', error);
         return null;
     }
 };
@@ -95,7 +95,7 @@ export async function joinEvent(eventId: number) {
     });
 
     if (!response.ok) {
-        throw new Error('Failed to join event');
+        throw new Error('Echec lors de l\'inscription à l\'événement');
     }
 
     return await response.json();
@@ -111,7 +111,23 @@ export async function unregisterEvent(eventId: number) {
     });
 
     if (!response.ok) {
-        throw new Error('Failed to unregister from event');
+        throw new Error('Echec de la désinscription à l\'événement');
+    }
+
+    return await response.json();
+}
+
+export async function fetchUserById(userId: string) {
+    const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('Erreur lors de la récupération des données utilisateur');
     }
 
     return await response.json();
