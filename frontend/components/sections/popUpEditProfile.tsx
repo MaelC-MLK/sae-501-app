@@ -13,7 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
-import Image from 'next/image';
+import {UpdateUserImage} from "@/lib/actions";
+import { UpdateUser } from "@/lib/actions";
 
 export function PopUpEditProfile({ user, onUpdate, userContext : { userContextUser, setUser } }) {
   const [name, setName] = useState(user?.firstName || "");
@@ -31,10 +32,11 @@ export function PopUpEditProfile({ user, onUpdate, userContext : { userContextUs
 
   const handleSubmit = async () => {
     try {
-      const api = "http://localhost:8080";
-      const url = `${api}/api/users/${user.id}`;
-
-      const updatedUser = {
+      if (!user || !user.id) {
+        throw new Error("Utilisateur non défini ou ID manquant");
+      }
+  
+      var updatedUser = {
         "@context": "string", // Remplace par le bon contexte
         "@id": `http://localhost:8080/api/users/${user.id}`,
         "@type": "string",
@@ -42,39 +44,25 @@ export function PopUpEditProfile({ user, onUpdate, userContext : { userContextUs
         "firstName": name,
         "lastName": username,
       };
-
-      const response = await fetch(url, {
-        method: "PUT",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/ld+json",
-        },
-        body: JSON.stringify(updatedUser),
-      });
-
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error("Vous n'êtes pas autorisé à effectuer cette action");
-        }
-        if (response.status === 404) {
-          throw new Error("Utilisateur non trouvé");
-        }
-        if (response.status === 422) {
-          throw new Error("Contenu non valide");
-        }
-
-        throw new Error("Erreur lors de la mise à jour du profil");
+  
+      if (profilePicture) {
+        const imageFile = new FormData();
+        imageFile.append("imageFile", profilePicture);
+        await UpdateUserImage(user, imageFile);
       }
-
-      const data = await response.json();
+      
+      const data = await UpdateUser(updatedUser);
+  
+  
+      
       if (onUpdate) {
+        console.log(data);
         onUpdate(data); // Appelle le callback pour mettre à jour le parent
         setUser(data); // Met à jour le contexte utilisateur
       }
-
+  
       setOpen(false); // Ferme le pop-up après la mise à jour
-
+  
     } catch (error: any) {
       setError(error.message);
     }
@@ -83,9 +71,7 @@ export function PopUpEditProfile({ user, onUpdate, userContext : { userContextUs
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="px-2.5">
-          <Image src="/images/edit.svg" alt="Edit Icon" width={21} height={20} />
-        </Button>
+        <Button variant="outline">Modifier le profil</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

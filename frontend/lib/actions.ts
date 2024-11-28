@@ -97,3 +97,32 @@ export async function inviteFriend(email: string) {
     }
     return responseJson;
 }
+
+export async function UpdateUser(user: any) {
+    const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/ld+json',
+        },
+        body: JSON.stringify(user),
+    });
+    if (!response.ok) {
+        throw new Error('Erreur lors de la mise à jour du profil');
+    }
+    const updatedUser = await response.json();
+    return updatedUser;
+}
+
+export async function UpdateUserImage(user: any, image: any) {
+    const response = await fetch(`http://localhost:8080/api/users/${user.id}/update-image`, {
+        method: 'POST',
+        credentials: 'include',
+        body: image,
+    });
+    if (!response.ok) {
+        throw new Error('Erreur lors de la mise à jour de l\'image');
+    }
+    const updatedUser = await response.json();
+    return updatedUser;
+}
