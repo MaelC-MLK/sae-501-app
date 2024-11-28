@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 
 export function CardEvent({ event }: { event: EventProps }) {
     const defaultImage = "/images/event_default.webp";
-    const image = event.image ? `http://localhost:8080/uploads/events/${event.image}` : defaultImage;
+    const image = event.image ? `${process.env.API_BASE_URL}/uploads/events/${event.image}` : defaultImage;
 
     const dateStart = parse(event.date_start, "dd/MM/yyyy - HH:mm", new Date());
     const dateEnd = parse(event.date_end, "dd/MM/yyyy - HH:mm", new Date());

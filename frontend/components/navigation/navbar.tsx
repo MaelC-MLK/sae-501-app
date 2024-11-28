@@ -53,7 +53,7 @@ const Navbar = () => {
                             { /*{user.email} */
                                 <Link href="/profile" className='flex items-center gap-2 group'>
                                     <Image
-                                        src={user.avatar ? `http://localhost:8080/uploads/users/${user.avatar}` : '/images/profile-picture.webp'}
+                                        src={user.avatar ? `${process.env.API_BASE_URL}/uploads/users/${user.avatar}` : '/images/profile-picture.webp'}
                                         alt='Profile Picture'
                                         width={50}
                                         height={50}

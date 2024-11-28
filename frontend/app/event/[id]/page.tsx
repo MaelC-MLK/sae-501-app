@@ -128,7 +128,7 @@ export default function Event() {
         <div className="mt-12">
             <div className="h-80 relative">
                 <Image
-                    src={event.image ? `http://localhost:8080/uploads/events/${event.image}` : defaultImage}
+                    src={event.image ? `${process.env.API_BASE_URL}/uploads/events/${event.image}` : defaultImage}
                     alt={event.title}
                     unoptimized={true}
                     layout="fill"
@@ -266,11 +266,14 @@ export default function Event() {
                     <div className="flex items-center gap-5 mt-2">
                         <div>
                             <Image
-                                src={event.creator.avatar ? `http://localhost:8080/uploads/users/${event.creator.avatar}` : "/images/profile-picture.webp"}
+                                src={event.creator.avatar ? `${process.env.API_BASE_URL}/uploads/users/${event.creator.avatar}` : "/images/profile-picture.webp"}
                                 alt="user-image"
                                 width={40}
                                 height={40}
-                                className="rounded-full"
+                                quality={100}
+                                unoptimized={true}
+                                objectFit="cover"
+                                className="rounded-full object-cover"
                             />
                         </div>
                         <div className="flex flex-col">

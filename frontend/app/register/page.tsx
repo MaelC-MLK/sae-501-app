@@ -55,7 +55,7 @@ export default function Page() {
 
         try {
             await new Promise((resolve) => setTimeout(resolve, 2000));
-            const api = 'http://localhost:8080';
+            const api = process.env.API_BASE_URL;
             const url = api + '/api/users';
 
             const response = await fetch(url, {

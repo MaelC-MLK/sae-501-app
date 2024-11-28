@@ -40,7 +40,7 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
             </div>
             <div className="relative w-full md:w-1/3 h-64 md:h-auto">
                 <Image
-                    src={event.image ? `http://localhost:8080/uploads/events/${event.image}` : defaultImage}
+                    src={event.image ? `${process.env.API_BASE_URL}/uploads/events/${event.image}` : defaultImage}
                     alt={event.title}
                     layout="fill"
                     objectFit="cover"
