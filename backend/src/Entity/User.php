@@ -78,7 +78,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?string $password = null;
 
-    #[Groups(['user:create', 'user:update'])]
     private ?string $plainPassword = null;
 
     #[ORM\Column(type: 'json')]
@@ -103,7 +102,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?File $imageFile = null;
 
-    #[Groups(['user:create', 'user:update', 'user:read'])]
+    #[Groups(['user:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
     
@@ -128,6 +127,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $Logout = null;
+
+    #[Groups(['user:create', 'user:update', 'user:read'])]
+    #[ORM\Column]
+    private ?bool $active = null;
 
     public function __construct()
     {
@@ -371,6 +374,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLogout(?\DateTimeInterface $Logout): static
     {
         $this->Logout = $Logout;
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): static
+    {
+        $this->active = $active;
 
         return $this;
     }

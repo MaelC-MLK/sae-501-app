@@ -5,3 +5,10 @@ export interface UserProps {
     lastName: null | string;
     avatar: null | string;
 }
+
+export interface UserRegister {
+    email: string,
+    plainPassword: string,
+    firstName: string,
+    lastName: string,
+}

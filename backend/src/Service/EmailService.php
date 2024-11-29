@@ -35,6 +35,24 @@ class EmailService
         $this->mailer->send($email);
     }
 
+    public function sendRegisterEmail(string $recipientEmail, string $token): void
+    {
+        $verificationLink = sprintf('http://localhost:8090/register/verify/%s', $token);
+
+        // Rendre le template Twig
+        $htmlContent = $this->twig->render('emails/verification_email.html.twig', [
+            'verification_link' => $verificationLink,
+        ]);
+
+        $email = (new Email())
+            ->from('eventifyverif.noreply@gmail.com')
+            ->to($recipientEmail)
+            ->subject('Vérification de votre inscription')
+            ->html($htmlContent);
+
+        $this->mailer->send($email);
+    }
+
     public function sendInvitationEmail(string $recipientEmail): void
     {
         // URL statique pour l'inscription
