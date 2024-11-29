@@ -21,6 +21,7 @@ export default function Page() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
+    const [loadingButton, setLoadingButton] = useState(false);
     const [open, setOpen] = useState(false);
     const [user, setUser] = useState({email: email, plainPassword: plainPassword, firstName: firstName, lastName: lastName});
     const router = useRouter();
@@ -40,6 +41,7 @@ export default function Page() {
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
+        setLoadingButton(true);
         e.preventDefault();
         setError('');
 
@@ -96,9 +98,11 @@ export default function Page() {
                 throw new Error('Echec de la création du compte');
             }
             else {
+                setLoadingButton(false);
                 setOpen(true);
             }
         } catch (err) {
+            setLoadingButton(false);
             if (err instanceof Error) {
                 setError(err.message);
             } else {
@@ -182,8 +186,12 @@ export default function Page() {
                         />
                     </div>
                     {error && <p className="text-red-500 text-sm">{error}</p>}
-                    <Button type="submit" className="mt-6 w-full bg-primary text-white text-lg py-6 rounded-md transition">
-                        S'incrire
+                    <Button 
+                        type="submit" 
+                        className="mt-6 w-full bg-primary text-white text-lg py-6 rounded-md transition"
+                        disabled={loadingButton}
+                    >
+                        {loadingButton ? "En cours..." : "S'inscrire"}
                     </Button>
                 </form>
 
