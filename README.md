@@ -4,41 +4,10 @@
 
 Actuellement, les fonctionnalités suivantes fonctionnent en environnement local, mais rencontrent des erreurs CORS sur Codespace, ce qui empêche leur bon fonctionnement dans cet environnement.
 
- Voici la liste des fonctionnalités disponibles :
-- Register / Login
-- Création d'un événement
-- Système de brouillon lors de la création d'un événement
-- Visualisation du calendrier
-- Visualisation de la page d'accueil avec des données dynamiques ( Pas encore de base "par défaut" donc vide si vous n'avez pas crée d'événement public )
-- Visualisation du calendrier en JOUR/SEMAINE/MOIS
-
-Voici la liste des fonctionnalités disponibles (15/11/2024) :
-- Pouvoir supprimer un compte dans le backoffice
-- Backoffice administrateur : gestion des utilisateurs et des évenements
-- Page profil et modification du profil
-- Affichage des événéments dans le calendrier en fonction de l'utilisateur connecté
-- Suppresion d'événément crée par un utilisateur dans la vu calendrier
-- Upload des images à partir de la création d'événément ( upload sur le server )
-- Récupérer les données de chaque évènement public et les afficher sur la page de détail de l'évènement
-- Intégrer un footer à l'application
-- Afficher des évènements publics dans les recommandations de la page d'accueil
-- Pouvoir s'inscrire avec une adresse mail à un évènement public
-
-Voici la liste des fonctionnalités disponibles (22/11/2024) :
-- Pouvoir s'inscrire avec une adresse mail à un évènement public
-- Envoi d'un mail de validation à l'utilisateur après inscription par adresse mail
-- Interface de partage d'un évènement
-- Ajout de loaders pour la page connexion et inscription
-- Mail d'invitation d'ami
-- Possibilité de modifier un événement pour un utilisateur
-- Faire la différence entre les événements que l'utilisateur a créés de ceux où il est inscrit
-- Pouvoir ajouter des participants avec une barre de recherche dans la création d'événement
-- Amélirotation du système d'authentification par token placé en cookie
-- Mise à jour des blocages des routes qui nécessite une authentification en front
-
-Voici la liste des fonctionnalités disponibles (29/11/2024) :
- - Refonte graphique
- - Récupération des événements auquel l'utilisateur est inscrits
+Voici la liste des nouvelles fonctionnalités disponibles (29/11/2024) :
+ - Améliorations graphiques
+ - Pouvoir modifier la photo de profil
+ - Pouvoir filtrer dans le calendrier entre les événement public ou privé
   
 ## Installation
 
