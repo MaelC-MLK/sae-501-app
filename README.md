@@ -9,6 +9,8 @@ Voici la liste des nouvelles fonctionnalités disponibles (29/11/2024) :
  - Pouvoir modifier la photo de profil
  - Pouvoir filtrer dans le calendrier entre les événement public ou privé
  - Pouvoir s'inscrire à un événement en tant qu'utilisateur inscrit
+ - Pouvoir avoir une redirection pour les événéments publiques vers leur page détail
+ - Fixe du calendrier ( Ouverture popup, rechargement des events à la création/modification )
   
 ## Installation
 
