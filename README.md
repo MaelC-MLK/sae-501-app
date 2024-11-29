@@ -11,6 +11,8 @@ Voici la liste des nouvelles fonctionnalités disponibles (29/11/2024) :
  - Pouvoir s'inscrire à un événement en tant qu'utilisateur inscrit
  - Pouvoir se désinscrire d'un évènement si on est inscrit en tant qu'utilisateur
  - Page 404 et 500
+ - Pouvoir avoir une redirection pour les événéments publiques vers leur page détail
+ - Fixe du calendrier ( Ouverture popup, rechargement des events à la création/modification )
   
 ## Installation
 
