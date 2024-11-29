@@ -35,6 +35,10 @@ Voici la liste des fonctionnalités disponibles (22/11/2024) :
 - Pouvoir ajouter des participants avec une barre de recherche dans la création d'événement
 - Amélirotation du système d'authentification par token placé en cookie
 - Mise à jour des blocages des routes qui nécessite une authentification en front
+
+Voici la liste des fonctionnalités disponibles (29/11/2024) :
+ - Refonte graphique
+ - Récupération des événements auquel l'utilisateur est inscrits
   
 ## Installation
 
