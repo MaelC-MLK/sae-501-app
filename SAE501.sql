@@ -26,10 +26,10 @@ SET time_zone = "+00:00";
 --
 
 INSERT INTO `user` 
-(`id`, `email`, `password`, `roles`, `first_name`, `last_name`, `avatar`, `verification_token`, `token_expiry`, `logout`, `image_size`, `updated_at`) 
+(`id`, `email`, `password`, `roles`, `first_name`, `last_name`, `avatar`, `verification_token`, `token_expiry`, `logout`, `image_size`, `updated_at`, `active`) 
 VALUES
-(1, 'demo@gmail.com', '$2y$13$b6Nnm3S/V2R3Jabq1Zbgre8djpHrCZyF0QYryKrqsv7zQ4a/8nWya', '[]', 'Prenom', 'Nom', NULL, NULL, NULL, NULL, NULL, NULL),
-(2, 'test@gmail.com', '$2y$13$lONY8ouZumR9Zr0h3aqnM.6xOFxtYmOSl0BWPQpGIOGTqWjiyl.MC', '[]', 'Prénom', 'Nom', NULL, NULL, NULL, NULL, NULL, NULL);
+(1, 'demo@gmail.com', '$2y$13$b6Nnm3S/V2R3Jabq1Zbgre8djpHrCZyF0QYryKrqsv7zQ4a/8nWya', '[]', 'Prenom', 'Nom', NULL, NULL, NULL, NULL, NULL, NULL, 1),
+(2, 'test@gmail.com', '$2y$13$lONY8ouZumR9Zr0h3aqnM.6xOFxtYmOSl0BWPQpGIOGTqWjiyl.MC', '[]', 'Prénom', 'Nom', NULL, NULL, NULL, NULL, NULL, NULL, 1);
 
 COMMIT;
 
