@@ -9,8 +9,11 @@ Voici la liste des nouvelles fonctionnalités disponibles (29/11/2024) :
  - Pouvoir modifier la photo de profil
  - Pouvoir filtrer dans le calendrier entre les événement public ou privé
  - Pouvoir s'inscrire à un événement en tant qu'utilisateur inscrit
+<<<<<<< HEAD
  - Pouvoir se désinscrire d'un évènement si on est inscrit en tant qu'utilisateur
  - Page 404 et 500
+=======
+>>>>>>> 4ba6870c0cb2e742f1898faedc1272a82d24bede
  - Pouvoir avoir une redirection pour les événéments publiques vers leur page détail
  - Fixe du calendrier ( Ouverture popup, rechargement des events à la création/modification )
   
