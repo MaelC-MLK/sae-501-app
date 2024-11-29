@@ -7,7 +7,7 @@ import { fr } from "date-fns/locale";
 import { EventProps } from "@/types/event";
 import { Badge } from "@/components/ui/badge"
 
-export function CardEvent({ event }: { event: EventProps }) {
+export function CardDraft({ event }: { event: EventProps }) {
     const defaultImage = "/images/event_default.webp";
     const image = event.image ? `${process.env.API_BASE_URL}/uploads/events/${event.image}` : defaultImage;
 
@@ -19,32 +19,24 @@ export function CardEvent({ event }: { event: EventProps }) {
     const formattedDateStartShort = format(dateStart, "dd/MM/yyyy", { locale: fr });
     const formattedDateEndShort = format(dateEnd, "dd/MM/yyyy", { locale: fr });
 
+    const startTime = format(dateStart, "HH:mm", { locale: fr });
+    const endTime = format(dateEnd, "HH:mm", { locale: fr });
 
     return (
-        <Link href={`/event/${event.id}`} passHref className="border-2 rounded-xl overflow-hidden p-2 w-96 group bg-background relative h-fit">
-            <Badge variant="secondary" className="absolute top-4 right-4 z-20 gap-1">
+        <div className="border-2 rounded-xl overflow-hidden py-2 px-4 md:px-10 w-full group bg-background relative h-fit">
 
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-                </svg>
-
-                {<span>{event.users.length}</span>}
-            </Badge>
-
-            <div className="relative w-full h-52 rounded-xl overflow-hidden">
-                <Image
+            {/* <Image
                     src={image}
                     alt={`${event.title}-image`}
                     layout="fill"
                     objectFit="cover"
                     unoptimized={true}
-                    className="group-hover:scale-105 transition-transform duration-300"
-                />
-            </div>
+                    className="group-hover:scale-105 transition-transform duration-300 relative"
+                /> */}
 
-            <div className="group flex flex-col mt-2">
-                <p className={`${k2d.className} text-lg font-medium truncate`}>{event.title}</p>
-                <div className="text-muted-foreground flex items-center gap-3">
+            <div className="group flex flex-col my-2">
+                <p className={`${k2d.className} text-xl font-medium truncate mb-2`}>{event.title}</p>
+                <div className="text-muted-foreground flex flex-wrap items-center gap-5">
                     {formattedDateStart === formattedDateEnd ? (
                         <>
                             <div className="flex items-center gap-1 shrink-0">
@@ -56,6 +48,16 @@ export function CardEvent({ event }: { event: EventProps }) {
                                 </span>
                             </div>
 
+                            <div className="flex items-center gap-1 shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+
+                                <span className="text-sm font-normal capitalize">
+                                    {startTime} - {endTime}
+                                </span>
+                            </div>                
+
                             {event.location ? (
 
                                 <div className="flex items-center gap-1 truncate">
@@ -63,12 +65,14 @@ export function CardEvent({ event }: { event: EventProps }) {
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                                     </svg>
-                                    <span className="text-sm font-normal capitalize truncate">
+                                    <span className="text-sm font-normal capitalize truncate max-w-96">
                                         {event.location}
                                     </span>
                                 </div>
                             ) : null
                             }
+
+                            
 
                         </>
                     ) : (
@@ -82,6 +86,17 @@ export function CardEvent({ event }: { event: EventProps }) {
                                 </span>
                             </div>
 
+                            <div className="flex items-center gap-1 shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+
+                                <span className="text-sm font-normal capitalize">
+                                    {startTime} - {endTime}
+                                </span>
+                            </div>      
+
+
                             {event.location ? (
 
                             <div className="flex items-center gap-1 truncate">
@@ -89,17 +104,16 @@ export function CardEvent({ event }: { event: EventProps }) {
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                                 </svg>
-                                <span className="text-sm font-normal capitalize truncate">
+                                <span className="text-sm font-normal capitalize truncate max-w-96">
                                     {event.location}
                                 </span>
                             </div>
-
                             ) : null
                             }
                         </>
                     )}
                 </div>
             </div>
-        </Link>
+        </div>
     );
 }
