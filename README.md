@@ -69,7 +69,7 @@ Il se peut que le dossier qui reçoit l'upload des images n'ait pas de permissio
 sudo chmod 777 -R ./backend/public/uploads
 ```
 
-### Si pproblème avec les migrations : 
+### Si problème avec les migrations : 
 
 - Supprimer toutes les migrations du projet dans les fichiers et sur phpMyAdmin
 
