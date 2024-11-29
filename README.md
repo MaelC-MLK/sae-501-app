@@ -8,6 +8,7 @@ Voici la liste des nouvelles fonctionnalités disponibles (29/11/2024) :
  - Améliorations graphiques
  - Pouvoir modifier la photo de profil
  - Pouvoir filtrer dans le calendrier entre les événement public ou privé
+ - Pouvoir s'inscrire à un événement en tant qu'utilisateur inscrit
   
 ## Installation
 
