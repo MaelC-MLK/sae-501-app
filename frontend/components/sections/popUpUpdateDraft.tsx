@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CalendarIcon, ClockIcon, CrossCircledIcon } from "@radix-ui/react-icons";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import { DateRange } from "react-day-picker";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -57,6 +57,7 @@ import { fr } from "date-fns/locale";
 import { useUser } from "@/contexts/UserProvider";
 import { useDebouncedCallback } from "use-debounce";
 
+
 const FormSchema = z.object({
   title: z.string().nonempty("Title is required"),
   description: z.string().optional(),
@@ -78,27 +79,37 @@ const FormSchema = z.object({
   is_draft: z.boolean(),
 });
 
-export default function PopupUpdateEvent({
+export default function PopupUpdateDraft({
   eventData,
   className,
-}: PopupUpdateEventProps) {
+  onEventChange,
+}: PopupUpdateEventProps & { onEventChange: () => void }) {
 
-  // console.log(JSON.stringify(eventData));
+  const dateStart = parse(eventData.date_start, "dd/MM/yyyy - HH:mm", new Date());
+  const dateEnd = parse(eventData.date_end, "dd/MM/yyyy - HH:mm", new Date());
+
+  const formattedDateStart = format(dateStart, "EEEE d MMMM yyyy", { locale: fr });
+  const formattedDateEnd = format(dateEnd, "EEEE d MMMM yyyy", { locale: fr });
+  const formattedDateStartShort = format(dateStart, "dd/MM/yyyy", { locale: fr });
+  const formattedDateEndShort = format(dateEnd, "dd/MM/yyyy", { locale: fr });
+
+  // const startTime = format(dateStart, "HH:mm", { locale: fr });
+  // const endTime = format(dateEnd, "HH:mm", { locale: fr });
 
   const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(eventData.start),
-    to: new Date(eventData.end),
+    from: new Date(dateStart),
+    to: new Date(dateEnd),
   });
   const [startTime, setStartTime] = useState<string>(
-    format(new Date(eventData.start), "HH:mm")
+    format(new Date(dateStart), "HH:mm")
   );
   const [endTime, setEndTime] = useState<string>(
-    format(new Date(eventData.end), "HH:mm")
+    format(new Date(dateEnd), "HH:mm")
   );
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [participants, setParticipants] = useState<any[]>(
-    eventData.extendedProps.users.map((user: any) => ({
+    eventData.users.map((user: any) => ({
       id: user.id,
       firstName: user.firstname,
       lastName: user.lastname,
@@ -109,7 +120,7 @@ export default function PopupUpdateEvent({
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPrivate, setIsPrivate] = useState<boolean>(
-    !eventData.extendedProps.isVisible
+    !eventData.isVisible
   );
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isMainDialogOpen, setIsMainDialogOpen] = useState<boolean>(false);
@@ -120,22 +131,22 @@ export default function PopupUpdateEvent({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       title: eventData.title,
-      description: eventData.extendedProps.description,
-      location: eventData.extendedProps.location,
-      date_start: eventData.extendedProps.date_start,
-      date_end: eventData.extendedProps.date_end,
+      description: eventData.description,
+      location: eventData.location,
+      date_start: eventData.date_start,
+      date_end: eventData.date_end,
       time_start: startTime,
       time_end: endTime,
       users:
-        eventData.extendedProps.users.map((user: any) => ({
+        eventData.users.map((user: any) => ({
           id: user.id,
           firstName: user.firstname,
           lastName: user.lastname,
           email: user.email,
           avatar: user.avatar,
         })) || [],
-      isVisible: eventData.extendedProps.isVisible,
-      is_draft: eventData.extendedProps.is_draft,
+      isVisible: eventData.isVisible,
+      is_draft: eventData.is_draft,
     },
   });
 
@@ -258,6 +269,7 @@ export default function PopupUpdateEvent({
       console.log("Event updated:", response);
       setIsMainDialogOpen(false);
       revalidatePath('/profile/calendar');
+      onEventChange();
     } catch (error) {
       console.error("Failed to update event:", error);
     }
@@ -267,14 +279,13 @@ export default function PopupUpdateEvent({
     <>
       <Dialog open={isMainDialogOpen} onOpenChange={setIsMainDialogOpen}>
         <DialogTrigger asChild className={`${className}`}>
-          <button
-            className="relative group text-gray-500 hover:text-gray-700 px-1 float-right"
+          <Button
+            className="absolute bottom-1/2 sm:bottom-0 sm:top-1/2 -translate-y-1 sm:-translate-y-1/2 right-6 sm:right-20 z-30 px-1 float-right bg-background"
             onClick={() => setIsMainDialogOpen(true)}
+            size="icon"
+            variant="ghost"
           >
-            <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2">
-              Modifier l'événement
-            </div>
-            <div className="rounded-full p-2 group-hover:bg-gray-200">
+            <div className="p-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -290,11 +301,11 @@ export default function PopupUpdateEvent({
                 />
               </svg>
             </div>
-          </button>
+          </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-xl max-h-dvh overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Modifier un événement</DialogTitle>
+            <DialogTitle>Modifier un le brouillon</DialogTitle>
             <DialogDescription>
               Veuillez remplir le formulaire.
             </DialogDescription>
@@ -602,7 +613,7 @@ export default function PopupUpdateEvent({
                   ))}
                 </div>
               </div>
-              <DialogFooter className="gap-2 md:gap-0 mt-6 sm:mt-0">
+              <DialogFooter className="gap-2 md:gap-0 mt-6 sm:mt-0 sm:justify-between">
                 <DialogClose asChild>
                   <Button
                     type="button"
@@ -611,11 +622,20 @@ export default function PopupUpdateEvent({
                     Annuler
                   </Button>
                 </DialogClose>
+                <div className='flex flex-col sm:flex-row gap-2'>
                 <Button
                   type="submit"
+                  disabled={!areAllFieldsFilled()}
+                  variant="secondary"
                 >
                   Modifier
                 </Button>
+                <Button
+                  type="submit"
+                  >
+                  Restaurer
+                </Button>
+                  </div>
               </DialogFooter>
             </form>
           </Form>
