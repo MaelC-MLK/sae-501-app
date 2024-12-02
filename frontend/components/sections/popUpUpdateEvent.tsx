@@ -82,6 +82,9 @@ export default function PopupUpdateEvent({
   eventData,
   className,
 }: PopupUpdateEventProps) {
+
+  // console.log(JSON.stringify(eventData));
+
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(eventData.start),
     to: new Date(eventData.end),

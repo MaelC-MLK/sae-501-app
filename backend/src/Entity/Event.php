@@ -23,6 +23,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use App\Controller\EventByUserController;
 use App\Controller\EventByCreatorController;
 use App\Controller\UpdateEventImageController;
+use App\Controller\EventDraftController;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[Vich\Uploadable]
@@ -54,6 +55,13 @@ use App\Controller\UpdateEventImageController;
             normalizationContext: ['groups' => ['event:read']],
             description: 'Récupère tous les événements créés par un utilisateur spécifique',
             controller: EventByCreatorController::class,
+            read: false,
+        ),
+        new GetCollection(
+            uriTemplate: 'events/draft/user/{userId}',
+            normalizationContext: ['groups' => ['event:read']],
+            description: 'Récupère tous les événements en brouillon liés à un utilisateur spécifique',
+            controller: EventDraftController::class,
             read: false,
         ),
         new Get(),

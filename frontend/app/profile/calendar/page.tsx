@@ -46,7 +46,7 @@ export default function Page() {
 
                     <div className="flex max-w-7xl justify-self-center w-full overflow-hidden ">
                         <button
-                            className={`px-6 py-5 flex items-center gap-2 w-full justify-center md:w-auto md:justify-start font-medium border-b-4 text-sm sm:text-base ${view === 'calendar' ? 'border-primary' : 'opacity-60 border-transparent'}`}
+                            className={`px-2 md:px-6 py-4 md:py-5 flex items-center gap-2 w-full justify-center md:w-auto md:justify-start font-medium border-b-4 text-sm sm:text-base ${view === 'calendar' ? 'border-primary' : 'opacity-60 border-transparent'}`}
                             onClick={() => setView('calendar')}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 sm:size-6">
@@ -56,7 +56,7 @@ export default function Page() {
                             Mon calendrier
                         </button>
                         <button
-                            className={`px-6 py-5 flex items-center gap-2 w-full justify-center md:w-auto md:justify-start font-medium border-b-4 text-sm sm:text-base ${view === 'drafts' ? 'border-primary' : 'opacity-60 border-transparent'}`}
+                            className={`px-2 md:px-6 py-4 md:py-5 flex items-center gap-2 w-full justify-center md:w-auto md:justify-start font-medium border-b-4 text-sm sm:text-base ${view === 'drafts' ? 'border-primary' : 'opacity-60 border-transparent'}`}
                             onClick={() => setView('drafts')}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 sm:size-6">

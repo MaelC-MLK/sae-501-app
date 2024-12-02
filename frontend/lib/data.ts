@@ -132,3 +132,19 @@ export async function fetchUserById(userId: string) {
 
     return await response.json();
 }
+
+export async function fetchEventDrafts(userId: string) {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/draft/user/${userId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('Erreur lors de la récupération des brouillons');
+    }
+
+    return await response.json();
+}

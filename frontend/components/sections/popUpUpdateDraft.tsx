@@ -1,9 +1,8 @@
 "use client";
 
-import * as React from "react";
-import { useState, useEffect, useRef } from "react";
 import { revalidatePath } from 'next/cache'
-
+import React from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,17 +16,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-import { CalendarIcon } from "@radix-ui/react-icons";
-import { ClockIcon } from "@radix-ui/react-icons";
-import { CrossCircledIcon } from "@radix-ui/react-icons";
-
-import { addDays, format, set } from "date-fns";
+import { CalendarIcon, ClockIcon, CrossCircledIcon } from "@radix-ui/react-icons";
+import { format, parse } from "date-fns";
 import { DateRange } from "react-day-picker";
 import { useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
@@ -39,7 +32,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -54,19 +46,16 @@ import {
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import UserSearchSkeleton from "@/components/skeletons/skeletons";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { createEvent } from "@/lib/actions";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { UpdateEvent } from "@/lib/actions";
+import { Separator } from "@/components/ui/separator";
 import { fetchUserBy } from "@/lib/data";
-
-import { PopupCreationEventProps } from "@/types/event";
-import { fr } from "date-fns/locale";
-import ImageUpload from "@/components/sections/dropZoneEventPopup";
-
-import { useDebouncedCallback } from 'use-debounce';
+import { PopupUpdateEventProps } from "@/types/event";
+import { fr, is } from "date-fns/locale";
 import { useUser } from "@/contexts/UserProvider";
+import { useDebouncedCallback } from "use-debounce";
 
 
 const FormSchema = z.object({
@@ -90,38 +79,74 @@ const FormSchema = z.object({
   is_draft: z.boolean(),
 });
 
-export default function PopupCreationEvent({
+export default function PopupUpdateDraft({
+  eventData,
   className,
-}: PopupCreationEventProps) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(),
-    to: undefined,
+  onEventChange,
+}: PopupUpdateEventProps & { onEventChange: () => void }) {
+
+  const dateStart = parse(eventData.date_start, "dd/MM/yyyy - HH:mm", new Date());
+  const dateEnd = parse(eventData.date_end, "dd/MM/yyyy - HH:mm", new Date());
+
+  const formattedDateStart = format(dateStart, "EEEE d MMMM yyyy", { locale: fr });
+  const formattedDateEnd = format(dateEnd, "EEEE d MMMM yyyy", { locale: fr });
+  const formattedDateStartShort = format(dateStart, "dd/MM/yyyy", { locale: fr });
+  const formattedDateEndShort = format(dateEnd, "dd/MM/yyyy", { locale: fr });
+
+  // const startTime = format(dateStart, "HH:mm", { locale: fr });
+  // const endTime = format(dateEnd, "HH:mm", { locale: fr });
+
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: new Date(dateStart),
+    to: new Date(dateEnd),
   });
-  const [startTime, setStartTime] = useState<string>("");
-  const [endTime, setEndTime] = useState<string>("");
+  const [startTime, setStartTime] = useState<string>(
+    format(new Date(dateStart), "HH:mm")
+  );
+  const [endTime, setEndTime] = useState<string>(
+    format(new Date(dateEnd), "HH:mm")
+  );
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [participants, setParticipants] = useState<any[]>([]);
+  const [participants, setParticipants] = useState<any[]>(
+    eventData.users.map((user: any) => ({
+      id: user.id,
+      firstName: user.firstname,
+      lastName: user.lastname,
+      email: user.email,
+      avatar: user.avatar,
+    })) || []
+  );
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isPrivate, setIsPrivate] = useState<boolean>(true);
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState<boolean>(false);
+  const [isPrivate, setIsPrivate] = useState<boolean>(
+    !eventData.isVisible
+  );
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isMainDialogOpen, setIsMainDialogOpen] = useState<boolean>(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const userContext = useUser();
+
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      title: "",
-      date_start: new Date().toISOString().replace("T", " ").substring(0, 19),
-      date_end: new Date().toISOString().replace("T", " ").substring(0, 19),
-      time_start: "",
-      time_end: "",
-      users: [],
-      isVisible: false,
-      is_draft: false,
+      title: eventData.title,
+      description: eventData.description,
+      location: eventData.location,
+      date_start: eventData.date_start,
+      date_end: eventData.date_end,
+      time_start: startTime,
+      time_end: endTime,
+      users:
+        eventData.users.map((user: any) => ({
+          id: user.id,
+          firstName: user.firstname,
+          lastName: user.lastname,
+          email: user.email,
+          avatar: user.avatar,
+        })) || [],
+      isVisible: eventData.isVisible,
+      is_draft: eventData.is_draft,
     },
   });
 
@@ -142,29 +167,14 @@ export default function PopupCreationEvent({
 
   const areAllFieldsFilled = () => {
     const values = form.getValues();
-    return values.title && values.date_start && values.date_end && values.time_start && values.time_end;
+    return (
+      values.title &&
+      values.date_start &&
+      values.date_end &&
+      values.time_start &&
+      values.time_end
+    );
   };
-
-  useEffect(() => {
-    const now = new Date();
-    const roundedMinutes = Math.ceil(now.getMinutes() / 15) * 15;
-    now.setMinutes(roundedMinutes);
-    now.setSeconds(0);
-    now.setMilliseconds(0);
-
-    const startHour = now.getHours().toString().padStart(2, "0");
-    const startMinute = now.getMinutes().toString().padStart(2, "0");
-    const startTimeValue = `${startHour}:${startMinute}`;
-    setStartTime(startTimeValue);
-    form.setValue("time_start", startTimeValue);
-
-    const end = new Date(now.getTime() + 60 * 60 * 1000);
-    const endHour = end.getHours().toString().padStart(2, "0");
-    const endMinute = end.getMinutes().toString().padStart(2, "0");
-    const endTimeValue = `${endHour}:${endMinute}`;
-    setEndTime(endTimeValue);
-    form.setValue("time_end", endTimeValue);
-  }, []);
 
   const handleSelect = (selectedDate: DateRange | undefined) => {
     if (!selectedDate?.from) {
@@ -186,16 +196,13 @@ export default function PopupCreationEvent({
   };
 
   const handleSearchChange = useDebouncedCallback(async (value: string) => {
-
-
     if (value.length > 0) {
       try {
         const results = await fetchUserBy(value);
-
-        const filteredResults = results.filter((user: any) =>
-          !participants.some(participant => participant.id === user.id)
+        const filteredResults = results.filter(
+          (user: any) =>
+            !participants.some((participant) => participant.id === user.id)
         );
-
         setSearchResults(filteredResults);
       } catch (error) {
         console.error("Failed to fetch search results:", error);
@@ -227,48 +234,12 @@ export default function PopupCreationEvent({
   };
 
   const handleRemoveParticipant = (participantId: number) => {
-    const updatedParticipants = participants.filter(participant => participant.id !== participantId);
+    const updatedParticipants = participants.filter(
+      (participant) => participant.id !== participantId
+    );
     setParticipants(updatedParticipants);
     form.setValue("users", updatedParticipants);
     handleSearchChange(searchTerm);
-  };
-
-  const resetForm = () => {
-    const now = new Date();
-    const roundedMinutes = Math.ceil(now.getMinutes() / 15) * 15;
-    now.setMinutes(roundedMinutes);
-    now.setSeconds(0);
-    now.setMilliseconds(0);
-
-    const startHour = now.getHours().toString().padStart(2, "0");
-    const startMinute = now.getMinutes().toString().padStart(2, "0");
-    const startTimeValue = `${startHour}:${startMinute}`;
-    setStartTime(startTimeValue);
-
-    const end = new Date(now.getTime() + 60 * 60 * 1000);
-    const endHour = end.getHours().toString().padStart(2, "0");
-    const endMinute = end.getMinutes().toString().padStart(2, "0");
-    const endTimeValue = `${endHour}:${endMinute}`;
-    setEndTime(endTimeValue);
-
-    setDate({ from: new Date(), to: undefined });
-
-    form.reset({
-      title: undefined,
-      description: undefined,
-      location: undefined,
-      date_start: new Date().toISOString().replace("T", " ").substring(0, 19),
-      date_end: new Date().toISOString().replace("T", " ").substring(0, 19),
-      time_start: startTimeValue,
-      time_end: endTimeValue,
-      users: [],
-      isVisible: false,
-      is_draft: false,
-    });
-
-    setParticipants([]);
-    setImageFile(null);
-    setIsPrivate(true);
   };
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -276,101 +247,105 @@ export default function PopupCreationEvent({
       console.error("User not found");
       return;
     }
-    const formData = new FormData();
-    formData.append('title', data.title);
-    formData.append('description', data.description || "");
-    formData.append('date_start', combineDateAndTime(date?.from || new Date(), data.time_start).toString());
-    formData.append('date_end', combineDateAndTime(date?.to || date?.from || new Date(), data.time_end).toString());
-
-    formData.append('isVisible', isPrivate ? "false" : "true");
-    formData.append('is_draft', "false");
-    formData.append('location', data.location || "");
-    formData.append('creator', `/api/users/${userContext.user.id}`);
-
-
-    if (imageFile) {
-      formData.append('imageFile', imageFile);
-    }
-
-    console.log("Participants:", participants);
-
-
-    const participantsArray = participants.map(participant => `/api/users/${participant.id}`);
-    formData.append('users', JSON.stringify(participantsArray));
-
-
-
+    const formData = {
+      title: data.title,
+      description: data.description || "",
+      date_start: combineDateAndTime(
+        date?.from || new Date(),
+        data.time_start
+      ).toString(),
+      date_end: combineDateAndTime(
+        date?.to || date?.from || new Date(),
+        data.time_end
+      ).toString(),
+      isVisible: "false",
+      location: data.location || "",
+      creator: `/api/users/${userContext.user.id}`,
+      users: participants.map((participant) => `/api/users/${participant.id}`),
+    };  
+  
     try {
-      const response = await createEvent(formData);
-      console.log("Event created successfully:", response);
+      const response = await UpdateEvent(formData, eventData.id);
+      console.log("Event updated:", response);
       setIsMainDialogOpen(false);
-      resetForm();
-      revalidatePath('/profile/calendar');
+      // revalidatePath('/profile/calendar');
+      onEventChange();
     } catch (error) {
-      console.error("Failed to create event:", error);
+      console.error("Failed to update event:", error);
     }
   };
 
-  const saveDraft = async (data: z.infer<typeof FormSchema>) => {
+  const handleRestoreEvent = async (data: z.infer<typeof FormSchema>) => {
     if (userContext.user === null) {
       console.error("User not found");
       return;
     }
-    const formData = new FormData();
-    formData.append('title', data.title);
-    formData.append('description', data.description || "");
-    formData.append('date_start', combineDateAndTime(date?.from || new Date(), data.time_start).toString());
-    formData.append('date_end', combineDateAndTime(date?.to || date?.from || new Date(), data.time_end).toString());
-
-    formData.append('isVisible', "false");
-    formData.append('is_draft', "true");
-    formData.append('location', data.location || "");
-    formData.append('creator', `/api/users/${userContext.user.id}`);
-
-
-    // if (imageFile) {
-    //   formData.append('imageFile', imageFile);
-    // }
-
-    console.log("Participants:", participants);
-
-    const participantsArray = participants.map(participant => `/api/users/${participant.id}`);
-    formData.append('users', JSON.stringify(participantsArray));
-
-
+    const formData = {
+      title: data.title,
+      description: data.description || "",
+      date_start: combineDateAndTime(
+        date?.from || new Date(),
+        data.time_start
+      ).toString(),
+      date_end: combineDateAndTime(
+        date?.to || date?.from || new Date(),
+        data.time_end
+      ).toString(),
+      isVisible: isPrivate ? "false" : "true",
+      location: data.location || "",
+      creator: `/api/users/${userContext.user.id}`,
+      users: participants.map((participant) => `/api/users/${participant.id}`),
+      is_draft: "false",
+    };  
+  
     try {
-      const response = await createEvent(formData);
-      console.log("Event saved as draft:", response);
-      setIsConfirmDialogOpen(false);
+      const response = await UpdateEvent(formData, eventData.id);
+      console.log("Event updated:", response);
       setIsMainDialogOpen(false);
-      resetForm();
+      // revalidatePath('/profile/calendar');
+      onEventChange();
     } catch (error) {
-      console.error("Failed to save draft:", error);
+      console.error("Failed to update event:", error);
     }
-  };
+  }
 
   return (
     <>
       <Dialog open={isMainDialogOpen} onOpenChange={setIsMainDialogOpen}>
         <DialogTrigger asChild className={`${className}`}>
-          <Button onClick={() => setIsMainDialogOpen(true)} size="lg" className="flex items-center h-fit py-2 gap-1 px-2 sm:px-4 md:p-2 lg:px-4 fixed bottom-5 right-5 z-50 md:absolute md:top-34 ">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-7 sm:size-5 md:size-6 lg:size-5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            <span className="hidden sm:block md:hidden lg:block">
-              Créer
-            </span>
-            </Button>
+          <Button
+            className="absolute bottom-1/2 sm:bottom-0 sm:top-1/2 -translate-y-1 sm:-translate-y-1/2 right-6 sm:right-20 z-30 px-1 float-right bg-background"
+            onClick={() => setIsMainDialogOpen(true)}
+            size="icon"
+            variant="ghost"
+          >
+            <div className="p-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="black"
+                className="size-5 shrink-0"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                />
+              </svg>
+            </div>
+          </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-xl max-h-dvh overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Créer un événement</DialogTitle>
+            <DialogTitle>Modifier un le brouillon</DialogTitle>
             <DialogDescription>
               Veuillez remplir le formulaire.
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={(e) => {e.preventDefault(); onSubmit(form.getValues())}}>
               <div className="">
                 <div className="flex flex-col">
                   <Label htmlFor="title" className="mb-2">
@@ -382,7 +357,12 @@ export default function PopupCreationEvent({
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input id="title" placeholder="Nom de l'événement" autoComplete="off" {...field} />
+                          <Input
+                            id="title"
+                            placeholder="Nom de l'événement"
+                            autoComplete="off"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -396,7 +376,6 @@ export default function PopupCreationEvent({
                     </Label>
                     <Popover>
                       <PopoverTrigger asChild>
-
                         <Button
                           id="date"
                           variant={"outline"}
@@ -408,7 +387,7 @@ export default function PopupCreationEvent({
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {date?.from ? (
                             date.to &&
-                              date.from.getTime() !== date.to.getTime() ? (
+                            date.from.getTime() !== date.to.getTime() ? (
                               `${format(date.from, "dd MMMM yyyy", {
                                 locale: fr,
                               })} - ${format(date.to, "dd MMMM yyyy", {
@@ -593,16 +572,6 @@ export default function PopupCreationEvent({
                   </Tabs>
                 </div>
 
-                <div className="flex flex-col mt-4">
-                  <Label htmlFor="image" className="mb-2">
-                    Ajouter une image
-                  </Label>
-                  <ImageUpload
-                    name="image"
-                    onFileSelect={(file) => setImageFile(file)}
-                  />
-                </div>
-
                 <Separator className="my-4" />
 
                 <div className="flex flex-col mt-4">
@@ -678,93 +647,33 @@ export default function PopupCreationEvent({
                   ))}
                 </div>
               </div>
-              <DialogFooter className="gap-2 md:gap-0 mt-6 sm:mt-0">
+              <DialogFooter className="gap-2 md:gap-0 mt-6 sm:mt-0 sm:justify-between">
                 <DialogClose asChild>
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (areAllFieldsFilled()) {
-                        setIsConfirmDialogOpen(true);
-                      } else {
-                        setIsMainDialogOpen(false); // Fermer le popup de création d'événement
-                        form.reset({
-                          title: "",
-                          description: "",
-                          date_start: new Date()
-                            .toISOString()
-                            .replace("T", " ")
-                            .substring(0, 19),
-                          date_end: new Date()
-                            .toISOString()
-                            .replace("T", " ")
-                            .substring(0, 19),
-                          time_start: startTime,
-                          time_end: endTime,
-                          users: [],
-                          isVisible: false,
-                          is_draft: false,
-                        });
-                        setIsPrivate(true);
-                      }
-                    }}
                   >
                     Annuler
                   </Button>
                 </DialogClose>
-                <Button type="submit">Créer</Button>
+                <div className='flex flex-col sm:flex-row gap-2'>
+                <Button
+                  type="submit"
+                  disabled={!areAllFieldsFilled()}
+                  variant="secondary"
+                >
+                  Modifier
+                </Button>
+                <Button
+                  // type="submit"
+                  onClick={(e) => {e.preventDefault(); handleRestoreEvent(form.getValues())}}
+                  >
+                  Restaurer
+                </Button>
+                  </div>
               </DialogFooter>
             </form>
           </Form>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Enregistrer en brouillon ?</DialogTitle>
-            <DialogDescription>
-              Voulez-vous enregistrer cet événement en tant que brouillon ?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setIsConfirmDialogOpen(false);
-                setIsMainDialogOpen(false); // Fermer le popup de création d'événement
-                form.reset({
-                  title: "",
-                  description: "",
-                  date_start: new Date()
-                    .toISOString()
-                    .replace("T", " ")
-                    .substring(0, 19),
-                  date_end: new Date()
-                    .toISOString()
-                    .replace("T", " ")
-                    .substring(0, 19),
-                  time_start: startTime,
-                  time_end: endTime,
-                  users: [],
-                  isVisible: false,
-                  is_draft: false,
-                });
-                setIsPrivate(true);
-              }}
-            >
-              Non
-            </Button>
-            <Button
-              onClick={async () => {
-                const data = form.getValues();
-                await saveDraft(data);
-              }}
-            >
-              Oui
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
