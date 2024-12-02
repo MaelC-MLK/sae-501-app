@@ -9,7 +9,7 @@ import Drafts from "@/components/sections/drafts";
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
-    const [view, setView] = useState('calendar'); // Nouvel état pour gérer l'affichage
+    const [view, setView] = useState('calendar');
     const userContext = useUser();
     const router = useRouter();
 

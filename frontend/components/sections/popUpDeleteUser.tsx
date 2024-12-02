@@ -12,9 +12,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import React, { useEffect, useState } from "react";
+import React, {useState } from "react";
 
-export function PopUpDeleteUser({ user }) {
+interface User {
+  id: string;
+  sub: string;
+}
+
+export function PopUpDeleteUser({ user }: { user: User }) {
   const [open, setOpen] = useState(false); 
 
   const handleSubmit = async () => {
