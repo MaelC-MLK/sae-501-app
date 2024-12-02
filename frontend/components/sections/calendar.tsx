@@ -22,6 +22,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {k2d} from "@/app/fonts/fonts";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
 import { unregisterEvent } from "@/lib/data";
 
 
@@ -89,6 +91,7 @@ export default function Calendar() {
       }
     }
   });
+  const {toast} = useToast();
 
   setEvents = setEventsState;
   setLoading = setLoadingState;
@@ -221,8 +224,18 @@ export default function Calendar() {
         await loadEvents(); // Recharger les événements après la suppression
         closeModal();
         setIsPopupDeleteOpen(false);
+        toast({
+          title: "Événement supprimé ! ✅",
+          description: "Votre événement a été supprimé avec succès.",
+          // action: (
+          //     <ToastAction altText="Annuler">Annuler</ToastAction>
+          // ),
+      });
       } catch (error) {
         console.error("Erreur lors de la suppression de l'événement :", error);
+        toast({
+          title: "Erreur lors de la suppression de l'événement ❌",
+        });
       }
     }
   };
