@@ -36,12 +36,6 @@ use App\Controller\UpdateEventImageController;
             description: 'Récupère tous les événements publics',
             controller: EventController::class,
         ),
-        new Post(
-            validationContext: ['groups' => ['Default', 'event:create']],
-            outputFormats: ['jsonld' => ['application/ld+json']],
-            inputFormats: ['multipart' => ['multipart/form-data']],
-            denormalizationContext: ['groups' => ['event:write']],
-        ),
         new GetCollection(
             uriTemplate: 'events/user/{userId}',
             normalizationContext: ['groups' => ['event:read']],
@@ -59,6 +53,12 @@ use App\Controller\UpdateEventImageController;
         new Get(),
         new Put(),
         new Patch(),
+        new Post(
+            validationContext: ['groups' => ['Default', 'event:create']],
+            outputFormats: ['jsonld' => ['application/ld+json']],
+            inputFormats: ['multipart' => ['multipart/form-data']],
+            denormalizationContext: ['groups' => ['event:write']],
+        ),
         new Delete(),
         new Post(
             uriTemplate: 'events/{id}/update-image',

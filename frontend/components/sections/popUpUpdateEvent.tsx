@@ -1,6 +1,5 @@
 "use client";
 
-import { revalidatePath } from 'next/cache'
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
@@ -56,6 +55,7 @@ import { PopupUpdateEventProps } from "@/types/event";
 import { fr } from "date-fns/locale";
 import { useUser } from "@/contexts/UserProvider";
 import { useDebouncedCallback } from "use-debounce";
+import { UpdateEventAndNotify } from "@/lib/actions";
 
 const FormSchema = z.object({
   title: z.string().nonempty("Title is required"),
@@ -251,10 +251,9 @@ export default function PopupUpdateEvent({
     };  
   
     try {
-      const response = await UpdateEvent(formData, eventData.id);
-      console.log("Event updated:", response);
+      await UpdateEvent(formData, eventData.id);
+      await UpdateEventAndNotify(eventData.id);
       setIsMainDialogOpen(false);
-      revalidatePath('/profile/calendar');
     } catch (error) {
       console.error("Failed to update event:", error);
     }

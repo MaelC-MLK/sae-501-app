@@ -139,3 +139,27 @@ export async function UpdateEventImage(id: any, image: any) {
     const updatedEvent = await response.json();
     return updatedEvent;
 }
+
+export async function deleteEventAndNotify(id: number) {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/${id}/notify-delete`, {
+        method: 'POST',
+        credentials: 'include',
+    });
+    if (!response.ok) {
+        throw new Error('Erreur lors de la suppression de l\'événement et de l\'envoi de la notification');
+    }
+    const result = await response.json();
+    return result;
+}
+
+export async function UpdateEventAndNotify(id: number){
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/${id}/notify-update`, {
+        method: 'POST',
+        credentials: 'include',
+    });
+    if (!response.ok) {
+        throw new Error('Erreur lors de la mise à jour de l\'événement et de l\'envoi de la notification');
+    }
+    const result = await response.json();
+    return result;
+}
