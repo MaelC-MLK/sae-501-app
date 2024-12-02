@@ -1,6 +1,5 @@
 "use client";
 
-import { revalidatePath } from 'next/cache'
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
@@ -58,6 +57,8 @@ import { useUser } from "@/contexts/UserProvider";
 import { useDebouncedCallback } from "use-debounce";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
+import { UpdateEventAndNotify } from "@/lib/actions";
+
 
 const FormSchema = z.object({
   title: z.string().nonempty("Title is required"),
@@ -256,11 +257,9 @@ export default function PopupUpdateEvent({
     };  
   
     try {
-      const response = await UpdateEvent(formData, eventData.id);
-      console.log("Event updated:", response);
+      await UpdateEvent(formData, eventData.id);
+      await UpdateEventAndNotify(eventData.id);
       setIsMainDialogOpen(false);
-      // revalidatePath('/profile/calendar');
-
       toast({
         title: "Événement modifié ! ✅",
         description: "Votre événement a été modifié avec succès.",
@@ -268,7 +267,6 @@ export default function PopupUpdateEvent({
         //     <ToastAction altText="Annuler">Annuler</ToastAction>
         // ),
     });
-
     } catch (error) {
       console.error("Failed to update event:", error);
       toast({
