@@ -50,6 +50,7 @@ class UserController extends AbstractController
         // Générer un token de vérification
         $token = Uuid::v4()->toRfc4122(); // Génération de token (UUID)
         $user->setVerificationToken($token);
+        $user->setActive(false);
 
         // Définir la date d'expiration du token
         $expiryDate = new \DateTime('+10 minutes');
@@ -126,6 +127,7 @@ class UserController extends AbstractController
         // Ajouter l'utilisateur à l'événement
         $event->addUser($user);
         $user->addEvent($event);
+        $user->setActive(true);
 
         // Supprimer le token après l'inscription
         $user->setVerificationToken(null);
