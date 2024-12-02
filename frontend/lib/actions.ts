@@ -96,3 +96,27 @@ export async function inviteFriend(email: string) {
     }
     return responseJson;
 }
+
+
+export async function inviteToEvent(email: string, eventId: string) {
+    const response = await fetch("http://localhost:8080/api/events/invite", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            email: email,
+            eventId: eventId,
+        }),
+    });
+
+    const responseJson = await response.json();
+
+    if (!response.ok) {
+        const errorMessage = responseJson.message || "Erreur lors de l'envoi de l'invitation. Veuillez réessayer.";
+        throw new Error(errorMessage);
+    }
+
+    return responseJson;
+}

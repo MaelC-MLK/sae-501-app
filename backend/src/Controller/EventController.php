@@ -48,4 +48,36 @@ class EventController extends AbstractController
 
         return new JsonResponse($data);
     }
+
+    #[Route('/api/events/invite', name: 'invite_to_event', methods: ['POST'])]
+    public function inviteToEvent(Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer): JsonResponse
+    {
+        $email = $request->get('email');
+        $eventId = $request->get('eventId');
+
+        if (!$email || !$eventId) {
+            return new JsonResponse(['message' => 'Email et eventId requis.'], 400);
+        }
+
+        $event = $entityManager->getRepository(Event::class)->find($eventId);
+
+        if (!$event) {
+            return new JsonResponse(['message' => "Événement introuvable."], 404);
+        }
+
+        $link = 'https://www.eventify.com/register?eventId=' . $eventId;
+        $emailMessage = (new Email())
+            ->from('no-reply@eventify.com')
+            ->to($email)
+            ->subject('Invitation à l\'événement : ' . $event->getTitle())
+            ->html("<p>Vous êtes invité à l'événement <strong>{$event->getTitle()}</strong>.</p>
+                    <p>Cliquez <a href='{$link}'>ici</a> pour vous inscrire.</p>");
+
+        try {
+            $mailer->send($emailMessage);
+            return new JsonResponse(['message' => 'Invitation envoyée avec succès.']);
+        } catch (\Exception $e) {
+            return new JsonResponse(['message' => 'Erreur lors de l\'envoi de l\'invitation.', 'error' => $e->getMessage()], 500);
+        }
+    }
 }

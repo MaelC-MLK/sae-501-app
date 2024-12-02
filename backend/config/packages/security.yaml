@@ -57,3 +57,4 @@ security:
     - { path: ^/admin/logout, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/admin, roles: ROLE_ADMIN }
     - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+    - { path: ^/api/events/invite, roles: PUBLIC_ACCESS, methods: [POST] }
