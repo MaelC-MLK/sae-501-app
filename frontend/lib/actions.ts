@@ -99,7 +99,7 @@ export async function inviteFriend(email: string) {
 }
 
 export async function inviteToEvent(email: string, eventId: string) {
-    const response = await fetch("http://localhost:8080/api/events/invite", {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/invite`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -119,6 +119,7 @@ export async function inviteToEvent(email: string, eventId: string) {
     }
 
     return responseJson;
+}
 
 export async function UpdateUser(user: any) {
     const response = await fetch(`${process.env.API_BASE_URL}/api/users/${user.id}`, {

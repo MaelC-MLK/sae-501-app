@@ -6,6 +6,17 @@ meta {
 
 post {
   url: http://localhost:8080/api/events/invite
-  body: none
+  body: json
   auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "mathis.micheau14@gmail.com",
+    "eventId": 1
+  }
 }

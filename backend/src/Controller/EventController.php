@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Mailer\MailerInterface;
 
 
 class EventController extends AbstractController
@@ -54,6 +55,7 @@ class EventController extends AbstractController
     #[Route('/api/events/invite', name: 'invite_to_event', methods: ['POST'])]
     public function inviteToEvent(Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer): JsonResponse
     {
+        echo $request;
         $email = $request->get('email');
         $eventId = $request->get('eventId');
 
@@ -69,7 +71,7 @@ class EventController extends AbstractController
 
         $link = 'https://www.eventify.com/register?eventId=' . $eventId;
         $emailMessage = (new Email())
-            ->from('no-reply@eventify.com')
+            ->from('eventifyverif.noreply@gmail.com')
             ->to($email)
             ->subject('Invitation à l\'événement : ' . $event->getTitle())
             ->html("<p>Vous êtes invité à l'événement <strong>{$event->getTitle()}</strong>.</p>
@@ -82,7 +84,8 @@ class EventController extends AbstractController
             return new JsonResponse(['message' => 'Erreur lors de l\'envoi de l\'invitation.', 'error' => $e->getMessage()], 500);
         }
     }
-}
+
+
 
     #[Route('/api/events/{id}/join', name: 'event_join', methods: ['PATCH'])]
     public function joinEvent(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
@@ -160,5 +163,6 @@ class EventController extends AbstractController
 
         return new JsonResponse(['message' => 'Désinscription réussie de l\'événement.'], JsonResponse::HTTP_OK);
     }
-}
 
+
+}
