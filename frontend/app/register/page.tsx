@@ -5,11 +5,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import Image from 'next/image';
-import { authenticate } from "@/lib/utils"
 import Link from 'next/link';
 import { useUser } from '@/contexts/UserProvider';
 import { k2d } from "@/app/fonts/fonts"
 import { useRouter } from 'next/navigation';
+import { PopUpEmailRegister } from '@/components/sections/popUpEmailRegister';
 
 
 export default function Page() {
@@ -21,7 +21,9 @@ export default function Page() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
-    const { setUser } = useUser();
+    const [loadingButton, setLoadingButton] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [user, setUser] = useState({email: email, plainPassword: plainPassword, firstName: firstName, lastName: lastName});
     const router = useRouter();
 
     const validateEmail = (email: string) => {
@@ -33,7 +35,13 @@ export default function Page() {
         return password.length >= 8 && password.length <= 30;
     };
 
+    const validateNoNumbersOrSpecialChars = (str: string) => {
+        const noNumbersOrSpecialCharsRegex = /^[a-zA-Z\s-]+$/;
+        return noNumbersOrSpecialCharsRegex.test(str);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
+        setLoadingButton(true);
         e.preventDefault();
         setError('');
 
@@ -52,42 +60,53 @@ export default function Page() {
             return;
         }
 
+        if (!validateNoNumbersOrSpecialChars(firstName)) {
+            setError('Le prénom doit contenir uniquement des lettres ou - ');
+            return;
+        }
+
+        if (!validateNoNumbersOrSpecialChars(lastName)) {
+            setError('Le nom doit contenir uniquement des lettres ou - ');
+            return;
+        }
 
         try {
             await new Promise((resolve) => setTimeout(resolve, 2000));
-            const api = 'http://localhost:8080';
-            const url = api + '/api/users';
+            const api = process.env.API_BASE_URL;
+            const url = api + '/api/user/register';
+
+            setUser({ email: email,
+                plainPassword: plainPassword, 
+                firstName: firstName,
+                lastName: lastName 
+            });
 
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': "application/ld+json",
                 },
-                body: JSON.stringify({ email, plainPassword, firstName, lastName }),
+                body: JSON.stringify({email: email, plainPassword: plainPassword, firstName: firstName, lastName: lastName}),
             });
 
+            
             if (!response.ok) {
                 if (response.status === 422) {
-                    throw new Error('Email already exists');
+                    throw new Error('Cette adresse email existe déjà');
                 }
-
-                throw new Error('Failed to create account');
+                
+                throw new Error('Echec de la création du compte');
             }
             else {
-                const login = await authenticate(email, plainPassword, setUser);
-                if (login) {
-                    router.push('/');
-                }
-                else {
-                    setError('Invalid email or password');
-                }
+                setLoadingButton(false);
+                setOpen(true);
             }
-
         } catch (err) {
+            setLoadingButton(false);
             if (err instanceof Error) {
                 setError(err.message);
             } else {
-                setError('An unknown error occurred');
+                setError('Une erreur est survenue');
             }
         }
         finally {
@@ -167,10 +186,16 @@ export default function Page() {
                         />
                     </div>
                     {error && <p className="text-red-500 text-sm">{error}</p>}
-                    <Button type="submit" className="mt-6 w-full bg-primary text-white text-lg py-6 rounded-md transition">
-                        S'incrire
+                    <Button 
+                        type="submit" 
+                        className="mt-6 w-full bg-primary text-white text-lg py-6 rounded-md transition"
+                        disabled={loadingButton}
+                    >
+                        {loadingButton ? "En cours..." : "S'inscrire"}
                     </Button>
                 </form>
+
+                <PopUpEmailRegister user={user} open={open} setOpen={setOpen}></PopUpEmailRegister>
 
                 <p className="text-center text-sm text-gray-500 mt-2">
                     Vous avez déjà un compte? <Link href="/login" className="text-primary hover:underline">Connectez-vous</Link>

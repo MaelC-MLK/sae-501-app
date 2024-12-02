@@ -1,25 +1,26 @@
 // /lib/action.ts
 
 import { error } from "console";
+import { loadEvents } from "@/components/sections/calendar";
 
 export async function createEvent(eventData: any) {
-    const response = await fetch('http://localhost:8080/api/events', {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events`, {
         method: 'POST',
         credentials: 'include',
         headers: {
         },
         body: eventData,
     });
-
     if (!response.ok) {
         throw new Error('Failed to create event');
     }
-
-    return await response.json();
+    const newEvent = await response.json();
+    await loadEvents();
+    return newEvent;
 }
 
 export async function UpdateEvent(eventData: any, eventId: string) {
-    const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/${eventId}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -28,16 +29,16 @@ export async function UpdateEvent(eventData: any, eventId: string) {
         },
         body: JSON.stringify(eventData),
     });
-
     if (!response.ok) {
         throw new Error('Failed to update event');
     }
-
-    return await response.json();
+    const updatedEvent = await response.json();
+    await loadEvents(); // Recharger les événements après la mise à jour
+    return updatedEvent;
 }
 
 export async function deleteEvent(eventId: string) {
-    const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/${eventId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -52,7 +53,7 @@ export async function deleteEvent(eventId: string) {
 
 
 export async function signUserInvite(email: any, eventId: any) {
-    const response = await fetch("http://localhost:8080/api/user/email", {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/user/email`, {
         method: "POST",
         credentials: 'include',
         headers: {
@@ -77,7 +78,7 @@ export async function signUserInvite(email: any, eventId: any) {
 
 
 export async function inviteFriend(email: string) {
-    const response = await fetch("http://localhost:8080/api/invite", {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/invite`, {
         method: "POST",
         credentials: 'include',
         headers: {
@@ -96,7 +97,6 @@ export async function inviteFriend(email: string) {
     }
     return responseJson;
 }
-
 
 export async function inviteToEvent(email: string, eventId: string) {
     const response = await fetch("http://localhost:8080/api/events/invite", {
@@ -119,4 +119,46 @@ export async function inviteToEvent(email: string, eventId: string) {
     }
 
     return responseJson;
+
+export async function UpdateUser(user: any) {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/users/${user.id}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/ld+json',
+        },
+        body: JSON.stringify(user),
+    });
+    if (!response.ok) {
+        throw new Error('Erreur lors de la mise à jour du profil');
+    }
+    const updatedUser = await response.json();
+    return updatedUser;
+}
+
+export async function UpdateUserImage(user: any, image: any) {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/users/${user.id}/update-image`, {
+        method: 'POST',
+        credentials: 'include',
+        body: image,
+    });
+    if (!response.ok) {
+        throw new Error('Erreur lors de la mise à jour de l\'image');
+    }
+    const updatedUser = await response.json();
+    return updatedUser;
+}
+
+export async function UpdateEventImage(id: any, image: any) {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/${id}/update-image`, {
+        method: 'POST',
+        credentials: 'include',
+        body: image,
+    });
+    if (!response.ok) {
+        throw new Error('Erreur lors de la mise à jour de l\'image');
+    }
+    const updatedEvent = await response.json();
+    return updatedEvent;
+
 }

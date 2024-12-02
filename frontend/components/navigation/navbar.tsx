@@ -53,12 +53,13 @@ const Navbar = () => {
                             { /*{user.email} */
                                 <Link href="/profile" className='flex items-center gap-2 group'>
                                     <Image
-                                        src={user.avatar ? `http://localhost:8080/uploads/users/${user.avatar}` : '/images/profile-picture.webp'}
+                                        src={user.avatar ? `${process.env.API_BASE_URL}/uploads/users/${user.avatar}` : '/images/profile-picture.webp'}
                                         alt='Profile Picture'
                                         width={50}
                                         height={50}
                                         quality={100}
-                                        className='rounded-full group-hover:ring-2 group-hover:ring-primary transition-all shrink-0 w-8 h-8'
+                                        unoptimized={true}
+                                        className='rounded-full object-cover group-hover:ring-2 group-hover:ring-primary transition-all shrink-0 w-8 h-8'
                                     >
                                     </Image>
                                     <p className='text-foreground capitalize truncate max-w-64 hidden sm:block'>{user.firstName} {user.lastName}</p>

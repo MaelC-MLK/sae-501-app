@@ -4,8 +4,8 @@ import { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-export default function VerifyEmailPage({ params }: { params: { token: string, id: string } }) {
-    const { token, id } = params;
+export default function VerifyEmailPage({ params }: { params: { token: string } }) {
+    const { token } = params;
     const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'alreadyVerified' | null>('loading');
     const [message, setMessage] = useState<string | null>(null);
     const hasFetched = useRef(false); // Référentiel pour suivre l'état de la requête
@@ -16,15 +16,15 @@ export default function VerifyEmailPage({ params }: { params: { token: string, i
 
         const verifyToken = async () => {
             try {
-                const res = await fetch(`${process.env.API_BASE_URL}/api/verify-email/${token}/${id}`);
+                const res = await fetch(`http://localhost:8080/api/verify-email-register/${token}`);
                 if (res.ok) {
                     const data = await res.json();
-                    if (data.message === 'Utilisateur déjà inscrit à l\'événement.') {
+                    if (data.message === 'Utilisateur déjà inscrit') {
                         setStatus('alreadyVerified');
                         setMessage(data.message);
                     } else {
                         setStatus('success');
-                        setMessage('Votre inscription a été validée avec succès !');
+                        setMessage('Votre inscription a été validée avec succès ! Vous pouvez maintenant vous connecter.');
                     }
                 } else {
                     const data = await res.json();
@@ -38,7 +38,7 @@ export default function VerifyEmailPage({ params }: { params: { token: string, i
         };
 
         verifyToken();
-    }, [token, id]);
+    }, [token]);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">

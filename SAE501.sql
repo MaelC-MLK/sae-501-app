@@ -22,6 +22,18 @@ SET time_zone = "+00:00";
 --
 
 --
+-- Déchargement des données de la table `user`
+--
+
+INSERT INTO `user` 
+(`id`, `email`, `password`, `roles`, `first_name`, `last_name`, `avatar`, `verification_token`, `token_expiry`, `logout`, `image_size`, `updated_at`, `active`) 
+VALUES
+(1, 'demo@gmail.com', '$2y$13$b6Nnm3S/V2R3Jabq1Zbgre8djpHrCZyF0QYryKrqsv7zQ4a/8nWya', '[]', 'Prenom', 'Nom', NULL, NULL, NULL, NULL, NULL, NULL, 1),
+(2, 'test@gmail.com', '$2y$13$lONY8ouZumR9Zr0h3aqnM.6xOFxtYmOSl0BWPQpGIOGTqWjiyl.MC', '[]', 'Prénom', 'Nom', NULL, NULL, NULL, NULL, NULL, NULL, 1);
+
+COMMIT;
+
+--
 -- Déchargement des données de la table `event`
 --
 
@@ -45,14 +57,6 @@ INSERT INTO `event_user` (`event_id`, `user_id`) VALUES
 (4, 2),
 (6, 2);
 
---
--- Déchargement des données de la table `user`
---
-
-INSERT INTO `user` (`id`, `email`, `password`, `roles`, `first_name`, `last_name`, `avatar`, `plain_password`, `verification_token`, `token_expiry`, `logout`) VALUES
-(1, 'demo@gmail.com', '$2y$13$b6Nnm3S/V2R3Jabq1Zbgre8djpHrCZyF0QYryKrqsv7zQ4a/8nWya', '[]', 'Prenom', 'Nom', NULL, NULL, NULL, NULL, NULL),
-(2, 'test@gmail.com', '$2y$13$lONY8ouZumR9Zr0h3aqnM.6xOFxtYmOSl0BWPQpGIOGTqWjiyl.MC', '[]', 'Test', 'Bonjour', NULL, NULL, NULL, NULL, NULL);
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

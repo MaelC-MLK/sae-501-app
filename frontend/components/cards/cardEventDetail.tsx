@@ -1,12 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
-
 import { Badge } from '../ui/badge';
-
 import { EventProps } from "@/types/event";
 import { PopupJoinPublicEvent } from '../sections/popupJoinPublicEvent';
 import { PopupShareEvent } from '../sections/popupShareEvent';
-
 
 interface CardEventDetailProps {
     event: EventProps;
@@ -43,7 +40,7 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
             </div>
             <div className="relative w-full md:w-1/3 h-64 md:h-auto">
                 <Image
-                    src={event.image ? `http://localhost:8080/uploads/events/${event.image}` : defaultImage}
+                    src={event.image ? `${process.env.API_BASE_URL}/uploads/events/${event.image}` : defaultImage}
                     alt={event.title}
                     layout="fill"
                     objectFit="cover"
@@ -56,3 +53,11 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
 };
 
 export default CardEventDetail;
+function setError(arg0: string) {
+    throw new Error('Function not implemented.');
+}
+
+function setLoading(arg0: boolean) {
+    throw new Error('Function not implemented.');
+}
+

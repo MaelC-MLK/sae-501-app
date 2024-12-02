@@ -27,8 +27,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Filter\ArticleQueryFilter;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
+use App\Controller\UpdateUserImageController;
 
 
+#[Vich\Uploadable]
 #[ApiResource(
     operations: [
         new GetCollection(),
@@ -40,9 +44,16 @@ use App\Filter\ArticleQueryFilter;
         new Put(processor: UserPasswordHasher::class, security: "is_granted('ROLE_ADMIN') or object == user"),
         new Patch(processor: UserPasswordHasher::class, security: "is_granted('ROLE_ADMIN') or object == user"),
         new Delete(security: "is_granted('ROLE_ADMIN') or object == user"),
+        new Post(
+            uriTemplate: 'users/{id}/update-image',
+            controller: UpdateUserImageController::class,
+            inputFormats: ['multipart' => ['multipart/form-data']],
+            denormalizationContext: ['groups' => ['user:write']],
+            validationContext: ['groups' => ['Default', 'user:update']],
+        ),
     ],
     normalizationContext: ['groups' => ['user:read']],
-    denormalizationContext: ['groups' => ['user:create', 'user:update']],
+    denormalizationContext: ['groups' => ['user:create', 'user:update', 'user:write']],
 )]
 // #[ApiFilter(SearchFilter::class, properties: ['email' => 'partial', 'firstName' => 'partial', 'lastName' => 'partial'])]
 #[ApiFilter(ArticleQueryFilter::class, strategy: 'partial')]
@@ -67,9 +78,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?string $password = null;
 
-    #[Groups(['user:create', 'user:update'])]
-    #[ORM\Column(nullable: true)]
-    #[ORM\Transient]
     private ?string $plainPassword = null;
 
     #[ORM\Column(type: 'json')]
@@ -86,9 +94,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $lastName = null;
 
+    #[Vich\UploadableField(mapping: 'users_image', fileNameProperty: 'avatar', size: 'imageSize')]
     #[Groups(['user:create', 'user:update', 'user:read'])]
+    #[Assert\Image(
+        mimeTypes: ["image/jpeg", "image/png", "image/webp"],
+        mimeTypesMessage: "Format d'image invalide (JPEG, PNG, WEBP)."
+    )]
+    private ?File $imageFile = null;
+
+    #[Groups(['user:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
+    
+    #[ORM\Column(nullable: true)]
+    #[Groups(['user:create', 'user:update', 'user:read'])]
+    private ?int $imageSize = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $verificationToken = null;
@@ -104,6 +127,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $Logout = null;
+
+    #[Groups(['user:create', 'user:update', 'user:read'])]
+    #[ORM\Column]
+    private ?bool $active = null;
 
     public function __construct()
     {
@@ -259,6 +286,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the user listeners won't be called and the file is lost
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageSize(?int $imageSize): void
+    {
+        $this->imageSize = $imageSize;
+    }
+
+    public function getImageSize(): ?int
+    {
+        return $this->imageSize;
+    }
+
     public function getVerificationToken(): ?string
     {
         return $this->verificationToken;
@@ -321,6 +374,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLogout(?\DateTimeInterface $Logout): static
     {
         $this->Logout = $Logout;
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): static
+    {
+        $this->active = $active;
 
         return $this;
     }
