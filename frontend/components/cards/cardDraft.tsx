@@ -62,7 +62,7 @@ export function CardDraft({ event, onEventChange }: { event: EventProps, onEvent
                     unoptimized={true}
                     className=""
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-background to-transparent from-0% to-30%"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-background to-transparent from-0% to-60%"></div>
             </div>
 
             <div className="group flex flex-col my-2 w-2/3">

@@ -328,9 +328,9 @@ export default function PopupCreationEvent({
     formData.append('creator', `/api/users/${userContext.user.id}`);
 
 
-    if (imageFile) {
-      formData.append('imageFile', imageFile);
-    }
+    // if (imageFile) {
+    //   formData.append('imageFile', imageFile);
+    // }
 
     console.log("Participants:", participants);
 

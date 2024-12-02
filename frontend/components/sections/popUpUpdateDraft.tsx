@@ -53,7 +53,7 @@ import { UpdateEvent } from "@/lib/actions";
 import { Separator } from "@/components/ui/separator";
 import { fetchUserBy } from "@/lib/data";
 import { PopupUpdateEventProps } from "@/types/event";
-import { fr } from "date-fns/locale";
+import { fr, is } from "date-fns/locale";
 import { useUser } from "@/contexts/UserProvider";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -258,7 +258,7 @@ export default function PopupUpdateDraft({
         date?.to || date?.from || new Date(),
         data.time_end
       ).toString(),
-      isVisible: isPrivate ? "false" : "true",
+      isVisible: "false",
       location: data.location || "",
       creator: `/api/users/${userContext.user.id}`,
       users: participants.map((participant) => `/api/users/${participant.id}`),
@@ -268,12 +268,46 @@ export default function PopupUpdateDraft({
       const response = await UpdateEvent(formData, eventData.id);
       console.log("Event updated:", response);
       setIsMainDialogOpen(false);
-      revalidatePath('/profile/calendar');
+      // revalidatePath('/profile/calendar');
       onEventChange();
     } catch (error) {
       console.error("Failed to update event:", error);
     }
   };
+
+  const handleRestoreEvent = async (data: z.infer<typeof FormSchema>) => {
+    if (userContext.user === null) {
+      console.error("User not found");
+      return;
+    }
+    const formData = {
+      title: data.title,
+      description: data.description || "",
+      date_start: combineDateAndTime(
+        date?.from || new Date(),
+        data.time_start
+      ).toString(),
+      date_end: combineDateAndTime(
+        date?.to || date?.from || new Date(),
+        data.time_end
+      ).toString(),
+      isVisible: isPrivate ? "false" : "true",
+      location: data.location || "",
+      creator: `/api/users/${userContext.user.id}`,
+      users: participants.map((participant) => `/api/users/${participant.id}`),
+      is_draft: "false",
+    };  
+  
+    try {
+      const response = await UpdateEvent(formData, eventData.id);
+      console.log("Event updated:", response);
+      setIsMainDialogOpen(false);
+      // revalidatePath('/profile/calendar');
+      onEventChange();
+    } catch (error) {
+      console.error("Failed to update event:", error);
+    }
+  }
 
   return (
     <>
@@ -631,7 +665,8 @@ export default function PopupUpdateDraft({
                   Modifier
                 </Button>
                 <Button
-                  type="submit"
+                  // type="submit"
+                  onClick={(e) => {e.preventDefault(); handleRestoreEvent(form.getValues())}}
                   >
                   Restaurer
                 </Button>
