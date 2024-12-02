@@ -17,13 +17,15 @@ class EmailService
         $this->twig = $twig;
     }
 
-    public function sendVerificationEmail(string $recipientEmail, string $token, int $eventId): void
+    public function sendVerificationEmail(string $recipientEmail, string $token, int $eventId, int $userId): void
     {
         $verificationLink = sprintf('http://localhost:8090/verify-email/%s/%d', $token, $eventId);
+            $unsubscribeLink = sprintf('http://localhost:8090/api/events/%d/unsubscribe/%d', $eventId, $userId);
 
         // Rendre le template Twig
-        $htmlContent = $this->twig->render('emails/verification_email.html.twig', [
+        $htmlContent = $this->twig->render('emails/verification_join_event_email.html.twig', [
             'verification_link' => $verificationLink,
+            'unsubscribe_link' => $unsubscribeLink,
         ]);
 
         $email = (new Email())

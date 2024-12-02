@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Vérification de votre inscription</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+    <div style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+        <div style="text-align: center; padding: 10px 0;">
+            <h1 style="margin: 0; color: #333333;">Vérification de votre inscription</h1>
+        </div>
+        <div style="text-align: center;">
+            <p style="font-size: 16px; color: #666666;">Bonjour,</p>
+            <p style="font-size: 16px; color: #666666;">Cliquez sur le bouton suivant pour vérifier votre email :</p>
+            <p><a href="{{ verification_link }}" style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #ffffff; background-color: #007bff; text-decoration: none; border-radius: 6px; margin-top: 20px;">Valider mon inscription</a></p>
+            <p style="font-size: 16px; color: #666666;">Si vous souhaitez vous désinscrire de l'événement, cliquez sur le lien suivant :</p>
+            <p><a href="{{ unsubscribe_link }}" style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #ffffff; background-color: #dc3545; text-decoration: none; border-radius: 6px; margin-top: 20px;">Se désinscrire</a></p>
+        </div>
+        <div style="text-align: center; padding: 10px 0; font-size: 12px; color: #999999;">
+            <p>&copy; {{ "now"|date("Y") }} Eventify. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>

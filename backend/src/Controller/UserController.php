@@ -50,6 +50,7 @@ class UserController extends AbstractController
         // Générer un token de vérification
         $token = Uuid::v4()->toRfc4122(); // Génération de token (UUID)
         $user->setVerificationToken($token);
+        $user->setActive(false);
 
         // Définir la date d'expiration du token
         $expiryDate = new \DateTime('+10 minutes');
@@ -57,7 +58,7 @@ class UserController extends AbstractController
 
         // Envoyer l'email de vérification
         try {
-            $this->emailService->sendVerificationEmail($email, $token, $eventId);
+            $this->emailService->sendVerificationEmail($email, $token, $eventId, (int) $user->getId());
         } catch (\Exception $e) {
             return new JsonResponse(['error' => 'Impossible d\'envoyer l\'email : ' . $e->getMessage()], 500);
         }
@@ -126,6 +127,7 @@ class UserController extends AbstractController
         // Ajouter l'utilisateur à l'événement
         $event->addUser($user);
         $user->addEvent($event);
+        $user->setActive(true);
 
         // Supprimer le token après l'inscription
         $user->setVerificationToken(null);

@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Event;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -106,6 +107,34 @@ class EventController extends AbstractController
         $user = $this->getUser();
         if (!$user) {
             return new JsonResponse(['message' => 'Vous devez être connecté pour vous désinscrire.'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        // Récupérer l'événement par ID
+        $event = $entityManager->getRepository(Event::class)->find($id);
+        if (!$event) {
+            return new JsonResponse(['message' => 'Événement non trouvé.'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        // Vérifier si l'utilisateur est inscrit
+        if (!$event->getUsers()->contains($user)) {
+            return new JsonResponse(['message' => 'Vous n\'êtes pas inscrit à cet événement.'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        // Supprimer l'utilisateur de l'événement
+        $event->removeUser($user);
+        $entityManager->persist($event);
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Désinscription réussie de l\'événement.'], JsonResponse::HTTP_OK);
+    }
+
+    #[Route('/api/events/{id}/unsubscribe/{userId}', name: 'event_unsubscribe', methods: ['GET'])]
+    public function unsubscribeEvent(int $id, int $userId, EntityManagerInterface $entityManager): JsonResponse
+    {
+        // Récupérer l'utilisateur par ID
+        $user = $entityManager->getRepository(User::class)->find($userId);
+        if (!$user) {
+            return new JsonResponse(['message' => 'Utilisateur non trouvé.'], JsonResponse::HTTP_UNAUTHORIZED);
         }
 
         // Récupérer l'événement par ID
