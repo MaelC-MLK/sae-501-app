@@ -24,6 +24,8 @@ import {
 import { UpdateEvent } from "@/lib/actions";
 import { format } from "date-fns";
 import {k2d} from "@/app/fonts/fonts";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
 
 let userContext: ReturnType<typeof useUser>;
 let setEvents: React.Dispatch<React.SetStateAction<any[]>>;
@@ -89,6 +91,7 @@ export default function Calendar() {
       }
     }
   });
+  const {toast} = useToast();
 
   setEvents = setEventsState;
   setLoading = setLoadingState;
@@ -244,8 +247,18 @@ export default function Calendar() {
         await loadEvents(); // Recharger les événements après la suppression
         closeModal();
         setIsPopupDeleteOpen(false);
+        toast({
+          title: "Événement supprimé ! ✅",
+          description: "Votre événement a été supprimé avec succès.",
+          // action: (
+          //     <ToastAction altText="Annuler">Annuler</ToastAction>
+          // ),
+      });
       } catch (error) {
         console.error("Erreur lors de la suppression de l'événement :", error);
+        toast({
+          title: "Erreur lors de la suppression de l'événement ❌",
+        });
       }
     }
   };

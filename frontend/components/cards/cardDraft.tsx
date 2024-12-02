@@ -7,8 +7,11 @@ import PopupUpdateDraft from "@/components/sections/popUpUpdateDraft";
 import { Button } from "@/components/ui/button";
 import { deleteEvent } from "@/lib/actions";
 import { k2d } from "@/app/fonts/fonts";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
 
 export function CardDraft({ event, onEventChange }: { event: EventProps, onEventChange: () => void }) {
+    const {toast} = useToast();
   const defaultImage = "/images/event_default.webp";
   const image = event.image ? `${process.env.API_BASE_URL}/uploads/events/${event.image}` : defaultImage;
 
@@ -27,8 +30,18 @@ export function CardDraft({ event, onEventChange }: { event: EventProps, onEvent
     try {
       await deleteEvent(event.id.toString());
       onEventChange();
+      toast({
+        title: "Brouillon supprimé ! ✅",
+        description: "Votre brouillon a été supprimé avec succès.",
+        // action: (
+        //     <ToastAction altText="Annuler">Annuler</ToastAction>
+        // ),
+    });
     } catch (error) {
       console.error("Erreur lors de la suppression de l'événement :", error);
+      toast({
+        title: "Erreur lors de la suppression du brouillon ❌",
+      });
     }
   };
 

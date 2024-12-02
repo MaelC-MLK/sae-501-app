@@ -4,7 +4,7 @@ import { useUser } from "@/contexts/UserProvider";
 import { useEffect, useState } from "react";
 
 export default function Drafts() {
-  const [drafts, setDrafts] = useState([]);
+  const [drafts, setDrafts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
 

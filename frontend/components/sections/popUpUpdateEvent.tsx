@@ -56,6 +56,8 @@ import { PopupUpdateEventProps } from "@/types/event";
 import { fr } from "date-fns/locale";
 import { useUser } from "@/contexts/UserProvider";
 import { useDebouncedCallback } from "use-debounce";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
 
 const FormSchema = z.object({
   title: z.string().nonempty("Title is required"),
@@ -114,7 +116,7 @@ export default function PopupUpdateEvent({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isMainDialogOpen, setIsMainDialogOpen] = useState<boolean>(false);
   const userContext = useUser();
-
+  const {toast} = useToast();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -257,9 +259,25 @@ export default function PopupUpdateEvent({
       const response = await UpdateEvent(formData, eventData.id);
       console.log("Event updated:", response);
       setIsMainDialogOpen(false);
-      revalidatePath('/profile/calendar');
+      // revalidatePath('/profile/calendar');
+
+      toast({
+        title: "Événement modifié ! ✅",
+        description: "Votre événement a été modifié avec succès.",
+        // action: (
+        //     <ToastAction altText="Annuler">Annuler</ToastAction>
+        // ),
+    });
+
     } catch (error) {
       console.error("Failed to update event:", error);
+      toast({
+        title: "Erreur lors de la modification de l'événement ❌",
+        description: "Une erreur est survenue lors de la modification de l'événement.",
+        // action: (
+        //     <ToastAction altText="Annuler">Annuler</ToastAction>
+        // ),
+    });
     }
   };
 
