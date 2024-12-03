@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useUser } from "@/contexts/UserProvider";
 import { useRouter } from "next/navigation";
 import Drafts from "@/components/sections/drafts";
+import { SkeletonPage } from "@/components/skeletons/skeletons";
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
@@ -27,16 +28,11 @@ export default function Page() {
         setLoading(false);
     }, [userContext.user]);
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen w-full">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid border-4"></div>
-                    <p className="mt-4 text-gray-700">Loading...</p>
-                </div>
-            </div>
-        );
-    }
+    // if (loading) {
+    //     return (
+    //         <SkeletonPage />
+    //     );
+    // }
 
     return (
         <>
@@ -68,7 +64,23 @@ export default function Page() {
                     </div>
                 </div>
                 <PopupCreationEvent />
-                {view === 'calendar' ? <Calendar /> : <Drafts />} {/* Affiche le composant approprié */}
+                {
+                    loading ? (
+                        <>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"></div>
+          <p className="mt-4 text-gray-700">Chargement...</p>
+        </div>
+      </div>
+                        </>
+                    ) : (
+                        <>
+                            {view === 'calendar' ? <Calendar /> : <Drafts />} {/* Affiche le composant approprié */}
+                        </>
+                    )
+                }
+                
             </div>
         </>
     );
