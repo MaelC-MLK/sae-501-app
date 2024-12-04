@@ -85,7 +85,7 @@ export default function Page() {
                             {loading ? (
                                 <>
                                     <Button className="w-full py-6 text-lg rounded-md transition opacity-90" disabled>
-                                        Connexion...
+                                        Connexion ...
                                     </Button>
                                 </>
                             ) : (
