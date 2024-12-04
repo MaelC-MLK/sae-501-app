@@ -10,6 +10,7 @@ import { UserProps } from "@/types/user";
 import { set } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { k2d } from "@/app/fonts/fonts"
 
 
@@ -32,10 +33,10 @@ export default function Page() {
                 router.push('/');
             }
             else {
-                setError('Invalid email or password');
+                setError('Email ou mot de passe incorrect');
             }
         } catch (err) {
-            setError('Authentication failed. Please try again.');
+            setError('Email ou mot de passe incorrect');
         } finally {
             setLoading(false);
         }

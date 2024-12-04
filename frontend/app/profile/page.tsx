@@ -15,11 +15,12 @@ import { PaginatedEvents } from "@/components/sections/paginatedEvents";
 import { CarouselInscris } from "@/components/sections/carouselInscris";
 import { fetchUserEvents } from "@/lib/data";
 import { fetchUserById } from "@/lib/data";
+import { SkeletonProfile } from "@/components/skeletons/skeletons";
 
 export default function Profile() {
   const userContext = useUser();
-  const [events, setEvents] = useState([]);
-  const [userData, setUserData] = useState(null);
+  const [events, setEvents] = useState<any[]>([]);
+  const [userData, setUserData] = useState<any>();
   const [error, setError] = useState("");
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [loadingUserData, setLoadingUserData] = useState(true);
@@ -45,6 +46,7 @@ export default function Profile() {
 
     const fetchUserData = async () => {
       try {
+        if (!userContext.user) return;
         const data = await fetchUserById(userContext.user.id);
         setUserData(data);
       } catch (err) {
@@ -63,12 +65,7 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-primary"></div>
-          <p className="mt-4 text-gray-700">Chargement...</p>
-        </div>
-      </div>
+      <SkeletonProfile/>
     );
   }
 
@@ -91,8 +88,8 @@ export default function Profile() {
                 {userData ? (
                   <PopUpEditProfile
                     user={userData}
-                    onUpdate={(updatedUser) => setUserData(updatedUser)}
-                    userContext={userContext}
+                    onUpdate={(updatedUser: typeof userData) => setUserData(updatedUser)}
+                    userContext={{ ...userContext, userContextUser: userContext.user }}
                   />
                 ) : (
                   <p>Chargement du profil...</p>
@@ -100,9 +97,7 @@ export default function Profile() {
               </div>
               <div>
                 {userData ? (
-                  <PopUpLogout
-                    user={userData}
-                  />
+                  <PopUpLogout />
                 ) : (
                   <p>...</p>
                 )}

@@ -84,7 +84,7 @@ export function PopUpEditProfile({ user, onUpdate, userContext : { userContextUs
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Nom
+              Prénom
             </Label>
             <Input
               id="name"
@@ -95,7 +95,7 @@ export function PopUpEditProfile({ user, onUpdate, userContext : { userContextUs
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="username" className="text-right">
-              Prénom
+              Nom
             </Label>
             <Input
               id="username"
