@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 import { UploadIcon, CrossCircledIcon } from "@radix-ui/react-icons";
 import Image from 'next/image';
 import { ImageUploadProps } from "@/types/image";
-import { on } from 'events';
+
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 const ImageUpload: React.FC<ImageUploadProps> = ({ onFileSelect }) => {
-
     const [dragActive, setDragActive] = useState(false);
     const [file, setFile] = useState<File | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -25,30 +26,46 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onFileSelect }) => {
         e.stopPropagation();
         setDragActive(false);
         const droppedFile = e.dataTransfer.files[0];
-        if (droppedFile && droppedFile.type.startsWith('image/')) {
+        if (droppedFile) {
+            if (!ALLOWED_FILE_TYPES.includes(droppedFile.type)) {
+                setError('Veuillez déposer uniquement des fichiers JPG, PNG ou WEBP.');
+                return;
+            }
+            if (droppedFile.size > MAX_FILE_SIZE) {
+                setError('La taille du fichier ne doit pas dépasser 2MB.');
+                return;
+            }
             setFile(droppedFile);
-            onFileSelect(droppedFile); // Pass the selected file
-            console.log(droppedFile);
+            onFileSelect(droppedFile);
+            setError(null);
         } else {
-            alert('Veuillez déposer uniquement des fichiers image.');
+            setError('Veuillez déposer uniquement des fichiers JPG, PNG ou WEBP.');
         }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0];
-        if (selectedFile && selectedFile.type.startsWith('image/')) {
+        if (selectedFile) {
+            if (!ALLOWED_FILE_TYPES.includes(selectedFile.type)) {
+                setError('Veuillez sélectionner uniquement des fichiers JPG, PNG ou WEBP.');
+                return;
+            }
+            if (selectedFile.size > MAX_FILE_SIZE) {
+                setError('La taille du fichier dépasse la limite de 5MB.');
+                return;
+            }
             setFile(selectedFile);
-            onFileSelect(selectedFile); // Pass the selected file
-            console.log(selectedFile);
-            
+            onFileSelect(selectedFile);
+            setError(null);
         } else {
-            alert('Veuillez sélectionner uniquement des fichiers image.');
+            setError('Veuillez sélectionner uniquement des fichiers image.');
         }
     };
 
     const handleRemove = () => {
         setFile(null);
-        onFileSelect(null); // Pass null to indicate removal
+        onFileSelect(null);
+        setError(null);
     };
 
     return (
@@ -92,6 +109,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onFileSelect }) => {
                     </label>
                 </>
             )}
+            {error && <p className="text-red-500 text-sm mt-2 text-center">{error}</p>}
         </div>
     );
 };

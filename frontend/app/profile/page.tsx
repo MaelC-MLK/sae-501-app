@@ -79,7 +79,7 @@ export default function Profile() {
   }
 
   return (
-    <div className=" min-h-screen p-10 pt-24">
+    <div className=" min-h-screen p-10 pt-24 relative overflow-hidden">
       <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="flex flex-col lg:flex-row">
           <div className="lg:w-1/3 p-4 bg-primary">
