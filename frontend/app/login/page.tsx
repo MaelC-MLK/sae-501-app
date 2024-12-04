@@ -11,6 +11,7 @@ import { set } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { k2d } from "@/app/fonts/fonts"
+import Link from 'next/link';
 
 
 export default function Page() {
@@ -84,7 +85,7 @@ export default function Page() {
                                 />
                             </div>
                             <div className="text-right mb-6">
-                                <a href="#" className="text-primary hover:underline text-sm">Mot de passe oublié ?</a>
+                                <Link href="#" className="text-primary hover:underline text-sm">Mot de passe oublié ?</Link>
                             </div>
                             
                             <div className='flex flex-col'>
@@ -92,7 +93,7 @@ export default function Page() {
                                 Se connecter
                                 </Button>
                                 <div className="text-center mt-2">
-                                    <p className="text-sm">Vous n'avez pas de compte ? <a href="#" className="text-primary hover:underline">Inscrivez-vous</a></p> 
+                                    <p className="text-sm">Vous n'avez pas de compte ? <Link href="#" className="text-primary hover:underline">Inscrivez-vous</Link></p> 
                                 </div>
                             </div>
                             

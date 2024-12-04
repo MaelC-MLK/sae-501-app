@@ -62,7 +62,7 @@ const Navbar = () => {
                                         className='rounded-full object-cover group-hover:ring-2 group-hover:ring-primary transition-all shrink-0 w-8 h-8'
                                     >
                                     </Image>
-                                    <p className='text-foreground capitalize truncate max-w-64 hidden sm:block'>{user.firstName} {user.lastName}</p>
+                                    <p className='text-foreground capitalize truncate max-w-64 hidden sm:block'>{user.lastName} {user.firstName}</p>
                                 </Link>
                             }
 

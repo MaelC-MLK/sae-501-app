@@ -119,7 +119,7 @@ export default function Profile() {
                 />
               </div>
               <h2 className={`${k2d.className} mt-4 text-2xl capitalize font-semibold text-white`}>
-                {userData?.firstName} {userData?.lastName}
+              {userData?.lastName} {userData?.firstName} 
               </h2>
               <div className="flex items-center justify-between">
                 <p className="text-white">{userData?.email}</p>
