@@ -53,7 +53,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onFileSelect }) => {
 
     return (
         <div
-            className={`relative border-2 p-4 rounded-md ${dragActive ? 'border-blue-500' : 'border-gray-300'} ${file ? 'border-none' : 'border-dashed'}`}
+            className={`relative border-2 p-4 rounded-md ${dragActive ? 'border-teal-500' : 'border-gray-300'} ${file ? 'border-none' : 'border-dashed'}`}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}

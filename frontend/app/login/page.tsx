@@ -46,7 +46,7 @@ export default function Page() {
             {loading ? (
             <div className="flex items-center justify-center min-h-screen w-full">
             <div className="text-center">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid border-4 border-gray-200"></div>
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-teal-500 border-solid border-4 border-gray-200"></div>
                 <p className="mt-4 text-gray-700">Authentification...</p>
             </div>
         </div>
