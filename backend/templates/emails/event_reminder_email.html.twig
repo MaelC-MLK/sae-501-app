@@ -7,8 +7,7 @@
 <body>
     <h1>Rappel de l'événement : {{ event.title }}</h1>
     <p>Bonjour,</p>
-    <p>Nous vous rappelons que l'événement <strong>{{ event.title }}</strong> aura lieu le {{ event.startDate|date('d/m/Y') }} à {{ event.startDate|date('H:i') }}.</p>
+    <p>Nous vous rappelons que l'événement <strong>{{ event.title }}</strong> aura lieu le {{ event.dateStart|date('d/m/Y') }} de {{ event.dateStart|date('H:i') }} à {{ event.dateEnd|date('H:i') }}.</p>
     <p>Merci de votre participation.</p>
 </body>
-
 </html>

@@ -26,6 +26,7 @@ class SendEventRemindersCommand extends Command
     protected function configure()
     {
         $this
+            ->setName(self::$defaultName)
             ->setDescription('Envoie des rappels pour les événements à venir');
     }
 
@@ -35,16 +36,35 @@ class SendEventRemindersCommand extends Command
         $now = new \DateTime();
         $tomorrow = (clone $now)->modify('+1 day');
 
+        $startOfDay = (clone $tomorrow)->setTime(0, 0, 0);
+        $endOfDay = (clone $tomorrow)->setTime(23, 59, 59);
+
+        $io->text(sprintf('Date de début : %s', $startOfDay->format('Y-m-d H:i:s')));
+        $io->text(sprintf('Date de fin : %s', $endOfDay->format('Y-m-d H:i:s')));
+
         $events = $this->entityManager->getRepository(Event::class)->createQueryBuilder('e')
             ->where('e.date_start BETWEEN :start AND :end')
-            ->setParameter('start', $tomorrow->setTime(0, 0))
-            ->setParameter('end', $tomorrow->setTime(23, 59, 59))
+            ->setParameter('start', $startOfDay)
+            ->setParameter('end', $endOfDay)
             ->getQuery()
             ->getResult();
 
+        if (empty($events)) {
+            $io->warning('Aucun événement trouvé pour demain.');
+            return Command::SUCCESS;
+        }
+
         foreach ($events as $event) {
-            foreach ($event->getUsers() as $user) {
+            $io->text(sprintf('Événement trouvé : ID %d, Date de début : %s', $event->getId(), $event->getDateStart()->format('Y-m-d H:i:s')));
+            $users = $event->getUsers();
+            if (empty($users)) {
+                $io->warning(sprintf('Aucun utilisateur trouvé pour l\'événement ID %d.', $event->getId()));
+                continue;
+            }
+
+            foreach ($users as $user) {
                 $this->emailService->sendEventReminderEmail($user->getEmail(), $event);
+                $io->text(sprintf('Email envoyé à %s pour l\'événement ID %d.', $user->getEmail(), $event->getId()));
             }
         }
 
