@@ -99,17 +99,42 @@ export default function Page() {
                             <div className="text-center mt-2">
                                 <p className="text-sm">Vous n'avez pas de compte ? <Link href="/register" className="text-primary hover:underline">Inscrivez-vous</Link></p>
                             </div>
-                        </div>
-
-                    </form>
-
+                            <div className="mb-2">
+                                <Label htmlFor="password" className='text-lg'>Mot de passe*</Label>
+                                <Input
+                                    type="password"
+                                    id="password"
+                                    placeholder="Mot de passe"
+                                    name="password"
+                                    required
+                                    className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                            </div>
+                            <div className="text-right mb-6">
+                                <a href="#" className="text-primary hover:underline text-sm">Mot de passe oublié ?</a>
+                            </div>
+                            
+                            <div className='flex flex-col'>
+                                <Button type="submit" className="w-full py-6 text-lg rounded-md transition">
+                                Se connecter
+                                </Button>
+                                <div className="text-center mt-2">
+                                    <p className="text-sm">Vous n'avez pas de compte ? <a href="#" className="text-primary hover:underline">Inscrivez-vous</a></p> 
+                                </div>
+                            </div>
+                            
+                        </form>
+        
+                    </div>
+                    <div className='hidden md:block md:w-1/3 relative'>
+                        <Image src='/images/login-picture.png' alt='image connexion' fill 
+                        style={{ objectFit: 'cover' }}/>
+                    </div>
                 </div>
-                <div className='hidden md:block md:w-1/3 relative'>
-                    <Image src='/images/login-picture.png' alt='image connexion' fill
-                        style={{ objectFit: 'cover' }} />
-                </div>
-            </div>
-
+                
+            )}
         </div>
     );
 }

@@ -259,7 +259,7 @@ export default function Calendar() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-teal-500"></div>
           <p className="mt-4 text-gray-700">Chargement...</p>
         </div>
       </div>
