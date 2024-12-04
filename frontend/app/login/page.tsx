@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { k2d } from "@/app/fonts/fonts"
+import Link from 'next/link';
 
 
 export default function Page() {

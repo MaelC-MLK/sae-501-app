@@ -25,7 +25,7 @@ import {k2d} from "@/app/fonts/fonts";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import { unregisterEvent } from "@/lib/data";
-
+import Link from "next/link";
 
 let userContext: ReturnType<typeof useUser>;
 let setEvents: React.Dispatch<React.SetStateAction<any[]>>;
@@ -347,7 +347,7 @@ export default function Calendar() {
 
             {selectedEvent.extendedProps.isVisible && (
               <>
-                <a className="relative group text-gray-500 hover:text-gray-700 px-1 float-right" href={`http://localhost:8090/event/${selectedEvent.id}`}                >
+                <Link target="_blank" className="relative group text-gray-500 hover:text-gray-700 px-1 float-right" href={`http://localhost:8090/event/${selectedEvent.id}`}                >
                   <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2">
                     Page détail public
                   </div>
@@ -367,7 +367,7 @@ export default function Calendar() {
                       />
                     </svg>
                   </div>
-                </a>
+                </Link>
               </>
             )}
 

@@ -103,5 +103,19 @@ class EmailService
         $this->mailer->send($email);
     }
 
+    public function sendEventReminderEmail(string $recipientEmail, $event): void
+    {
+        $htmlContent = $this->twig->render('emails/event_reminder_email.html.twig', [
+            'event' => $event,
+        ]);
+
+        $email = (new Email())
+        ->from('eventifyverif.noreply@gmail.com')
+        ->to($recipientEmail)
+        ->subject('Rappel de l\'événement')
+        ->html($htmlContent);
+
+        $this->mailer->send($email);
+    }
 
 }

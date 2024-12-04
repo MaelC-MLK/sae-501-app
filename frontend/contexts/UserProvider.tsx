@@ -34,7 +34,14 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         
             if (response.ok) {
                 const data = await response.json();
-                setUser(data);
+                const user = {
+                    id : data.id,
+                    email: data.email,
+                    firstName: data.firstname,
+                    lastName: data.lastname,
+                    avatar: data.avatar
+                }
+                setUser(user);
             }
             else {
                 setUser(null);
