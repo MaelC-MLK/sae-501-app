@@ -30,7 +30,7 @@ export default function RootLayout({
       <body
         className={`${inter.className} antialiased min-h-dvh`}
       >
-        <UserProvider>
+        <UserProvider initialUser={null}>
           <Navbar />
           <EventProvider>
             <main className="flex-grow min-h-screen">{children}</main>

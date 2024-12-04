@@ -56,7 +56,8 @@ import { PopupUpdateEventProps } from "@/types/event";
 import { fr, is } from "date-fns/locale";
 import { useUser } from "@/contexts/UserProvider";
 import { useDebouncedCallback } from "use-debounce";
-
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
 
 const FormSchema = z.object({
   title: z.string().nonempty("Title is required"),
@@ -125,6 +126,7 @@ export default function PopupUpdateDraft({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isMainDialogOpen, setIsMainDialogOpen] = useState<boolean>(false);
   const userContext = useUser();
+  const {toast} = useToast();
 
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -204,6 +206,8 @@ export default function PopupUpdateDraft({
             !participants.some((participant) => participant.id === user.id)
         );
         setSearchResults(filteredResults);
+
+
       } catch (error) {
         console.error("Failed to fetch search results:", error);
       } finally {
@@ -270,8 +274,18 @@ export default function PopupUpdateDraft({
       setIsMainDialogOpen(false);
       // revalidatePath('/profile/calendar');
       onEventChange();
+      toast({
+        title: "Brouillon modifié ! ✅",
+        description: "Votre événement a été modifié avec succès.",
+        // action: (
+        //     <ToastAction altText="Annuler">Annuler</ToastAction>
+        // ),
+    });
     } catch (error) {
       console.error("Failed to update event:", error);
+      toast({
+        title: "Erreur lors de la modification du brouillon ❌",
+      });
     }
   };
 
@@ -304,8 +318,19 @@ export default function PopupUpdateDraft({
       setIsMainDialogOpen(false);
       // revalidatePath('/profile/calendar');
       onEventChange();
+      toast({
+        title: "Brouillon restauré ! ✅",
+        description: "Votre événement a été restauré avec succès.",
+        // action: (
+        //     <ToastAction altText="Annuler">Annuler</ToastAction>
+        // ),
+      });
+
     } catch (error) {
       console.error("Failed to update event:", error);
+      toast({
+        title: "Erreur lors de la restauration du brouillon ❌",
+      });
     }
   }
 

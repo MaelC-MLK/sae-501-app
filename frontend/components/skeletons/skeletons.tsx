@@ -110,3 +110,83 @@ export function SkeletonEventDetails() {
         </div>
     );
 }
+
+export function SkeletonProfile() {
+  return (
+    <div className="min-h-screen p-10 pt-24">
+      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="flex flex-col lg:flex-row">
+          <div className="lg:w-1/3 p-4 bg-primary">
+            <div className="flex items-center justify-end gap-3 mb-4">
+              <div className="h-10 w-32 bg-gray-300 animate-pulse rounded-md"></div>
+              <div className="h-10 w-10 bg-gray-300 animate-pulse rounded-md"></div>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white bg-gray-300 animate-pulse"></div>
+              <div className="mt-4 h-6 w-48 bg-gray-300 animate-pulse rounded-md"></div>
+              <div className="mt-2 h-4 w-32 bg-gray-300 animate-pulse rounded-md"></div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-6 lg:w-2/3 p-6">
+            <div className="flex justify-between items-center">
+              <div className="h-8 w-48 bg-gray-300 animate-pulse rounded-md"></div>
+              <div className="h-10 w-32 bg-gray-300 animate-pulse rounded-md"></div>
+            </div>
+            <div className="flex flex-col gap-4">
+              <div className="h-64 bg-gray-300 animate-pulse rounded-md"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="w-144 h-144 bg-primary rounded-full blur-6xl absolute -right-52 -top-64 -z-10" />
+    </div>
+  );
+}
+
+export function SkeletonDraftCard() {
+  return (
+    <div className="border-2 rounded-xl overflow-hidden py-2 px-4 md:px-10 w-full group bg-background relative h-fit">
+      <div className="absolute top-1/2 translate-y-1 sm:-translate-y-1/2 right-6 sm:right-8 z-30 px-1 float-right bg-background">
+        <div className="h-10 w-10 bg-gray-300 animate-pulse rounded-md"></div>
+      </div>
+
+      <div className="group flex flex-col my-2 w-2/3">
+        <div className="h-6 w-48 bg-gray-300 animate-pulse rounded-md mb-2"></div>
+        <div className="text-muted-foreground flex flex-wrap items-center gap-2 md:gap-3 lg:gap-5">
+          <div className="flex items-center gap-1 shrink-0">
+            <div className="h-4 w-24 bg-gray-300 animate-pulse rounded-md"></div>
+          </div>
+          <div className="flex items-center gap-1 shrink-0">
+            <div className="h-4 w-24 bg-gray-300 animate-pulse rounded-md"></div>
+          </div>
+          <div className="flex items-center gap-1 truncate">
+            <div className="h-4 w-36 bg-gray-300 animate-pulse rounded-md"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function SkeletonPage() {
+    return (
+      <div className="pt-14">
+        <div className="border-b relative overflow-hidden">
+          <div className="w-144 h-144 bg-primary rounded-full blur-6xl absolute -right-52 -top-64 -z-10 opacity-30 hidden md:block" />
+  
+          <div className="flex max-w-7xl justify-self-center w-full overflow-hidden">
+            <div className="px-2 md:px-6 py-4 md:py-5 flex items-center gap-2 w-full justify-center md:w-auto md:justify-start font-medium text-sm sm:text-base">
+              <div className="h-6 w-24 bg-gray-300 animate-pulse rounded-md"></div>
+            </div>
+            <div className="px-2 md:px-6 py-4 md:py-5 flex items-center gap-2 w-full justify-center md:w-auto md:justify-start font-medium text-sm sm:text-base">
+              <div className="h-6 w-24 bg-gray-300 animate-pulse rounded-md"></div>
+            </div>
+          </div>
+        </div>
+        <div className="mt-10">
+          <div className="h-64 bg-gray-300 animate-pulse rounded-md"></div>
+        </div>
+      </div>
+    );
+  }

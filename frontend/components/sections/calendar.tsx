@@ -22,6 +22,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {k2d} from "@/app/fonts/fonts";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
 import { unregisterEvent } from "@/lib/data";
 import Link from "next/link";
 
@@ -89,6 +91,7 @@ export default function Calendar() {
       }
     }
   });
+  const {toast} = useToast();
 
   setEvents = setEventsState;
   setLoading = setLoadingState;
@@ -221,8 +224,18 @@ export default function Calendar() {
         await loadEvents(); // Recharger les événements après la suppression
         closeModal();
         setIsPopupDeleteOpen(false);
+        toast({
+          title: "Événement supprimé ! ✅",
+          description: "Votre événement a été supprimé avec succès.",
+          // action: (
+          //     <ToastAction altText="Annuler">Annuler</ToastAction>
+          // ),
+      });
       } catch (error) {
         console.error("Erreur lors de la suppression de l'événement :", error);
+        toast({
+          title: "Erreur lors de la suppression de l'événement ❌",
+        });
       }
     }
   };
@@ -246,8 +259,8 @@ export default function Calendar() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
-          <p className="mt-4 text-gray-700">Chargement...</p>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"></div>
+          <p className="mt-4 text-gray-700">Chargement...</p>  
         </div>
       </div>
     );

@@ -191,7 +191,7 @@ export default function Page() {
                         className="mt-6 w-full bg-primary text-white text-lg py-6 rounded-md transition"
                         disabled={loadingButton}
                     >
-                        {loadingButton ? "En cours..." : "S'inscrire"}
+                        {loadingButton ? "Inscription..." : "S'inscrire"}
                     </Button>
                 </form>
 
