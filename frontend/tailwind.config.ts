@@ -70,6 +70,9 @@ const config: Config = {
 		},
 		boxShadow: {
 			'cta-custom': '0px 0px 300px 0px var(--primary-foreground) ',
+		},
+		zIndex: {
+			'100': '100',
 		}
   	}
   },

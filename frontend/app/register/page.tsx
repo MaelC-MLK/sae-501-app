@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import Image from 'next/image';
 import Link from 'next/link';
 import { useUser } from '@/contexts/UserProvider';
@@ -11,19 +12,17 @@ import { k2d } from "@/app/fonts/fonts"
 import { useRouter } from 'next/navigation';
 import { PopUpEmailRegister } from '@/components/sections/popUpEmailRegister';
 
-
 export default function Page() {
-
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [plainPassword, setPlainPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(true);
     const [loadingButton, setLoadingButton] = useState(false);
     const [open, setOpen] = useState(false);
-    const [user, setUser] = useState({email: email, plainPassword: plainPassword, firstName: firstName, lastName: lastName});
+    const [user, setUser] = useState({ email: email, plainPassword: plainPassword, firstName: firstName, lastName: lastName });
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
     const router = useRouter();
 
     const validateEmail = (email: string) => {
@@ -47,26 +46,37 @@ export default function Page() {
 
         if (!validateEmail(email)) {
             setError('Please enter a valid email address.');
+            setLoadingButton(false);
             return;
         }
 
         if (!validatePassword(plainPassword)) {
             setError('Password must be between 8 and 30 characters.');
+            setLoadingButton(false);
             return;
         }
 
         if (plainPassword !== confirmPassword) {
             setError("Les mots de passe ne correspondent pas");
+            setLoadingButton(false);
             return;
         }
 
         if (!validateNoNumbersOrSpecialChars(firstName)) {
             setError('Le prénom doit contenir uniquement des lettres ou - ');
+            setLoadingButton(false);
             return;
         }
 
         if (!validateNoNumbersOrSpecialChars(lastName)) {
             setError('Le nom doit contenir uniquement des lettres ou - ');
+            setLoadingButton(false);
+            return;
+        }
+
+        if (!acceptedTerms) {
+            setError('Vous devez accepter les conditions d\'utilisation et la politique de confidentialité.');
+            setLoadingButton(false);
             return;
         }
 
@@ -75,10 +85,11 @@ export default function Page() {
             const api = process.env.API_BASE_URL;
             const url = api + '/api/user/register';
 
-            setUser({ email: email,
-                plainPassword: plainPassword, 
+            setUser({
+                email: email,
+                plainPassword: plainPassword,
                 firstName: firstName,
-                lastName: lastName 
+                lastName: lastName
             });
 
             const response = await fetch(url, {
@@ -86,18 +97,16 @@ export default function Page() {
                 headers: {
                     'Content-Type': "application/ld+json",
                 },
-                body: JSON.stringify({email: email, plainPassword: plainPassword, firstName: firstName, lastName: lastName}),
+                body: JSON.stringify({ email: email, plainPassword: plainPassword, firstName: firstName, lastName: lastName }),
             });
 
-            
             if (!response.ok) {
                 if (response.status === 422) {
                     throw new Error('Cette adresse email existe déjà');
                 }
-                
+
                 throw new Error('Echec de la création du compte');
-            }
-            else {
+            } else {
                 setLoadingButton(false);
                 setOpen(true);
             }
@@ -109,14 +118,11 @@ export default function Page() {
                 setError('Une erreur est survenue');
             }
         }
-        finally {
-            setLoading(false);
-        }
     };
 
     return (
         <div className="flex h-full">
-            <div className="flex flex-col justify-items-center md:w-2/3 p-4 sm:p-12 lg:p-24 lg:px-56">
+            <div className="flex flex-col justify-items-center md:w-2/3 p-4 pt-16 sm:pt-24 mx-auto lg:mx-0 lg:px-34">
                 <h1 className={`${k2d.className} text-3xl font-bold mb-6`}>Rejoignez notre communauté</h1>
 
                 <form onSubmit={handleSubmit}>
@@ -185,11 +191,23 @@ export default function Page() {
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                     </div>
+
+                    <div className="flex items-center mt-6 mb-3">
+                        <Checkbox
+                            id="terms"
+                            checked={acceptedTerms}
+                            onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
+                        />
+                        <Label htmlFor="terms" className="ml-2">
+                            J'accepte les <Link href="/conditions-utilisation" className="text-primary hover:underline">conditions d'utilisation</Link> et la <Link href="/politique-confidentialite" className="text-primary hover:underline">politique de confidentialité</Link>.
+                        </Label>
+                    </div>
+
                     {error && <p className="text-red-500 text-sm">{error}</p>}
-                    <Button 
-                        type="submit" 
-                        className="mt-6 w-full bg-primary text-white text-lg py-6 rounded-md transition"
-                        disabled={loadingButton}
+                    <Button
+                        type="submit"
+                        className="w-full bg-primary text-white text-lg py-6 rounded-md transition"
+                        disabled={loadingButton || !acceptedTerms}
                     >
                         {loadingButton ? "Inscription..." : "S'inscrire"}
                     </Button>
@@ -208,5 +226,3 @@ export default function Page() {
         </div>
     );
 };
-
-
