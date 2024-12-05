@@ -37,18 +37,23 @@ interface PopUpEditProfileProps {
 }
 
 export function PopUpEditProfile({ user, onUpdate, userContext: { userContextUser, setUser } }: PopUpEditProfileProps) {
-  const [name, setName] = useState(user?.firstName || "");
-  const [username, setUsername] = useState(user?.lastName || "");
+  const [firstName, setfirstName] = useState(user?.firstName || "");
+  const [lastName, setlastName] = useState(user?.lastName || "");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (user) {
-      setName(user.firstName || "");
-      setUsername(user.lastName || "");
+      setfirstName(user.firstName || "");
+      setlastName(user.lastName || "");
     }
   }, [user]);
+
+  const validateNoNumbersOrSpecialChars = (str: string) => {
+      const noNumbersOrSpecialCharsRegex = /^[a-zA-Z\sÀ-ÖØ-öø-ÿ-]+$/;
+      return noNumbersOrSpecialCharsRegex.test(str);
+  };
 
   const handleSubmit = async () => {
     try {
@@ -56,13 +61,23 @@ export function PopUpEditProfile({ user, onUpdate, userContext: { userContextUse
         throw new Error("Utilisateur non défini ou ID manquant");
       }
 
+      if (!validateNoNumbersOrSpecialChars(firstName)) {
+          setError('Le prénom doit contenir uniquement des lettres ou - ');
+          return;
+      }
+
+      if (!validateNoNumbersOrSpecialChars(lastName)) {
+          setError('Le nom doit contenir uniquement des lettres ou - ');
+          return;
+      }
+  
       var updatedUser = {
         "@context": "string", // Remplace par le bon contexte
         "@id": `${process.env.API_BASE_URL}/api/users/${user.id}`,
         "@type": "string",
         "id": user.id,
-        "firstName": name,
-        "lastName": username,
+        "firstName": firstName,
+        "lastName": lastName,
       };
 
       if (profilePicture) {
@@ -119,24 +134,24 @@ export function PopUpEditProfile({ user, onUpdate, userContext: { userContextUse
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
+            <Label htmlFor="firstName" className="text-right">
               Prénom
             </Label>
             <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setfirstName(e.target.value)}
               className="col-span-3"
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right">
+            <Label htmlFor="lastName" className="text-right">
               Nom
             </Label>
             <Input
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setlastName(e.target.value)}
               className="col-span-3"
             />
           </div>

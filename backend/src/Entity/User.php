@@ -128,7 +128,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $Logout = null;
 
-    #[Groups(['user:create', 'user:update', 'user:read'])]
+    #[Groups(['user:create', 'user:update'])]
     #[ORM\Column]
     private ?bool $active = null;
 

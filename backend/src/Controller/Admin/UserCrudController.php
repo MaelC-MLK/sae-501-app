@@ -46,6 +46,7 @@ class UserCrudController extends AbstractCrudController
             }
 
             if(!$entityInstance->isActive()){
+                $entityInstance->setLogout(new \DateTime());
                 $entityInstance->setActive(false);
             }
         }
@@ -66,6 +67,7 @@ class UserCrudController extends AbstractCrudController
             }
 
             if(!$entityInstance->isActive()){
+                $entityInstance->setLogout(new \DateTime());
                 $entityInstance->setActive(false);
             }
         }
