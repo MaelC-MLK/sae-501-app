@@ -38,11 +38,12 @@ export async function UpdateEvent(eventData: any, eventId: string) {
 }
 
 export async function deleteEvent(eventId: string) {
-    const response = await fetch(`${process.env.API_BASE_URL}/api/events/${eventId}`, {
-        method: 'DELETE',
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/${eventId}/delete`, {
+        method: 'PATCH',
         credentials: 'include',
         headers: {
-            'Content-Type': 'application/ld+json',
+            'Content-Type': 'application/merge-patch+json',
+            'Accept': 'application/json',
         },
     });
 

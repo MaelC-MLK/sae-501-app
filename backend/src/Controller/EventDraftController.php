@@ -13,7 +13,7 @@ class EventDraftController extends AbstractController
     public function __invoke(Request $request, EntityManagerInterface $entityManager, int $userId): JsonResponse
     {
         // Ajoutez la condition is_draft = 0 dans les critères de recherche
-        $criteria = ['creator' => $userId, 'is_draft' => '1'];
+        $criteria = ['creator' => $userId, 'is_draft' => '1', 'supprime' => null];
         $events = $entityManager->getRepository(Event::class)->findBy($criteria);
 
         $data = array_map(function (Event $event) {
