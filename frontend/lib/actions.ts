@@ -190,5 +190,16 @@ export async function UpdateEventAndNotify(id: number){
     }
     const result = await response.json();
     return result;
+}
 
+export async function CreateEventAndNotify(id: number){
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/${id}/notify-create`, {
+        method: 'POST',
+        credentials: 'include',
+    });
+    if (!response.ok) {
+        throw new Error('Erreur lors de la création de l\'événement et de l\'envoi de la notification');
+    }
+    const result = await response.json();
+    return result;
 }

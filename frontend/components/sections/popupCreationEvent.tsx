@@ -69,7 +69,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { useUser } from "@/contexts/UserProvider";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
-
+import { CreateEventAndNotify } from "@/lib/actions";
 
 const FormSchema = z.object({
   title: z.string().nonempty("Title is required"),
@@ -295,8 +295,6 @@ export default function PopupCreationEvent({
       formData.append('imageFile', imageFile);
     }
 
-    console.log("Participants:", participants);
-
 
     const participantsArray = participants.map(participant => `/api/users/${participant.id}`);
     formData.append('users', JSON.stringify(participantsArray));
@@ -305,25 +303,38 @@ export default function PopupCreationEvent({
 
     try {
       const response = await createEvent(formData);
-      console.log("Event created successfully:", response);
       setIsMainDialogOpen(false);
       resetForm();
-      // revalidatePath('/profile/calendar');
-
-      toast({
-        title: "Événement créé ! ✅",
-        description: "Votre événement a été créé avec succès.",
-        // action: (
-        //     <ToastAction altText="Annuler">Annuler</ToastAction>
-        // ),
-    });
-
-    } catch (error) {
+  
+      console.log(response);
+  
+      if (response['@id']) {
+          const idMatch = response['@id'].match(/\/api\/events\/(\d+)/);
+          const eventId = idMatch ? parseInt(idMatch[1], 10) : null;
+  
+          console.log("Event ID:", eventId);
+  
+          if (eventId !== null) {
+              await CreateEventAndNotify(eventId);
+              toast({
+                  title: "Événement créé ! ✅",
+                  description: "Votre événement a été créé avec succès.",
+                  // action: (
+                  //     <ToastAction altText="Annuler">Annuler</ToastAction>
+                  // ),
+              });
+          } else {
+              console.error("Impossible d'extraire l'ID de l'événement.");
+          }
+      } else {
+          console.error("L'ID de la réponse est indéfini.");
+      }
+  } catch (error) {
       console.error("Failed to create event:", error);
       toast({
-        title: "Erreur lors de la création de l'événement ❌",
+          title: "Erreur lors de la création de l'événement ❌",
       });
-    }
+  }
   };
 
   const saveDraft = async (data: z.infer<typeof FormSchema>) => {
@@ -342,12 +353,6 @@ export default function PopupCreationEvent({
     formData.append('location', data.location || "");
     formData.append('creator', `/api/users/${userContext.user.id}`);
 
-
-    // if (imageFile) {
-    //   formData.append('imageFile', imageFile);
-    // }
-
-    console.log("Participants:", participants);
 
     const participantsArray = participants.map(participant => `/api/users/${participant.id}`);
     formData.append('users', JSON.stringify(participantsArray));
