@@ -67,6 +67,8 @@ import ImageUpload from "@/components/sections/dropZoneEventPopup";
 
 import { useDebouncedCallback } from 'use-debounce';
 import { useUser } from "@/contexts/UserProvider";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
 
 
 const FormSchema = z.object({
@@ -110,6 +112,7 @@ export default function PopupCreationEvent({
   const [isMainDialogOpen, setIsMainDialogOpen] = useState<boolean>(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const userContext = useUser();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -305,9 +308,21 @@ export default function PopupCreationEvent({
       console.log("Event created successfully:", response);
       setIsMainDialogOpen(false);
       resetForm();
-      revalidatePath('/profile/calendar');
+      // revalidatePath('/profile/calendar');
+
+      toast({
+        title: "Événement créé ! ✅",
+        description: "Votre événement a été créé avec succès.",
+        // action: (
+        //     <ToastAction altText="Annuler">Annuler</ToastAction>
+        // ),
+    });
+
     } catch (error) {
       console.error("Failed to create event:", error);
+      toast({
+        title: "Erreur lors de la création de l'événement ❌",
+      });
     }
   };
 
@@ -328,9 +343,9 @@ export default function PopupCreationEvent({
     formData.append('creator', `/api/users/${userContext.user.id}`);
 
 
-    if (imageFile) {
-      formData.append('imageFile', imageFile);
-    }
+    // if (imageFile) {
+    //   formData.append('imageFile', imageFile);
+    // }
 
     console.log("Participants:", participants);
 
@@ -344,8 +359,16 @@ export default function PopupCreationEvent({
       setIsConfirmDialogOpen(false);
       setIsMainDialogOpen(false);
       resetForm();
+      toast({
+        title: "Événement enregistré en brouillon ! ✅",
+        description: "Votre événement a été enregistré en brouillon avec succès.",
+      });
+
     } catch (error) {
       console.error("Failed to save draft:", error);
+      toast({
+        title: "Erreur lors de l'enregistrement en brouillon ❌",
+      });
     }
   };
 

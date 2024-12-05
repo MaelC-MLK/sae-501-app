@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Mise à jour de l'événement</title>
+</head>
+<body>
+    <h1>Mise à jour de l'événement : {{ event.title }}</h1>
+    <p>Bonjour,</p>
+    <p>L'événement <strong>{{ event.title }}</strong> a été mis à jour.</p>
+    <p>Voici les nouvelles informations :</p>
+    <ul>
+        {% if event.dateStart %}
+            <li>Date de début : {{ event.dateStart|date('d/m/Y H:i') }}</li>
+        {% endif %}
+        {% if event.dateEnd %}
+            <li>Date de fin : {{ event.dateEnd|date('d/m/Y H:i') }}</li>
+        {% endif %}
+        {% if event.description %}
+            <li>Description : {{ event.description }}</li>
+        {% endif %}
+        {% if event.location %}
+            <li>Lieu : {{ event.location }}</li>
+        {% endif %}
+    </ul>
+    <p>Merci de votre compréhension.</p>
+</body>
+</html>

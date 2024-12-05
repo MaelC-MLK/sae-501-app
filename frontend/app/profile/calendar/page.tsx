@@ -6,10 +6,11 @@ import { useEffect, useState } from "react";
 import { useUser } from "@/contexts/UserProvider";
 import { useRouter } from "next/navigation";
 import Drafts from "@/components/sections/drafts";
+import { SkeletonPage } from "@/components/skeletons/skeletons";
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
-    const [view, setView] = useState('calendar'); // Nouvel état pour gérer l'affichage
+    const [view, setView] = useState('calendar');
     const userContext = useUser();
     const router = useRouter();
 
@@ -27,16 +28,16 @@ export default function Page() {
         setLoading(false);
     }, [userContext.user]);
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen w-full">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid border-4"></div>
-                    <p className="mt-4 text-gray-700">Loading...</p>
-                </div>
-            </div>
-        );
-    }
+    // if (loading) {
+    //     return (
+    //         <div className="flex items-center justify-center min-h-screen w-full">
+    //             <div className="text-center">
+    //                 <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-teal-500 border-solid border-4"></div>
+    //                 <p className="mt-4 text-gray-700">Loading...</p>
+    //             </div>
+    //         </div>
+    //     );
+    // }
 
     return (
         <>
@@ -46,7 +47,7 @@ export default function Page() {
 
                     <div className="flex max-w-7xl justify-self-center w-full overflow-hidden ">
                         <button
-                            className={`px-6 py-5 flex items-center gap-2 w-full justify-center md:w-auto md:justify-start font-medium border-b-4 text-sm sm:text-base ${view === 'calendar' ? 'border-primary' : 'opacity-60 border-transparent'}`}
+                            className={`px-2 md:px-6 py-4 md:py-5 flex items-center gap-2 w-full justify-center md:w-auto md:justify-start font-medium border-b-4 text-sm sm:text-base ${view === 'calendar' ? 'border-primary' : 'opacity-60 border-transparent'}`}
                             onClick={() => setView('calendar')}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 sm:size-6">
@@ -56,7 +57,7 @@ export default function Page() {
                             Mon calendrier
                         </button>
                         <button
-                            className={`px-6 py-5 flex items-center gap-2 w-full justify-center md:w-auto md:justify-start font-medium border-b-4 text-sm sm:text-base ${view === 'drafts' ? 'border-primary' : 'opacity-60 border-transparent'}`}
+                            className={`px-2 md:px-6 py-4 md:py-5 flex items-center gap-2 w-full justify-center md:w-auto md:justify-start font-medium border-b-4 text-sm sm:text-base ${view === 'drafts' ? 'border-primary' : 'opacity-60 border-transparent'}`}
                             onClick={() => setView('drafts')}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 sm:size-6">
@@ -68,7 +69,23 @@ export default function Page() {
                     </div>
                 </div>
                 <PopupCreationEvent />
-                {view === 'calendar' ? <Calendar /> : <Drafts />} {/* Affiche le composant approprié */}
+                {
+                    loading ? (
+                        <>
+                            <div className="flex items-center justify-center min-h-screen">
+                                <div className="text-center">
+                                    <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"></div>
+                                    <p className="mt-4 text-gray-700">Chargement...</p>
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            {view === 'calendar' ? <Calendar /> : <Drafts />} {/* Affiche le composant approprié */}
+                        </>
+                    )
+                }
+
             </div>
         </>
     );

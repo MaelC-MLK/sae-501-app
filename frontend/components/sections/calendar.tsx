@@ -21,9 +21,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UpdateEvent } from "@/lib/actions";
-import { format } from "date-fns";
 import {k2d} from "@/app/fonts/fonts";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
+import { unregisterEvent } from "@/lib/data";
+import Link from "next/link";
 
 let userContext: ReturnType<typeof useUser>;
 let setEvents: React.Dispatch<React.SetStateAction<any[]>>;
@@ -89,6 +91,7 @@ export default function Calendar() {
       }
     }
   });
+  const {toast} = useToast();
 
   setEvents = setEventsState;
   setLoading = setLoadingState;
@@ -162,34 +165,11 @@ export default function Calendar() {
   const handleUnsubscribeClick = async () => {
     if (selectedEvent) {
       try {
-        const formattedStartDate = format(
-          new Date(selectedEvent.start),
-          "yyyy-MM-dd HH:mm:ss"
-        );
-        const formattedEndDate = format(
-          new Date(selectedEvent.end),
-          "yyyy-MM-dd HH:mm:ss"
-        );
-
-        const updatedEventData = {
-          ...selectedEvent.extendedProps,
-          users: selectedEvent.extendedProps.users.filter(
-            (user: any) => user.id !== userId
-          ),
-          date_start: formattedStartDate,
-          date_end: formattedEndDate,
-        };
-
-        console.log(JSON.stringify(updatedEventData));
-
-        await UpdateEvent(updatedEventData, selectedEvent.id);
+        await unregisterEvent(selectedEvent.id);
         await loadEvents();
         closeModal();
       } catch (error) {
-        console.error(
-          "Erreur lors de la désinscription de l'événement :",
-          error
-        );
+        console.error("Erreur lors de la désinscription de l'événement :", error);
       }
     }
   };
@@ -244,8 +224,18 @@ export default function Calendar() {
         await loadEvents(); // Recharger les événements après la suppression
         closeModal();
         setIsPopupDeleteOpen(false);
+        toast({
+          title: "Événement supprimé ! ✅",
+          description: "Votre événement a été supprimé avec succès.",
+          // action: (
+          //     <ToastAction altText="Annuler">Annuler</ToastAction>
+          // ),
+      });
       } catch (error) {
         console.error("Erreur lors de la suppression de l'événement :", error);
+        toast({
+          title: "Erreur lors de la suppression de l'événement ❌",
+        });
       }
     }
   };
@@ -269,8 +259,8 @@ export default function Calendar() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
-          <p className="mt-4 text-gray-700">Chargement...</p>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"></div>
+          <p className="mt-4 text-gray-700">Chargement...</p>  
         </div>
       </div>
     );
@@ -357,7 +347,7 @@ export default function Calendar() {
 
             {selectedEvent.extendedProps.isVisible && (
               <>
-                <a className="relative group text-gray-500 hover:text-gray-700 px-1 float-right" href={`http://localhost:8090/event/${selectedEvent.id}`}                >
+                <Link target="_blank" className="relative group text-gray-500 hover:text-gray-700 px-1 float-right" href={`http://localhost:8090/event/${selectedEvent.id}`}                >
                   <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2">
                     Page détail public
                   </div>
@@ -377,7 +367,7 @@ export default function Calendar() {
                       />
                     </svg>
                   </div>
-                </a>
+                </Link>
               </>
             )}
 
@@ -442,7 +432,9 @@ export default function Calendar() {
             <div className="flex flex-row gap-3 mb-3 relative">
               <div
                 className="w-4 h-4 rounded-full shrink-0 absolute top-10"
-                style={{ backgroundColor: "#FFD700" }}
+                style={{
+                  backgroundColor: selectedEvent.extendedProps.creator_id == userId ? "#FFD700" : "#ADD8E6",
+                }}
               ></div>
               <h2 className="text-xl font-semibold ml-7 mt-9 mb-4">
                 {selectedEvent.title}
@@ -524,6 +516,7 @@ export default function Calendar() {
       {isPopupDeleteOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <PopupDeleteEvent
+            eventId={selectedEvent.id}
             onClose={closePopupDelete}
             onDelete={handleDeleteClick}
           />

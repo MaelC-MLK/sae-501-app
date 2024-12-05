@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast"
 import { checkUserRegistration, joinEvent, unregisterEvent } from "@/lib/data";
+import { revalidatePath } from "next/cache";
 
 export default function Event() {
     const { id } = useParams();
@@ -70,8 +71,8 @@ export default function Event() {
             await joinEvent(event.id);
             setIsRegistered(true);
             const description = formattedDateStart === formattedDateEnd
-                ? `Le ${formattedDateStart} de ${startTime} à ${endTime}`
-                : `Du ${formattedDateStart} à ${startTime} au ${formattedDateEnd} à ${endTime}`;
+            ? `Le ${formattedDateStart} de ${startTime} à ${endTime}`
+            : `Du ${formattedDateStart} à ${startTime} au ${formattedDateEnd} à ${endTime}`;
             toast({
                 title: "Événement planifié !",
                 description: description,
@@ -101,6 +102,7 @@ export default function Event() {
                     <ToastAction onClick={handleJoinEvent} altText="Annuler">Annuler</ToastAction>
                 ),
             });
+            
         } catch (error) {
             toast({
                 title: "Oups... Désinscription impossible",
@@ -136,11 +138,11 @@ export default function Event() {
                     objectFit="cover"
                     className="max-h-96"
                 />
-                <Badge variant="secondary" className="absolute bg-foreground text-background top-5 right-5 md:hidden">Public</Badge>
+                <Badge variant="secondary" className="absolute bg-foreground text-background top-5 right-5 md:hidden hover:bg-foreground">Public</Badge>
             </div>
 
             <div className="max-w-7xl w-full mt-6 px-10 justify-self-center relative">
-                <Badge variant="secondary" className="absolute bg-foreground text-background top-0 right-10 text-base hidden md:block">Public</Badge>
+                <Badge variant="secondary" className="absolute bg-foreground text-background top-0 right-10 text-base hidden md:block hover:bg-foreground">Public</Badge>
                 {<h2 className={`${k2d.className} font-medium text-2xl md:w-10/12 lg:w-11/12`}>{event.title}</h2>}
 
                 {event.description ? (
@@ -265,7 +267,9 @@ export default function Event() {
                         </p>
                     </div>
                     <div className="flex items-center gap-5 mt-2">
-                        <div>
+                        <div className="overflow-hidden">
+                            <div className="w-12 h-12">
+
                             <Image
                                 src={event.creator.avatar ? `${process.env.API_BASE_URL}/uploads/users/${event.creator.avatar}` : "/images/profile-picture.webp"}
                                 alt="user-image"
@@ -273,9 +277,10 @@ export default function Event() {
                                 height={40}
                                 quality={100}
                                 unoptimized={true}
-                                objectFit="cover"
-                                className="rounded-full object-cover"
-                            />
+                                // objectFit="cover"
+                                className="rounded-full object-cover shrink-0 w-full h-full"
+                                />
+                                </div>
                         </div>
                         <div className="flex flex-col">
                             <span className="capitalize">{event.creator.firstName} <span className="uppercase">{event.creator.lastName}</span>

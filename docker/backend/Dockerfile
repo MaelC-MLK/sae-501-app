@@ -18,6 +18,8 @@ RUN apt-get update && \
 
 RUN echo "extension=intl.so" >> /usr/local/etc/php/conf.d/docker-php-ext-intl.ini
 
+# RUN sudo chmod 777 -R ./public/uploads
+
 # Install Composer globally
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 

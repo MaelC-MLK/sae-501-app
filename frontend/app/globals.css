@@ -90,7 +90,7 @@
 
 .calendar-container {
   position: absolute !important;
-  top: 8rem !important;
+  top: 7.5rem !important;
   bottom: 0 !important;
   left: 0 !important;
   right: 0 !important;
@@ -144,6 +144,15 @@
   margin-right: 1rem !important;
 }
 
+@media (min-width: 768px) {
+  .calendar-container {
+  top: 8rem !important;
+    
+
+  }
+
+}
+
 @media (min-width: 1024px) {
   .fc-header-toolbar{
     margin-left: 3rem !important;
@@ -151,6 +160,7 @@
   }
   .calendar-container {
     bottom: .5rem !important;
+
   }
 }
 
@@ -318,4 +328,5 @@
   .fc-toolbar-title {
     font-size: 12px;
   }
+
 }

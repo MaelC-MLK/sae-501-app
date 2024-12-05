@@ -7,10 +7,10 @@ import { EventProvider } from "@/components/EventContext";
 import Navbar from "@/components/navigation/navbar";
 import Footer from "@/components/layout/footer";
 import { UserProvider } from "@/contexts/UserProvider";
-
 import { inter } from '@/app/fonts/fonts';
 import { k2d } from '@/app/fonts/fonts';
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/toaster";
+import CookieConsentPopup from "@/components/sections/CookieConsentPopup";
 
 export default function RootLayout({
   children,
@@ -30,13 +30,14 @@ export default function RootLayout({
       <body
         className={`${inter.className} antialiased min-h-dvh`}
       >
-        <UserProvider>
+        <UserProvider initialUser={null}>
           <Navbar />
           <EventProvider>
             <main className="flex-grow min-h-screen">{children}</main>
             <Toaster />
           </EventProvider>
           {!isProfileCalendarRoute && <Footer />}
+          <CookieConsentPopup />
         </UserProvider>
       </body>
     </html>
