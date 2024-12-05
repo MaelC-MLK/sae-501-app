@@ -71,6 +71,24 @@ class EmailService
     
         $this->mailer->send($email);
     }
+
+    public function sendInvitationEvent(string $recipientEmail, string $eventTitle, string $eventLink): void
+    {
+        // Rendre le template Twig avec les informations spécifiques à l'événement
+        $htmlContent = $this->twig->render('emails/invitation_email_event.html.twig', [
+            'event_title' => $eventTitle,
+            'event_link' => $eventLink,
+        ]);
+
+        $email = (new Email())
+            ->from('eventifyverif.noreply@gmail.com')
+            ->to($recipientEmail)
+            ->subject('Invitation à l\'événement : ' . $eventTitle)
+            ->html($htmlContent);
+
+        $this->mailer->send($email);
+    }
+    
     
 
     public function sendEventUpdateEmail(string $recipientEmail, $event): void
@@ -114,6 +132,21 @@ class EmailService
         ->to($recipientEmail)
         ->subject('Rappel de l\'événement')
         ->html($htmlContent);
+
+        $this->mailer->send($email);
+    }
+
+    public function sendEventCreateEmail(string $recipientEmail, $event): void
+    {
+        $htmlContent = $this->twig->render('emails/event_create_email.html.twig', [
+            'event' => $event,
+        ]);
+
+        $email = (new Email())
+            ->from('eventifyverif.noreply@gmail.com')
+            ->to($recipientEmail)
+            ->subject('Création de l\'événement')
+            ->html($htmlContent);
 
         $this->mailer->send($email);
     }

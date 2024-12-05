@@ -236,48 +236,52 @@ export default function PopupUpdateEvent({
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     if (userContext.user === null) {
-      console.error("User not found");
-      return;
+        console.error("User not found");
+        return;
     }
     const formData = {
-      title: data.title,
-      description: data.description || "",
-      date_start: combineDateAndTime(
-        date?.from || new Date(),
-        data.time_start
-      ).toString(),
-      date_end: combineDateAndTime(
-        date?.to || date?.from || new Date(),
-        data.time_end
-      ).toString(),
-      isVisible: isPrivate ? "false" : "true",
-      location: data.location || "",
-      creator: `/api/users/${userContext.user.id}`,
-      users: participants.map((participant) => `/api/users/${participant.id}`),
-    };  
-  
+        title: data.title,
+        description: data.description || "",
+        date_start: combineDateAndTime(
+            date?.from || new Date(),
+            data.time_start
+        ).toString(),
+        date_end: combineDateAndTime(
+            date?.to || date?.from || new Date(),
+            data.time_end
+        ).toString(),
+        isVisible: isPrivate ? "false" : "true",
+        location: data.location || "",
+        creator: `/api/users/${userContext.user.id}`,
+        users: participants.map((participant) => `/api/users/${participant.id}`),
+    };
+
     try {
-      await UpdateEvent(formData, eventData.id);
-      await UpdateEventAndNotify(eventData.id);
-      setIsMainDialogOpen(false);
-      toast({
-        title: "Événement modifié ! ✅",
-        description: "Votre événement a été modifié avec succès.",
-        // action: (
-        //     <ToastAction altText="Annuler">Annuler</ToastAction>
-        // ),
-    });
+        await UpdateEvent(formData, eventData.id);
+        setIsMainDialogOpen(false);
+        toast({
+            title: "Événement modifié ! ✅",
+            description: "Votre événement a été modifié avec succès.",
+            // action: (
+            //     <ToastAction altText="Annuler">Annuler</ToastAction>
+            // ),
+        });
+
+        // Envoyer la notification en arrière-plan
+        UpdateEventAndNotify(eventData.id).catch((error) => {
+            console.error("Failed to send notification:", error);
+        });
     } catch (error) {
-      console.error("Failed to update event:", error);
-      toast({
-        title: "Erreur lors de la modification de l'événement ❌",
-        description: "Une erreur est survenue lors de la modification de l'événement.",
-        // action: (
-        //     <ToastAction altText="Annuler">Annuler</ToastAction>
-        // ),
-    });
+        console.error("Failed to update event:", error);
+        toast({
+            title: "Erreur lors de la modification de l'événement ❌",
+            description: "Une erreur est survenue lors de la modification de l'événement.",
+            // action: (
+            //     <ToastAction altText="Annuler">Annuler</ToastAction>
+            // ),
+        });
     }
-  };
+};
 
   return (
     <>

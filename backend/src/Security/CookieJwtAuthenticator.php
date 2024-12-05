@@ -31,8 +31,6 @@ class CookieJwtAuthenticator extends AbstractAuthenticator
 
     public function authenticate(Request $request): SelfValidatingPassport
     {
-        
-
         $jwt = $request->cookies->get('eventify');
 
         if (!$jwt) {
@@ -46,15 +44,29 @@ class CookieJwtAuthenticator extends AbstractAuthenticator
             throw new AuthenticationException('Invalid JWT token.', 0, $e);
         }
 
-        // Utilisez UserBadge pour rechercher l'utilisateur à partir du payload
-        return new SelfValidatingPassport(
-            new UserBadge($payload['username'] ?? '', function ($userIdentifier){
-                // Vous pouvez ici personnaliser comment l'utilisateur est récupéré
-                // Par exemple, charger l'utilisateur depuis la base de données
-                $user = $this->userProvider->loadUserByIdentifier($userIdentifier);
-                return $user;
-            })
-        );
+        if(!empty($payload['username'])){
+
+            $user = $this->userProvider->loadUserByIdentifier($payload['username']);
+
+            if(!$user){
+                throw new AuthenticationException('User not found.');
+            }
+            
+            if($user->isActive() === false){
+                throw new AuthenticationException('User is not active.');
+            }
+
+            if($user->getLogout()){
+                $tokenIssuedAtDateTime = (new \DateTime())->setTimestamp($payload['iat']);
+                if($user->getLogout()->getTimestamp() >  $tokenIssuedAtDateTime->getTimestamp()){
+                    throw new AuthenticationException('User is logged out.');
+                }
+            }
+
+            return new SelfValidatingPassport(
+                new UserBadge($user)
+            );
+        }
     }
 
     public function onAuthenticationSuccess(Request $request, $passport, string $firewallName): ?Response

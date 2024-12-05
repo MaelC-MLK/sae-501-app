@@ -2,6 +2,7 @@
 // src/EventListener/RateLimiterEventListener.php
 namespace App\EventListener;
 
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpFoundation\Response;
@@ -9,7 +10,7 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
-use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 /**
  * L'attribut permet de déclarer la méthode onRequest 
@@ -21,32 +22,53 @@ final readonly class RateLimiterEventListener
 {
     private RateLimiterFactory $anonymousApiLimiter;
     private RateLimiterFactory $authenticatedApiLimiter;
-    private Security $security;
+    private JWTTokenManagerInterface $jwtTokenManager;
+    private UserProviderInterface $userProvider;
 
     public function __construct(
         RateLimiterFactory $anonymousApiLimiter,
         RateLimiterFactory $authenticatedApiLimiter,
-        Security $security
+        JWTTokenManagerInterface $jwtTokenManager,
+        UserProviderInterface $userProvider
     ) {
         $this->anonymousApiLimiter = $anonymousApiLimiter;
         $this->authenticatedApiLimiter = $authenticatedApiLimiter;
-        $this->security = $security;
+        $this->jwtTokenManager = $jwtTokenManager;
+        $this->userProvider = $userProvider;
     }
 
     public function onRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
-        $user = $this->security->getUser();
+        $jwt = $request->cookies->get('eventify');
 
-        if (!$user) {
+        if (!$jwt) {
             $limiter = $this->anonymousApiLimiter->create(
                 $event->getRequest()->getClientIp()
             );
         } else {
-            $limiter = $this->authenticatedApiLimiter->create (
-                $event->getRequest()->getClientIp()
-            );
+            try {
+                // Decode et valide le JWT
+                $payload = $this->jwtTokenManager->parse($jwt);
+            } catch (\Exception $e) {
+                throw new AuthenticationException('Invalid JWT token.', 0, $e);
+            }
+
+            if(!empty($payload['username'])){
+                $user = $this->userProvider->loadUserByIdentifier($payload['username']);
+    
+                if (!$user) {
+                    $limiter = $this->anonymousApiLimiter->create(
+                        $event->getRequest()->getClientIp()
+                    );
+                } else {
+                    $limiter = $this->authenticatedApiLimiter->create (
+                        $event->getRequest()->getClientIp()
+                    );
+                }
+            }
         }
+        
 
         $limit = $limiter->consume(1);
 
@@ -59,18 +81,36 @@ final readonly class RateLimiterEventListener
 
     public function onResponse(ResponseEvent $event): void
     {
-        $user = $this->security->getUser();
-        
-        if (!$user) {
+        $request = $event->getRequest();
+        $jwt = $request->cookies->get('eventify');
+
+        if (!$jwt) {
             $limiter = $this->anonymousApiLimiter->create(
                 $event->getRequest()->getClientIp()
             );
         } else {
-            $limiter = $this->authenticatedApiLimiter->create (
-                $event->getRequest()->getClientIp()
-            );
-        }
+            try {
+                // Decode et valide le JWT
+                $payload = $this->jwtTokenManager->parse($jwt);
+            } catch (\Exception $e) {
+                throw new AuthenticationException('Invalid JWT token.', 0, $e);
+            }
 
+            if(!empty($payload['username'])){
+                $user = $this->userProvider->loadUserByIdentifier($payload['username']);
+    
+                if (!$user) {
+                    $limiter = $this->anonymousApiLimiter->create(
+                        $event->getRequest()->getClientIp()
+                    );
+                } else {
+                    $limiter = $this->authenticatedApiLimiter->create (
+                        $event->getRequest()->getClientIp()
+                    );
+                }
+            }
+        }
+        
         $limit = $limiter->consume(match ($event->getResponse()->getStatusCode()) {
             Response::HTTP_NOT_FOUND => 5,
             Response::HTTP_FORBIDDEN, Response::HTTP_METHOD_NOT_ALLOWED, Response::HTTP_BAD_REQUEST => 10,         

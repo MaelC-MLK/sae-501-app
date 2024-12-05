@@ -161,24 +161,9 @@ class AuthController
         $em->persist($user);
         $em->flush();
         
-        // Créer un cookie expiré
-        $cookie = new Cookie(
-            'eventify',
-            null,
-            1,
-            '/',
-            null,
-            false,
-            true,
-            false,
-            'lax'
-        );
-
         // Créer une réponse JSON vide
         $response = new JsonResponse(null);
-        
-        // Ajouter le cookie à la réponse
-        $response->headers->setCookie($cookie);
+        $response->headers->clearCookie('eventify');
         
         // Retourner la réponse
         

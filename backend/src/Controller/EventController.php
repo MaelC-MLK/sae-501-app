@@ -4,14 +4,24 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Event;
+use App\Service\EmailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Mailer\MailerInterface;
 
 
 class EventController extends AbstractController
 {
+
+    private EmailService $emailService;
+
+    public function __construct(EmailService $emailService)
+    {
+        $this->emailService = $emailService;
+    }
+
     public function __invoke(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $criteria = ['isVisible' => true, 'supprime' => null];
@@ -49,6 +59,39 @@ class EventController extends AbstractController
 
         return new JsonResponse($data);
     }
+
+
+    #[Route('/api/events/invite', name: 'invite_to_event', methods: ['POST'])]
+    public function inviteToEvent( Request $request, EntityManagerInterface $entityManager, EmailService $emailService
+    ): JsonResponse {
+        $data = json_decode($request->getContent(), true);
+        $email = $data['email'] ?? null;
+        $eventId = $data['eventId'] ?? null;
+
+        if (!$email || !$eventId) {
+            return new JsonResponse(['error' => 'L\'adresse e-mail et l\'ID de l\'événement sont requis.'], 400);
+        }
+
+        $event = $entityManager->getRepository(Event::class)->find($eventId);
+
+        if (!$event) {
+            return new JsonResponse(['error' => 'Événement introuvable.'], 404);
+        }
+        try {
+            $emailService->sendInvitationEvent(
+                $email,
+                $event->getTitle(),
+                'http://localhost:8090/event/' . $eventId
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Impossible d\'envoyer l\'invitation : ' . $e->getMessage()], 500);
+        }
+
+        return new JsonResponse(['message' => 'Invitation envoyée avec succès.'], 201);
+    }
+
+
+
 
     #[Route('/api/events/{id}/join', name: 'event_join', methods: ['PATCH'])]
     public function joinEvent(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
@@ -126,4 +169,6 @@ class EventController extends AbstractController
 
         return new JsonResponse(['message' => 'Désinscription réussie de l\'événement.'], JsonResponse::HTTP_OK);
     }
+
+
 }

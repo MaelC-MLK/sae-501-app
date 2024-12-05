@@ -35,7 +35,7 @@ export default function Page() {
     };
 
     const validateNoNumbersOrSpecialChars = (str: string) => {
-        const noNumbersOrSpecialCharsRegex = /^[a-zA-Z\s-]+$/;
+        const noNumbersOrSpecialCharsRegex = /^[a-zA-Z\sÀ-ÖØ-öø-ÿ-]+$/;
         return noNumbersOrSpecialCharsRegex.test(str);
     };
 
@@ -45,30 +45,35 @@ export default function Page() {
         setError('');
 
         if (!validateEmail(email)) {
+            setLoadingButton(false);
             setError('Please enter a valid email address.');
             setLoadingButton(false);
             return;
         }
 
         if (!validatePassword(plainPassword)) {
+            setLoadingButton(false);
             setError('Password must be between 8 and 30 characters.');
             setLoadingButton(false);
             return;
         }
 
         if (plainPassword !== confirmPassword) {
+            setLoadingButton(false);
             setError("Les mots de passe ne correspondent pas");
             setLoadingButton(false);
             return;
         }
 
         if (!validateNoNumbersOrSpecialChars(firstName)) {
+            setLoadingButton(false);
             setError('Le prénom doit contenir uniquement des lettres ou - ');
             setLoadingButton(false);
             return;
         }
 
         if (!validateNoNumbersOrSpecialChars(lastName)) {
+            setLoadingButton(false);
             setError('Le nom doit contenir uniquement des lettres ou - ');
             setLoadingButton(false);
             return;
