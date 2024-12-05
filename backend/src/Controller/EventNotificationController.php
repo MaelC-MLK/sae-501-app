@@ -49,4 +49,20 @@ class EventNotificationController extends AbstractController
 
         return new JsonResponse(['message' => 'Emails de suppression envoyés avec succès.'], JsonResponse::HTTP_OK);
     }
+
+    #[Route('/api/events/{id}/notify-create', name: 'event_notify_create', methods: ['POST'])]
+    public function notifyCreate(int $id, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $event = $entityManager->getRepository(Event::class)->find($id);
+        if (!$event) {
+            return new JsonResponse(['message' => 'Événement non trouvé.'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        $users = $event->getUsers();
+        foreach ($users as $user) {
+            $this->emailService->sendEventCreateEmail($user->getEmail(), $event);
+        }
+
+        return new JsonResponse(['message' => 'Emails de création envoyés avec succès.'], JsonResponse::HTTP_OK);
+    }
 }

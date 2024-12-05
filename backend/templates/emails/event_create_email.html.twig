@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>  
+    <meta charset="UTF-8">
+    <title>Création de l'événement</title>
+</head>
+<body>
+    <h1>Nouvel événement : {{ event.title }}</h1>
+    <p>Bonjour,</p>
+    <p>Nous sommes ravis de vous informer qu'un nouvel événement <strong>{{ event.title }}</strong> a été créé.</p>
+    <p>Voici les détails de l'événement :</p>
+    <ul>
+        {% if event.dateStart %}
+            <li>Date de début : {{ event.dateStart|date('d/m/Y H:i') }}</li>
+        {% endif %}
+        {% if event.dateEnd %}
+            <li>Date de fin : {{ event.dateEnd|date('d/m/Y H:i') }}</li>
+        {% endif %}
+        {% if event.description %}
+            <li>Description : {{ event.description }}</li>
+        {% endif %}
+        {% if event.location %}
+            <li>Lieu : {{ event.location }}</li>
+        {% endif %}
+    </ul>
+    <p>Nous espérons vous voir nombreux à cet événement.</p>
+    <p>Merci de votre participation.</p>
+</body>
+</html>
