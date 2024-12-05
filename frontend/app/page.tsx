@@ -1,29 +1,37 @@
 "use client";
 
-import * as React from "react"
+import * as React from "react";
 import { useEffect, useState } from "react";
-import Image from 'next/image'
-import ScrollButton from "@/components/ui/scrollButton"
-import { CarouselRecom } from "@/components/sections/carouselRecom"
-import { SignUpCallToAction } from "@/components/sections/signUpCallToAction"
-import { PaginatedEvents } from "@/components/sections/paginatedEvents"
-import { Button } from "@/components/ui/button"
-import { k2d } from "@/app/fonts/fonts"
-import Link from 'next/link'
-import { useUser } from '@/contexts/UserProvider'
-
+import Image from 'next/image';
+import ScrollButton from "@/components/ui/scrollButton";
+import { CarouselRecom } from "@/components/sections/carouselRecom";
+import { SignUpCallToAction } from "@/components/sections/signUpCallToAction";
+import { PaginatedEvents } from "@/components/sections/paginatedEvents";
+import { Button } from "@/components/ui/button";
+import { k2d } from "@/app/fonts/fonts";
+import Link from 'next/link';
+import { useUser } from '@/contexts/UserProvider';
 
 export default function Home() {
   const [events, setEvents] = useState([]);
   const { user, setUser } = useUser();
 
-
   useEffect(() => {
     fetch(`${process.env.API_BASE_URL}/api/events/public`)
       .then(response => response.json())
-      .then(data => setEvents(data))
+      .then(data => {
+        // Trier les événements par date de début
+        const sortedEvents = data.sort((a: { date_start: string }, b: { date_start: string }) => {
+          const dateA = new Date(a.date_start.split(" - ")[0].split("/").reverse().join("-"));
+          const dateB = new Date(b.date_start.split(" - ")[0].split("/").reverse().join("-"));
+          return dateA.getTime() - dateB.getTime();
+        });
+        setEvents(sortedEvents);
+      })
       .catch(error => console.error("Erreur lors de la récupération des événements :", error));
   }, []);
+
+  console.log(events);
 
   return (
     <div className="mt-10 relative overflow-hidden">
@@ -36,18 +44,17 @@ export default function Home() {
             d’événements
           </h2>
           <Link href="#events-list">
-          <Button>Voir les événements</Button>
+            <Button>Voir les événements</Button>
           </Link>
         </div>
         <div className="relative rounded-2xl overflow-hidden before:w-full before:h-full before:bg-black before:absolute before:opacity-15">
           <Image
-          alt="Image d'illustration"
-          src="/images/image_illustration_small.webp"
-          width={500}
-          height={500}
-          className="w-96 lg:w-128"
-          >
-          </Image>
+            alt="Image d'illustration"
+            src="/images/image_illustration_small.webp"
+            width={500}
+            height={500}
+            className="w-96 lg:w-128"
+          />
         </div>
       </div>
 
@@ -71,8 +78,8 @@ export default function Home() {
         </div>
       </div>
 
-        <h2 className="font-bold max-w-7xl justify-self-center mt-7 w-full px-5 md:px-10 text-xl md:text-2xl md:mt-20 mb-5">Nos recommandations !</h2>
-        <CarouselRecom events={events}/> 
+      <h2 className="font-bold max-w-7xl justify-self-center mt-7 w-full px-5 md:px-10 text-xl md:text-2xl md:mt-20 mb-5">Nos recommandations !</h2>
+      <CarouselRecom events={events} />
 
       {!user && <SignUpCallToAction />}
 
@@ -80,25 +87,3 @@ export default function Home() {
     </div>
   );
 }
-
-
-{/* <div className="flex items-center max-w-7xl justify-evenly w-full place-self-center mt-20">
-<div>
-  <h2 className={`${k2d.className} text-5xl mb-5`}>
-    Votre gestionnaire<br />
-    d’événements
-  </h2>
-  <Link href="#events-list">
-  <Button>Voir les événements</Button>
-  </Link>
-</div>
-<div className="relative rounded-2xl overflow-hidden before:w-full before:h-full before:bg-black before:absolute before:opacity-15">
-  <Image
-  alt="Image d'illustration"
-  src="/images/image_illustration.webp"
-  width={500}
-  height={500}
-  >
-  </Image>
-</div>
-</div> */}
