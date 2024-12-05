@@ -10,6 +10,7 @@ import { EventProps } from "@/types/event";
 import { Badge } from '@/components/ui/badge';
 import { PopupJoinPublicEvent } from '@/components/sections/popupJoinPublicEvent';
 import { PopupShareEvent } from '@/components/sections/popupShareEvent';
+import { PopUpInviteEvent } from '@/components/sections/popUpInviteEvent';
 import { k2d } from '@/app/fonts/fonts';
 import { format, parse } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -314,6 +315,7 @@ export default function Event() {
                         <PopupJoinPublicEvent eventId={event.id} />
                     )}
                     <PopupShareEvent eventUrl={eventUrl} />
+                    <PopUpInviteEvent eventId={event.id} eventTitle={event.title}  />
                 </div>
 
             </div>
