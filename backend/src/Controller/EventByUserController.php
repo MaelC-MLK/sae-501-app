@@ -44,6 +44,7 @@ class EventByUserController extends AbstractController
                 'isVisible' => $event->isIsVisible(),
                 'image' => $event->getImage(),
                 'location' => $event->getLocation(),
+                'limit' => $event->getLimit(),
                 'users' => array_map(function ($user) {
                     return [
                         'id' => $user->getId(),

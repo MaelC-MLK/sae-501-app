@@ -5,7 +5,21 @@ meta {
 }
 
 post {
-  url: http://localhost:8080/api/events/
+  url: http://localhost:8080/api/events
   body: multipartForm
   auth: none
+}
+
+body:multipart-form {
+  title: test limit
+  description: description
+  date_start: 2024-12-05 15:30:00
+  date_end: 2024-12-05 16:30:00
+  isVisible: false
+  is_draft: false
+  location: location
+  creator: /api/users/2
+  users: []
+  limit: 5000
+  ~imageFile: @file()
 }

@@ -330,3 +330,8 @@
   }
 
 }
+
+
+.fc-timegrid-event-harness-inset, .fc-daygrid-event-harness{
+  cursor: pointer;
+}

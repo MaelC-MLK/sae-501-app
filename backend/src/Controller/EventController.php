@@ -45,6 +45,7 @@ class EventController extends AbstractController
                 'image' => $event->getImage(),
                 'location' => $event->getLocation(),
                 'isRecommended' => $event->isRecommended(),
+                'limit' => $event->getLimit(),
                 'users' => $event->getUsers()->map(function ($user) {
                     return [
                         'id' => $user->getId(),
