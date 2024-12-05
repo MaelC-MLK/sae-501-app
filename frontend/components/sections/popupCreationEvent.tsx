@@ -69,6 +69,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { useUser } from "@/contexts/UserProvider";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
+import Image from "next/image";
 
 
 const FormSchema = z.object({
@@ -316,7 +317,7 @@ export default function PopupCreationEvent({
         // action: (
         //     <ToastAction altText="Annuler">Annuler</ToastAction>
         // ),
-    });
+      });
 
     } catch (error) {
       console.error("Failed to create event:", error);
@@ -383,7 +384,7 @@ export default function PopupCreationEvent({
             <span className="hidden sm:block md:hidden lg:block">
               Créer
             </span>
-            </Button>
+          </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-xl max-h-dvh overflow-y-auto">
           <DialogHeader>
@@ -657,13 +658,15 @@ export default function PopupCreationEvent({
                                 }
                               >
                                 <Avatar className="mr-2">
-                                  <AvatarImage
-                                    src={result.avatar}
+                                  <Image
+                                    src={result.avatar ? process.env.API_BASE_URL + "/uploads/users/" + result.avatar : "/images/profile-picture.webp"}
                                     alt={result.firstName}
-                                  />
-                                  <AvatarFallback>
-                                    {result.firstName.charAt(0)}
-                                  </AvatarFallback>
+                                    height={40}
+                                    width={40}
+                                    unoptimized={true}
+                                    className="rounded-full shrink-0 overflow-hidden object-cover"
+                                  >
+                                  </Image>
                                 </Avatar>
                                 <span className="capitalize">
                                   {result.firstName} {result.lastName}
@@ -685,13 +688,15 @@ export default function PopupCreationEvent({
                   {participants.map((participant) => (
                     <div key={participant.id} className="relative">
                       <Avatar className="">
-                        <AvatarImage
-                          src={participant.avatar}
+                        <Image
+                          src={participant.avatar ? process.env.API_BASE_URL + "/uploads/users/" + participant.avatar : "/images/profile-picture.webp"}
                           alt={participant.firstName}
-                        />
-                        <AvatarFallback>
-                          {participant.firstName.charAt(0)}
-                        </AvatarFallback>
+                          height={40}
+                          width={40}
+                          unoptimized={true}
+                          className="rounded-full shrink-0 overflow-hidden object-cover"
+                        >
+                        </Image>
                       </Avatar>
                       <CrossCircledIcon
                         className="absolute -top-0.5 -right-0.5 h-4 w-4 text-black cursor-pointer bg-white rounded-full"
