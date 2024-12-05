@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Event;
+use App\Service\EmailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,6 +14,14 @@ use Symfony\Component\Mailer\MailerInterface;
 
 class EventController extends AbstractController
 {
+
+    private EmailService $emailService;
+
+    public function __construct(EmailService $emailService)
+    {
+        $this->emailService = $emailService;
+    }
+
     public function __invoke(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $criteria = ['isVisible' => true];
@@ -53,37 +62,34 @@ class EventController extends AbstractController
 
 
     #[Route('/api/events/invite', name: 'invite_to_event', methods: ['POST'])]
-    public function inviteToEvent(Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer): JsonResponse
-    {
-        echo $request;
-        $email = $request->get('email');
-        $eventId = $request->get('eventId');
+    public function inviteToEvent( Request $request, EntityManagerInterface $entityManager, EmailService $emailService
+    ): JsonResponse {
+        $data = json_decode($request->getContent(), true);
+        $email = $data['email'] ?? null;
+        $eventId = $data['eventId'] ?? null;
 
         if (!$email || !$eventId) {
-            return new JsonResponse(['message' => 'Email et eventId requis.'], 400);
+            return new JsonResponse(['error' => 'L\'adresse e-mail et l\'ID de l\'événement sont requis.'], 400);
         }
 
         $event = $entityManager->getRepository(Event::class)->find($eventId);
 
         if (!$event) {
-            return new JsonResponse(['message' => "Événement introuvable."], 404);
+            return new JsonResponse(['error' => 'Événement introuvable.'], 404);
         }
-
-        $link = 'https://www.eventify.com/register?eventId=' . $eventId;
-        $emailMessage = (new Email())
-            ->from('eventifyverif.noreply@gmail.com')
-            ->to($email)
-            ->subject('Invitation à l\'événement : ' . $event->getTitle())
-            ->html("<p>Vous êtes invité à l'événement <strong>{$event->getTitle()}</strong>.</p>
-                    <p>Cliquez <a href='{$link}'>ici</a> pour vous inscrire.</p>");
-
         try {
-            $mailer->send($emailMessage);
-            return new JsonResponse(['message' => 'Invitation envoyée avec succès.']);
+            $emailService->sendInvitationEvent(
+                $email,
+                $event->getTitle(),
+                'http://localhost:8090/event/' . $eventId
+            );
         } catch (\Exception $e) {
-            return new JsonResponse(['message' => 'Erreur lors de l\'envoi de l\'invitation.', 'error' => $e->getMessage()], 500);
+            return new JsonResponse(['error' => 'Impossible d\'envoyer l\'invitation : ' . $e->getMessage()], 500);
         }
+
+        return new JsonResponse(['message' => 'Invitation envoyée avec succès.'], 201);
     }
+
 
 
 

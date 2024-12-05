@@ -310,7 +310,7 @@ export default function Event() {
                         <PopupJoinPublicEvent eventId={event.id} />
                     )}
                     <PopupShareEvent eventUrl={eventUrl} />
-                    <PopUpInviteEvent eventId={event.id}  />
+                    <PopUpInviteEvent eventId={event.id} eventTitle={event.title}  />
                 </div>
 
             </div>

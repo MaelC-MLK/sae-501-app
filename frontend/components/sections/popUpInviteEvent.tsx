@@ -15,10 +15,11 @@ import { inviteToEvent } from "@/lib/actions";
 import Image from "next/image";
 
 interface PopUpInviteEventProps {
-    eventId: string; // Ajoute l'ID de l'événement comme prop
+    eventId: number; 
+    eventTitle: string
 }
 
-export function PopUpInviteEvent({ eventId }: PopUpInviteEventProps) {
+export function PopUpInviteEvent({ eventId, eventTitle }: PopUpInviteEventProps) {
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -60,7 +61,7 @@ export function PopUpInviteEvent({ eventId }: PopUpInviteEventProps) {
                 <DialogHeader>
                     <DialogTitle>Plus on est de fous, plus on rit !</DialogTitle>
                     <DialogDescription>
-                        Un e-mail lui sera envoyé pour lui permettre de s'inscrire à l'évènement.
+                        Invitez un ami à l'événement {eventTitle}. Un e-mail lui sera envoyé pour s'inscrire.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">

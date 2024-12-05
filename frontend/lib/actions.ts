@@ -98,26 +98,30 @@ export async function inviteFriend(email: string) {
     return responseJson;
 }
 
-export async function inviteToEvent(email: string, eventId: string) {
+export async function inviteToEvent(email: string, eventId: Number) {
+    console.log("Envoi de l'invitation avec :", email, eventId);
+
     const response = await fetch(`${process.env.API_BASE_URL}/api/events/invite`, {
         method: "POST",
-        credentials: "include",
+        credentials: 'include',
         headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/ld+json",
         },
         body: JSON.stringify({
             email: email,
             eventId: eventId,
         }),
     });
-
-    const responseJson = await response.json();
-
+    
+    const responseJson = await response.json(); // Lit le corps une seule fois
+    
     if (!response.ok) {
         const errorMessage = responseJson.message || "Erreur lors de l'envoi de l'invitation. Veuillez réessayer.";
+        console.error("Erreur API :", errorMessage); // Utilise la réponse déjà extraite
         throw new Error(errorMessage);
     }
-
+    
+    console.log("Réponse API réussie :", responseJson); // Utilisation directe
     return responseJson;
 }
 
