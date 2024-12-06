@@ -11,6 +11,9 @@ Voici la liste des nouvelles fonctionnalités disponibles (06/12/2024) :
  - Rafraichissement du nombre de participants lors d'une inscription
  - Envoie d'email lors de l'update/delete d'un event à tous les participants
  - Correction de bugs et fix de fonctionnalité précédente
+ - Ajout de Toast
+ - Ajout de skeletons et loaders
+ - Pages annexes (mentions légales, cookies, etc...)
      
 ## Installation
 
