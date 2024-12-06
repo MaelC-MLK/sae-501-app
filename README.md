@@ -9,8 +9,9 @@ Voici la liste des nouvelles fonctionnalités disponibles (06/12/2024) :
  - Amélioration de l'authentification, des sessions et de la désactivation des utilisateurs
  - Invitation à un événement public par mail
  - Rafraichissement du nombre de participants lors d'une inscription
- - Correction de bugs
-  
+ - Envoie d'email lors de l'update/delete d'un event à tous les participants
+ - Correction de bugs et fix de fonctionnalité précédente
+     
 ## Installation
 
 Il faut ensuite exécuter ces commandes :
