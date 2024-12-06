@@ -4,17 +4,11 @@
 
 Actuellement, les fonctionnalités suivantes fonctionnent en environnement local, mais rencontrent des erreurs CORS sur Codespace, ce qui empêche leur bon fonctionnement dans cet environnement.
 
-Voici la liste des nouvelles fonctionnalités disponibles (29/11/2024) :
- - Améliorations graphiques
- - Pouvoir modifier la photo de profil
- - Pouvoir filtrer dans le calendrier entre les événement public ou privé
- - Pouvoir s'inscrire à un événement en tant qu'utilisateur inscrit
- - Pouvoir se désinscrire d'un évènement si on est inscrit en tant qu'utilisateur
- - Page 404 et 500
- - Pouvoir avoir une redirection pour les événéments publiques vers leur page détail
- - Fixe du calendrier ( Ouverture popup, rechargement des events à la création/modification )
- - Activation et désactivation des utilisateur dans le backoffice
- - Pour créer un compte on doit désormais valider un lien dans un mail sinon le compte n'est pas activé
+Voici la liste des nouvelles fonctionnalités disponibles (06/12/2024) :
+ - Ajout d'un rate-limiter sur l'api
+ - Amélioration de l'authentification, des sessions et de la désactivation des utilisateurs
+ - Invitation à un événement public par mail
+ - Correction de bugs
   
 ## Installation
 
