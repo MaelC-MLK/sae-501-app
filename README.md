@@ -8,6 +8,7 @@ Voici la liste des nouvelles fonctionnalités disponibles (06/12/2024) :
  - Ajout d'un rate-limiter sur l'api
  - Amélioration de l'authentification, des sessions et de la désactivation des utilisateurs
  - Invitation à un événement public par mail
+ - Rafraichissement du nombre de participants lors d'une inscription
  - Correction de bugs
   
 ## Installation
