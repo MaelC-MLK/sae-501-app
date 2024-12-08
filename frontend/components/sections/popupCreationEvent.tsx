@@ -780,7 +780,8 @@ export default function PopupCreationEvent({
 
                 <div className="flex flex-wrap mt-4 gap-2 mb-2">
                   {participants.slice(0, maxVisibleParticipants).map((participant) => (
-                    <div key={participant.id} className="relative">
+                    <div key={participant.id} className="relative group">
+                      <p className="hidden group-hover:block absolute -top-5 -right-full bg-foreground text-background z-20 shrink-0 text-sm text-nowrap delay-700 transition-all translate-x-1/2">{participant.firstName} {participant.lastName}</p>
                       <Avatar className="">
                         <Image
                           src={participant.avatar ? process.env.API_BASE_URL + "/uploads/users/" + participant.avatar : "/images/profile-picture.webp"}
