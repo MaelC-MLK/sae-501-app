@@ -58,6 +58,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import { UpdateEventAndNotify } from "@/lib/actions";
+import Image from "next/image";
 
 
 const FormSchema = z.object({
@@ -256,7 +257,7 @@ export default function PopupUpdateEvent({
         location: data.location || "",
         creator: `/api/users/${userContext.user.id}`,
         users: participants.map((participant) => `/api/users/${participant.id}`),
-        limit: data.limit || 0,
+        limit: data.limit.toString() || "5000",
     };
 
     try {
@@ -285,6 +286,9 @@ export default function PopupUpdateEvent({
         });
     }
 };
+
+const maxVisibleParticipants = 5;
+const extraParticipantsCount = participants.length - maxVisibleParticipants;  
 
   return (
     <>
@@ -610,13 +614,15 @@ export default function PopupUpdateEvent({
                                 }
                               >
                                 <Avatar className="mr-2">
-                                  <AvatarImage
-                                    src={result.avatar}
+                                  <Image
+                                    src={result.avatar ? process.env.API_BASE_URL + "/uploads/users/" + result.avatar : "/images/profile-picture.webp"}
                                     alt={result.firstName}
-                                  />
-                                  <AvatarFallback>
-                                    {result.firstName.charAt(0)}
-                                  </AvatarFallback>
+                                    height={40}
+                                    width={40}
+                                    unoptimized={true}
+                                    className="rounded-full shrink-0 overflow-hidden object-cover"
+                                  >
+                                  </Image>
                                 </Avatar>
                                 <span className="capitalize">
                                   {result.firstName} {result.lastName}
@@ -635,16 +641,18 @@ export default function PopupUpdateEvent({
                 </div>
 
                 <div className="flex flex-wrap mt-4 gap-2 mb-2">
-                  {participants.map((participant) => (
+                  {participants.slice(0, maxVisibleParticipants).map((participant) => (
                     <div key={participant.id} className="relative">
                       <Avatar className="">
-                        <AvatarImage
-                          src={participant.avatar}
+                        <Image
+                          src={participant.avatar ? process.env.API_BASE_URL + "/uploads/users/" + participant.avatar : "/images/profile-picture.webp"}
                           alt={participant.firstName}
-                        />
-                        <AvatarFallback>
-                          {participant.firstName.charAt(0)}
-                        </AvatarFallback>
+                          height={40}
+                          width={40}
+                          unoptimized={true}
+                          className="rounded-full shrink-0 overflow-hidden object-cover"
+                        >
+                        </Image>
                       </Avatar>
                       <CrossCircledIcon
                         className="absolute -top-0.5 -right-0.5 h-4 w-4 text-black cursor-pointer bg-white rounded-full"
@@ -652,6 +660,11 @@ export default function PopupUpdateEvent({
                       />
                     </div>
                   ))}
+                  {extraParticipantsCount > 0 && (
+                    <div className="relative flex items-center justify-center w-10 h-10 bg-gray-200 rounded-full">
+                      <span className="text-sm font-medium text-gray-700">+{extraParticipantsCount}</span>
+                    </div>
+                  )}
                 </div>
               </div>
               <DialogFooter className="gap-2 md:gap-0 mt-6 sm:mt-0">

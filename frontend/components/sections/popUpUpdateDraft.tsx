@@ -268,7 +268,7 @@ export default function PopupUpdateDraft({
       location: data.location || "",
       creator: `/api/users/${userContext.user.id}`,
       users: participants.map((participant) => `/api/users/${participant.id}`),
-      limit: data.limit,
+      limit: data.limit.toString() || "5000",
     };  
   
     try {
@@ -313,7 +313,7 @@ export default function PopupUpdateDraft({
       creator: `/api/users/${userContext.user.id}`,
       users: participants.map((participant) => `/api/users/${participant.id}`),
       is_draft: "false",
-      limit: data.limit,
+      limit: data.limit.toString() || "5000",
     };  
   
     try {
@@ -368,7 +368,7 @@ export default function PopupUpdateDraft({
         </DialogTrigger>
         <DialogContent className="sm:max-w-3xl max-h-dvh overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Modifier un le brouillon</DialogTitle>
+            <DialogTitle>Modifier le brouillon</DialogTitle>
             <DialogDescription>
               Veuillez remplir le formulaire.
             </DialogDescription>
@@ -633,7 +633,7 @@ export default function PopupUpdateDraft({
 
                 <Separator className="my-4" />
 
-                <div className="flex flex-col mt-4">
+                {/* <div className="flex flex-col mt-4">
                   <Label htmlFor="participants" className="mb-2">
                     Ajouter des participants
                   </Label>
@@ -684,9 +684,9 @@ export default function PopupUpdateDraft({
                       </div>
                     )}
                   </div>
-                </div>
+                </div> */}
 
-                <div className="flex flex-wrap mt-4 gap-2 mb-2">
+                {/* <div className="flex flex-wrap mt-4 gap-2 mb-2">
                   {participants.map((participant) => (
                     <div key={participant.id} className="relative">
                       <Avatar className="">
@@ -704,7 +704,7 @@ export default function PopupUpdateDraft({
                       />
                     </div>
                   ))}
-                </div>
+                </div> */}
               </div>
               <DialogFooter className="gap-2 md:gap-0 mt-6 sm:mt-0 sm:justify-between">
                 <DialogClose asChild>

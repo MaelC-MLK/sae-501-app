@@ -116,7 +116,9 @@ export default function PopupCreationEvent({
   const [imageFile, setImageFile] = useState<File | null>(null);
   const userContext = useUser();
   const { toast } = useToast();
-
+  const [isParticipantsModalOpen, setIsParticipantsModalOpen] = useState<boolean>(false);
+  const [participantSearchTerm, setParticipantSearchTerm] = useState<string>("");
+  const participantSearchInputRef = useRef<HTMLInputElement>(null);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -294,7 +296,7 @@ export default function PopupCreationEvent({
     formData.append('is_draft', "false");
     formData.append('location', data.location || "");
     formData.append('creator', `/api/users/${userContext.user.id}`);
-    formData.append('limit', data.limit || "0");
+    formData.append('limit', data.limit || "5000");
 
 
     if (imageFile) {
@@ -357,11 +359,8 @@ export default function PopupCreationEvent({
     formData.append('is_draft', "true");
     formData.append('location', data.location || "");
     formData.append('creator', `/api/users/${userContext.user.id}`);
-    formData.append('limit', data.limit || "0");
-
-
-    const participantsArray = participants.map(participant => `/api/users/${participant.id}`);
-    formData.append('users', JSON.stringify(participantsArray));
+    formData.append('limit', data.limit || "5000");
+    formData.append('users', "[]");
 
 
     try {
@@ -382,6 +381,62 @@ export default function PopupCreationEvent({
       });
     }
   };
+
+  function ParticipantsList({ participants, onRemoveParticipant, searchTerm }: { participants: any[], onRemoveParticipant: (id: number) => void, searchTerm: string }) {
+    const filteredParticipants = participants.filter(participant =>
+      participant.firstName.toLowerCase().includes((searchTerm || "").toLowerCase()) ||
+      participant.lastName.toLowerCase().includes((searchTerm || "").toLowerCase()) ||
+      participant.email.toLowerCase().includes((searchTerm || "").toLowerCase())
+    );
+  
+    useEffect(() => {
+      if (participantSearchInputRef.current) {
+        participantSearchInputRef.current.focus();
+      }
+    }, [searchTerm]);
+  
+    return (
+      <div className="p-4">
+        <Input
+          id="participant-search"
+          placeholder="Rechercher des participants"
+          value={searchTerm}
+          onChange={(e) => {
+            e.preventDefault();
+            setParticipantSearchTerm(e.target.value);
+          }}
+          onClick={(e) => e.stopPropagation()}
+          className="mb-4"
+          ref={participantSearchInputRef}
+        />
+        <ul className="space-y-2">
+          {filteredParticipants.map((participant) => (
+            <li key={participant.id} className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Avatar className="mr-2">
+                  <Image
+                    src={participant.avatar ? process.env.API_BASE_URL + "/uploads/users/" + participant.avatar : "/images/profile-picture.webp"}
+                    alt={participant.firstName}
+                    height={40}
+                    width={40}
+                    unoptimized={true}
+                    className="rounded-full shrink-0 overflow-hidden object-cover"
+                  />
+                </Avatar>
+                <span className="capitalize">{participant.firstName} {participant.lastName}</span>
+              </div>
+              <Button variant="destructive" size="sm" onClick={() => onRemoveParticipant(participant.id)}>
+                Supprimer
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
+  const maxVisibleParticipants = 5;
+  const extraParticipantsCount = participants.length - maxVisibleParticipants;  
 
   return (
     <>
@@ -724,7 +779,7 @@ export default function PopupCreationEvent({
                 </div>
 
                 <div className="flex flex-wrap mt-4 gap-2 mb-2">
-                  {participants.map((participant) => (
+                  {participants.slice(0, maxVisibleParticipants).map((participant) => (
                     <div key={participant.id} className="relative">
                       <Avatar className="">
                         <Image
@@ -734,8 +789,7 @@ export default function PopupCreationEvent({
                           width={40}
                           unoptimized={true}
                           className="rounded-full shrink-0 overflow-hidden object-cover"
-                        >
-                        </Image>
+                        />
                       </Avatar>
                       <CrossCircledIcon
                         className="absolute -top-0.5 -right-0.5 h-4 w-4 text-black cursor-pointer bg-white rounded-full"
@@ -743,6 +797,11 @@ export default function PopupCreationEvent({
                       />
                     </div>
                   ))}
+                  {extraParticipantsCount > 0 && (
+                    <div className="relative flex items-center justify-center w-10 h-10 bg-gray-200 rounded-full cursor-pointer" onClick={() => setIsParticipantsModalOpen(true)}>
+                      <span className="text-sm font-medium text-gray-700">+{extraParticipantsCount}</span>
+                    </div>
+                  )}
                 </div>
               </div>
               <DialogFooter className="gap-2 md:gap-0 mt-6 sm:mt-0">
@@ -792,7 +851,7 @@ export default function PopupCreationEvent({
           <DialogHeader>
             <DialogTitle>Enregistrer en brouillon ?</DialogTitle>
             <DialogDescription>
-              Voulez-vous enregistrer cet événement en tant que brouillon ?
+              Voulez-vous enregistrer cet événement en tant que brouillon ? L'image ne sera pas enregistrée ainsi que les participants.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -834,6 +893,18 @@ export default function PopupCreationEvent({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={isParticipantsModalOpen} onOpenChange={setIsParticipantsModalOpen} >
+      <DialogContent className="max-h-dvh overflow-scroll">
+        <DialogHeader>
+          <DialogTitle>Participants</DialogTitle>
+        </DialogHeader>
+        <ParticipantsList participants={participants} onRemoveParticipant={handleRemoveParticipant} searchTerm={participantSearchTerm} />
+        {/* <DialogFooter>
+          <Button onClick={() => setIsParticipantsModalOpen(false)}>Fermer</Button>
+        </DialogFooter> */}
+      </DialogContent>
+    </Dialog>
     </>
   );
 }
