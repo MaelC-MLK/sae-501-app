@@ -21,7 +21,7 @@ export function PopUpEmailRegister({ user, open, setOpen }: { user: UserRegister
   const handleSubmit = async () => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      const api = 'http://localhost:8080';
+      const api = process.env.API_BASE_URL;
       const url = api + '/api/user/register';
 
       const response = await fetch(url, {
