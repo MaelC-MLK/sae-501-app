@@ -5,29 +5,70 @@ namespace App\EventListener;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 
 class RefreshTokenMiddleware
 {
     private JWTTokenManagerInterface $jwtManager;
+    private UserProviderInterface $userProvider;
     private LoggerInterface $logger;
-    private Security $security;
 
-    public function __construct(JWTTokenManagerInterface $jwtManager, LoggerInterface $logger, Security $security)
+    public function __construct(JWTTokenManagerInterface $jwtManager, UserProviderInterface $userProvider, LoggerInterface $logger)
     {
         $this->jwtManager = $jwtManager;
+        $this->userProvider = $userProvider;
         $this->logger = $logger;
-        $this->security = $security;
     }
 
     public function onKernelResponse(ResponseEvent $event)
     {
         $request = $event->getRequest();
-        $user = $this->security->getUser();
+        $jwt = $request->cookies->get('eventify');
+
+        if (!$jwt) {
+            return;
+        }
+
+        try {
+            // Decode et valide le JWT
+            $payload = $this->jwtManager->parse($jwt);
+        } catch (\Exception $e) {
+            $response = new Response('Error on token:' . $e, 403);
+            $event->setResponse($response);
+    
+            return;
+        }
+
+        $user = null;
+
+        if(!empty($payload['username'])){
+            $user = $this->userProvider->loadUserByIdentifier($payload['username']);
+        }
+        else {
+            return;
+        }
 
         if (!$user) {
             return;
+        }
+
+        if($user->isActive() == false){
+            $response = $event->getResponse();
+            $response->headers->clearCookie('eventify');
+
+            return;
+        }
+
+        if($user->getLogout()){
+            $tokenIssuedAtDateTime = (new \DateTime())->setTimestamp($payload['iat']);
+            if($user->getLogout()->getTimestamp() >  $tokenIssuedAtDateTime->getTimestamp()){
+                $response = $event->getResponse();
+                $response->headers->clearCookie('eventify');
+    
+                return;
+            }
         }
 
         // Générer un nouveau token et l'attacher au cookie

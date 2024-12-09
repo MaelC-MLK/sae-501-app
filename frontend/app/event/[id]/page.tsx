@@ -29,6 +29,7 @@ export default function Event() {
     const { user } = useUser();
     const { toast } = useToast();
     const [isRegistered, setIsRegistered] = useState<boolean | null>(null);
+    const [participantCount, setParticipantCount] = useState<number>(0);
 
     useEffect(() => {
         if (events.length > 0) {
@@ -39,6 +40,10 @@ export default function Event() {
     const event = events.find((event: EventProps) => event.id === Number(id));
 
     useEffect(() => {
+        if (event) {
+            // Initialisez le nombre de participants
+            setParticipantCount(event.users.length || 0);
+        }
         if (user && event) {
             const fetchRegistrationStatus = async () => {
                 try {
@@ -70,6 +75,7 @@ export default function Event() {
         try {
             await joinEvent(event.id);
             setIsRegistered(true);
+            setParticipantCount(prevCount => prevCount + 1);
             const description = formattedDateStart === formattedDateEnd
             ? `Le ${formattedDateStart} de ${startTime} à ${endTime}`
             : `Du ${formattedDateStart} à ${startTime} au ${formattedDateEnd} à ${endTime}`;
@@ -95,6 +101,7 @@ export default function Event() {
         try {
             await unregisterEvent(event.id);
             setIsRegistered(false);
+            setParticipantCount(prevCount => Math.max(0, prevCount - 1));
             toast({
                 title: "Désinscription réussie !",
                 description: "Vous avez été désinscrit de l'événement.",
@@ -245,7 +252,7 @@ export default function Event() {
                             </p>
                         </div>
                         <Badge variant="secondary" className="font-normal text-base">
-                            {event.users.length}
+                            {participantCount}
                         </Badge>
                     </div>
 

@@ -128,9 +128,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $Logout = null;
 
-    #[Groups(['user:create', 'user:update', 'user:read'])]
+    #[Groups(['user:create', 'user:update'])]
     #[ORM\Column]
     private ?bool $active = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $resetToken = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $resetTokenExpiry = null;
 
     public function __construct()
     {
@@ -386,6 +392,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setActive(bool $active): static
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): static
+    {
+        $this->resetToken = $resetToken;
+
+        return $this;
+    }
+
+    public function getResetTokenExpiry(): ?\DateTimeInterface
+    {
+        return $this->resetTokenExpiry;
+    }
+
+    public function setResetTokenExpiry(?\DateTimeInterface $resetTokenExpiry): static
+    {
+        $this->resetTokenExpiry = $resetTokenExpiry;
 
         return $this;
     }

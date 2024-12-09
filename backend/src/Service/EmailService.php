@@ -136,4 +136,36 @@ class EmailService
         $this->mailer->send($email);
     }
 
+    public function sendEventCreateEmail(string $recipientEmail, $event): void
+    {
+        $htmlContent = $this->twig->render('emails/event_create_email.html.twig', [
+            'event' => $event,
+        ]);
+
+        $email = (new Email())
+            ->from('eventifyverif.noreply@gmail.com')
+            ->to($recipientEmail)
+            ->subject('Création de l\'événement')
+            ->html($htmlContent);
+
+        $this->mailer->send($email);
+    }
+
+    public function sendResetPasswordEmail(string $recipientEmail, string $token): void
+    {
+        $resetLink = sprintf('http://localhost:8090/forgot-password/%s', $token);
+
+            // Rendre le template Twig
+            $htmlContent = $this->twig->render('emails/reset_password.html.twig', [
+                'reset_link' => $resetLink,
+            ]);
+    
+            $email = (new Email())
+                ->from('eventifyverif.noreply@gmail.com')
+                ->to($recipientEmail)
+                ->subject('Reinitialisation de votre mot de passe')
+                ->html($htmlContent);
+    
+            $this->mailer->send($email);
+    }
 }

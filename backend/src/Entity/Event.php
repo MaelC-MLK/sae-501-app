@@ -24,6 +24,7 @@ use App\Controller\EventByUserController;
 use App\Controller\EventByCreatorController;
 use App\Controller\UpdateEventImageController;
 use App\Controller\EventDraftController;
+use App\Controller\MarkEventAsDeletedController;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[Vich\Uploadable]
@@ -74,6 +75,12 @@ use App\Controller\EventDraftController;
             inputFormats: ['multipart' => ['multipart/form-data']],
             denormalizationContext: ['groups' => ['event:write']],
             validationContext: ['groups' => ['Default', 'event:update']],
+        ),
+        new Patch(
+            uriTemplate: 'events/{id}/delete',
+            controller: MarkEventAsDeletedController::class,
+            read: false,
+            name: 'event_mark_as_deleted',
         ),
     ]
 )]
@@ -143,6 +150,9 @@ class Event
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['event:read', 'event:write'])]
     private ?User $creator = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $supprime = null;
 
     public function __construct()
     {
@@ -348,6 +358,24 @@ class Event
     {
         $this->creator = $creator;
 
+        return $this;
+    }
+
+    public function getSupprime(): ?\DateTimeInterface
+    {
+        return $this->supprime;
+    }
+
+    public function setSupprime(?\DateTimeInterface $supprime): static
+    {
+        $this->supprime = $supprime;
+
+        return $this;
+    }
+
+    public function markAsDeleted(): static
+    {
+        $this->supprime = new \DateTimeImmutable();
         return $this;
     }
 }

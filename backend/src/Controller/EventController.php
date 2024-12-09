@@ -24,7 +24,7 @@ class EventController extends AbstractController
 
     public function __invoke(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        $criteria = ['isVisible' => true];
+        $criteria = ['isVisible' => true, 'supprime' => null];
         $events = $entityManager->getRepository(Event::class)->findBy($criteria);
 
         $data = array_map(function (Event $event) {

@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { k2d } from "@/app/fonts/fonts"
+import PopUpForgotPassword from '@/components/sections/popUpForgotPassword';
 
 
 export default function Page() {
@@ -91,7 +92,7 @@ export default function Page() {
                         </div>
 
                         <div className="text-right">
-                            <a href="#" className="text-primary hover:underline text-sm">Mot de passe oublié ?</a>
+                            <PopUpForgotPassword />
                         </div>
 
                         {error && <p className="text-red-500 text-sm mb-2 mt-3">{error}</p>}
