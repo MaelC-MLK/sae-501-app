@@ -56,7 +56,7 @@ export default function Page() {
                             <Input
                                 type="email"
                                 id="email"
-                                placeholder="Adresse mail"
+                                placeholder="example@mail.com"
                                 name="email"
                                 required
                                 className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"
@@ -70,7 +70,7 @@ export default function Page() {
                                 <Input
                                     type={showPassword ? "text" : "password"}
                                     id="password"
-                                    placeholder="Mot de passe"
+                                    placeholder="**********"
                                     name="password"
                                     required
                                     className="mt-1 w-full p-2 pr-10 border border-gray-300 rounded-md text-md h-10"

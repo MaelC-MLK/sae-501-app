@@ -13,8 +13,9 @@ export default function ForgotPasswordPage({ params }: { params: { token: string
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const validatePassword = (password: string) => {
         return password.length >= 8 && password.length <= 30;
     };
@@ -55,7 +56,7 @@ export default function ForgotPasswordPage({ params }: { params: { token: string
 
             setStatus('success');
         } catch (err) {
-            if(err.message.includes('expiré')) {
+            if (err.message.includes('expiré')) {
                 setError('Le lien est expiré');
             } else if (err.message.includes('utilisé')) {
                 setError('Le lien a déjà été utilisé');
@@ -71,32 +72,59 @@ export default function ForgotPasswordPage({ params }: { params: { token: string
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 ">
             <div className="bg-white p-8 rounded-lg shadow-md text-center md:min-w-[40rem]">
-                {status === 'loading' && <Loading/>}
+                {status === 'loading' && <Loading />}
                 {(status === 'input' || status === 'error') && (
                     <>
                         <h1 className='text-lg font-semibold'>Réinitialisation du mot de passe</h1>
                         {error && <p className="text-red-500 mt-2">{error}</p>}
                         <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-4">
-                            <div className='flex flex-col gap-2'>
+                            <div className="flex flex-col gap-2">
                                 <label htmlFor="password" className="text-left w-full">Nouveau mot de passe</label>
-                                <input
-                                    type="password"
-                                    placeholder="Nouveau mot de passe"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-md"
-                                />
+                                <div className="relative w-full">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Nouveau mot de passe"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="w-full p-2 pr-10 border border-gray-300 rounded-md"
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute top-1/2 right-3 transform -translate-y-1/2"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        <img
+                                            src={showPassword ? "/images/show.svg" : "/images/no-show.svg"}
+                                            alt="Toggle Password Visibility"
+                                            className="w-5 h-5"
+                                        />
+                                    </button>
+                                </div>
                             </div>
-                            <div className='flex flex-col gap-2'>
+                            <div className="flex flex-col gap-2">
                                 <label htmlFor="confirmPassword" className="text-left w-full">Confirmer mot de passe</label>
-                                <input
-                                    type="password"
-                                    placeholder="Confirmer mot de passe"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-md"
-                                />
+                                <div className="relative w-full">
+                                    <input
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        placeholder="Confirmer mot de passe"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        className="w-full p-2 pr-10 border border-gray-300 rounded-md"
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute top-1/2 right-3 transform -translate-y-1/2"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    >
+                                        <img
+                                            src={showConfirmPassword ? "/images/show.svg" : "/images/no-show.svg"}
+                                            alt="Toggle Password Visibility"
+                                            className="w-5 h-5"
+                                        />
+                                    </button>
+                                </div>
                             </div>
+
                             <Button
                                 variant={'default'}
                                 size={'lg'}
@@ -109,21 +137,21 @@ export default function ForgotPasswordPage({ params }: { params: { token: string
                         </form>
                     </>
                 )}
-                { status === 'success' && (
+                {status === 'success' && (
                     <div className='flex flex-col gap-6'>
                         <div className="flex flex-col items-center justify-center gap-2 mb-4">
-                            <CheckCircleIcon className="text-green-500 w-16 h-16"/>
+                            <CheckCircleIcon className="text-green-500 w-16 h-16" />
                             <p className="">Votre mot de passe a été réinitialisé avec succès.</p>
                         </div>
                         <Link href="/login">
                             <Button
-                                    variant={'default'}
-                                    size={'lg'}
-                                >
+                                variant={'default'}
+                                size={'lg'}
+                            >
                                 Se connecter
                             </Button>
                         </Link>
-                    </div> 
+                    </div>
                 )}
             </div>
         </div>
