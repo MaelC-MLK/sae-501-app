@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -12,21 +13,26 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Uid\Uuid;
+use App\Service\EmailService;
 
 class AuthController
 {
     private JWTTokenManagerInterface $jwtManager;
     private UserPasswordHasherInterface $passwordHasher;
     private UserProviderInterface $userProvider;
+    private EmailService $emailService;
 
     public function __construct(
         JWTTokenManagerInterface $jwtManager,
         UserPasswordHasherInterface $passwordHasher,
-        UserProviderInterface $userProvider
+        UserProviderInterface $userProvider,
+        EmailService $emailService
     ) {
         $this->jwtManager = $jwtManager;
         $this->passwordHasher = $passwordHasher;
         $this->userProvider = $userProvider;
+        $this->emailService = $emailService;
     }
 
     #[Route('/api/auth', name: 'api_auth', methods: ['POST'])]
@@ -168,5 +174,89 @@ class AuthController
         // Retourner la réponse
         
         return $response;
+    }   
+    
+    // Forgot password
+    #[Route('/api/auth/forgot-password', name: 'forgot_password', methods: ['POST'])]
+    public function forgotPassword(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $email = $data['email'] ?? null;
+
+        if (!$email) {
+            return new JsonResponse(['error' => 'Email est requis.'], 400);
+        }
+
+        // Rechercher l'utilisateur par email
+        $user = $this->userProvider->loadUserByIdentifier($email);
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Utilisateur introuvable.'], 404);
+        }
+
+        // Générer un token de réinitialisation
+        $token = Uuid::v4()->toRfc4122(); // Génération de token (UUID)
+        $user->setResetToken($token);
+
+        // Définir la date d'expiration du token
+        $expiryDate = new \DateTime('+10 minutes');
+        $user->setResetTokenExpiry($expiryDate);
+
+        $entityManager->flush();
+
+        // Envoyer l'email de réinitialisation
+        try {
+            $this->emailService->sendResetPasswordEmail($email, $token);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Impossible d\'envoyer l\'email : ' . $e->getMessage()], 500);
+        }
+
+        return new JsonResponse(['message' => 'Email de réinitialisation envoyé.'], 200);
+    }
+
+    // Reset password
+    #[Route('/api/auth/reset-password/{token}', name: 'reset_password', methods: ['POST'])]
+    public function resetPassword(string $token, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+
+        if (!$token) {
+            return new JsonResponse(['error' => 'Token requis.'], 400);
+        }
+
+        // Rechercher l'utilisateur par token
+        $user = $entityManager->getRepository(User::class)->findOneBy(['resetToken' => $token]);
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Token invalide ou déjà utilisé.'], 400);
+        }
+
+        // Vérifier si le token a expiré
+        if ($user->getResetTokenExpiry() < new \DateTime()) {
+            return new JsonResponse(['error' => 'Token expiré.'], 400);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $password = $data['password'] ?? null;
+
+        if (!$password) {
+            return new JsonResponse(['error' => 'Mot de passe requis.'], 400);
+        }
+
+        // Vérifier si le token a expiré
+        $now = new \DateTime();
+        if ($user->getResetTokenExpiry() < $now) {
+            return new JsonResponse(['error' => 'Token expiré.'], 400);
+        }
+
+        // Réinitialiser le mot de passe
+        $user->setPassword($this->passwordHasher->hashPassword($user, $password));
+        $user->setResetToken(null);
+        $user->setResetTokenExpiry(null);
+        // Déconnecter l'utilisateur après la réinitialisation du mot de passe
+        $user->setLogout(new \DateTime());
+
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Mot de passe réinitialisé.'], 200);
     }
 }
