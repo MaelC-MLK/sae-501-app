@@ -23,7 +23,8 @@ export default function Page() {
     const [open, setOpen] = useState(false);
     const [user, setUser] = useState({ email: email, plainPassword: plainPassword, firstName: firstName, lastName: lastName });
     const [acceptedTerms, setAcceptedTerms] = useState(false);
-    const router = useRouter();
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const validateEmail = (email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -166,31 +167,60 @@ export default function Page() {
                             onChange={(e) => setEmail(e.target.value)} />
                     </div>
 
-                    <div className="mb-6">
-                        <Label className='text-lg' htmlFor="plainPassword">Mot de passe*</Label>
-                        <Input
-                            type="password"
-                            id="plainPassword"
-                            placeholder="**********"
-                            name="plainPassword"
-                            required
-                            className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"
-                            value={plainPassword}
-                            onChange={(e) => setPlainPassword(e.target.value)} />
+                    <div className="mb-6 relative">
+                        <Label className="text-lg" htmlFor="plainPassword">Mot de passe*</Label>
+                        <div className="relative w-full">
+                            <Input
+                                type={showPassword ? "text" : "password"}
+                                id="plainPassword"
+                                placeholder="**********"
+                                name="plainPassword"
+                                required
+                                className="mt-1 w-full p-2 pr-10 border border-gray-300 rounded-md text-md h-10"
+                                value={plainPassword}
+                                onChange={(e) => setPlainPassword(e.target.value)}
+                            />
+                            <button
+                                type="button"
+                                className="absolute top-1/2 right-3 transform -translate-y-1/2"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                <img
+                                    src={showPassword ? "/images/show.svg" : "/images/no-show.svg"}
+                                    alt="Toggle Password Visibility"
+                                    className="w-5 h-5"
+                                />
+                            </button>
+                        </div>
                     </div>
-                    <div className="mb-4">
+
+                    <div className="mb-4 relative">
                         <Label className="text-lg" htmlFor="confirmPassword">Confirmer le mot de passe*</Label>
-                        <Input
-                            type="password"
-                            id="confirmPassword"
-                            placeholder="**********"
-                            name="confirmPassword"
-                            required
-                            className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                        />
+                        <div className="relative w-full">
+                            <Input
+                                type={showConfirmPassword ? "text" : "password"}
+                                id="confirmPassword"
+                                placeholder="**********"
+                                name="confirmPassword"
+                                required
+                                className="mt-1 w-full p-2 pr-10 border border-gray-300 rounded-md text-md h-10"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                            />
+                            <button
+                                type="button"
+                                className="absolute top-1/2 right-3 transform -translate-y-1/2"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            >
+                                <img
+                                    src={showConfirmPassword ? "/images/show.svg" : "/images/no-show.svg"}
+                                    alt="Toggle Password Visibility"
+                                    className="w-5 h-5"
+                                />
+                            </button>
+                        </div>
                     </div>
+
 
                     <div className="flex items-center mt-6 mb-3">
                         <Checkbox
