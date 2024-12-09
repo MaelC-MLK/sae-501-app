@@ -46,14 +46,14 @@ export default function Page() {
 
         if (!validateEmail(email)) {
             setLoadingButton(false);
-            setError('Please enter a valid email address.');
+            setError('Entrez une adresse email valide');
             setLoadingButton(false);
             return;
         }
 
         if (!validatePassword(plainPassword)) {
             setLoadingButton(false);
-            setError('Password must be between 8 and 30 characters.');
+            setError('Le mot de passe doit contenir entre 8 et 30 caractères');
             setLoadingButton(false);
             return;
         }
