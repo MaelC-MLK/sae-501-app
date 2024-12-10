@@ -58,6 +58,11 @@ import { useDebouncedCallback } from "use-debounce";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import { UpdateEventAndNotify } from "@/lib/actions";
+import { UpdateEventImage } from "@/lib/actions";
+import ImageUpload from "@/components/sections/dropZoneEventPopup";
+
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 
 const FormSchema = z.object({
@@ -68,6 +73,7 @@ const FormSchema = z.object({
   date_end: z.string(),
   time_start: z.string().nonempty("Start time is required"),
   time_end: z.string().nonempty("End time is required"),
+  image: z.string().optional(),
   users: z.array(
     z.object({
       id: z.number(),
@@ -85,8 +91,6 @@ export default function PopupUpdateEvent({
   eventData,
   className,
 }: PopupUpdateEventProps) {
-
-  // console.log(JSON.stringify(eventData));
 
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(eventData.start),
@@ -118,6 +122,8 @@ export default function PopupUpdateEvent({
   const [isMainDialogOpen, setIsMainDialogOpen] = useState<boolean>(false);
   const userContext = useUser();
   const {toast} = useToast();
+  const [error, setError] = useState<string | null>(null);
+  const [eventPicture, setEventPicture] = useState<File | null>(null);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -129,6 +135,7 @@ export default function PopupUpdateEvent({
       date_end: eventData.extendedProps.date_end,
       time_start: startTime,
       time_end: endTime,
+      image: eventData.extendedProps.image,
       users:
         eventData.extendedProps.users.map((user: any) => ({
           id: user.id,
@@ -225,6 +232,23 @@ export default function PopupUpdateEvent({
     setIsPopoverOpen(false);
   };
 
+  const handleFileChange = (file: File | null) => {
+    if (file) {
+        if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+            setError('Veuillez sélectionner uniquement des fichiers JPG, PNG ou WEBP.');
+            return;
+        }
+        if (file.size > MAX_FILE_SIZE) {
+            setError('La taille du fichier ne doit pas dépasser 2MB.');
+            return;
+        }
+        setEventPicture(file);
+        setError('');
+    } else {
+        setError('Veuillez sélectionner uniquement des fichiers JPG, PNG ou WEBP.');
+    }
+};
+
   const handleRemoveParticipant = (participantId: number) => {
     const updatedParticipants = participants.filter(
       (participant) => participant.id !== participantId
@@ -235,54 +259,61 @@ export default function PopupUpdateEvent({
   };
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    if (userContext.user === null) {
-        console.error("User not found");
-        return;
-    }
-    const formData = {
-        title: data.title,
-        description: data.description || "",
-        date_start: combineDateAndTime(
-            date?.from || new Date(),
-            data.time_start
-        ).toString(),
-        date_end: combineDateAndTime(
-            date?.to || date?.from || new Date(),
-            data.time_end
-        ).toString(),
-        isVisible: isPrivate ? "false" : "true",
-        location: data.location || "",
-        creator: `/api/users/${userContext.user.id}`,
-        users: participants.map((participant) => `/api/users/${participant.id}`),
-    };
+      if (userContext.user === null) {
+          console.error("User not found");
+          return;
+      }
+      const formData = {
+          title: data.title,
+          description: data.description || "",
+          date_start: combineDateAndTime(
+              date?.from || new Date(),
+              data.time_start
+          ).toString(),
+          date_end: combineDateAndTime(
+              date?.to || date?.from || new Date(),
+              data.time_end
+          ).toString(),
+          isVisible: isPrivate ? "false" : "true",
+          location: data.location || "",
+          creator: `/api/users/${userContext.user.id}`,
+          users: participants.map((participant) => `/api/users/${participant.id}`),
+      };
+  
+      try {
+          await UpdateEvent(formData, eventData.id);
 
-    try {
-        await UpdateEvent(formData, eventData.id);
-        setIsMainDialogOpen(false);
-        toast({
-            title: "Événement modifié ! ✅",
-            description: "Votre événement a été modifié avec succès.",
-            // action: (
-            //     <ToastAction altText="Annuler">Annuler</ToastAction>
-            // ),
-        });
-
-        // Envoyer la notification en arrière-plan
-        UpdateEventAndNotify(eventData.id).catch((error) => {
-            console.error("Failed to send notification:", error);
-        });
-    } catch (error) {
-        console.error("Failed to update event:", error);
-        toast({
-            title: "Erreur lors de la modification de l'événement ❌",
-            description: "Une erreur est survenue lors de la modification de l'événement.",
-            // action: (
-            //     <ToastAction altText="Annuler">Annuler</ToastAction>
-            // ),
-        });
-    }
-};
-
+          // Vérifier si l'image a été modifiée
+          if (eventPicture) {
+              const imageFile = new FormData();
+              imageFile.append("imageFile", eventPicture);
+              await UpdateEventImage(eventData.id, imageFile);
+          }
+  
+          setIsMainDialogOpen(false);
+          toast({
+              title: "Événement modifié ! ✅",
+              description: "Votre événement a été modifié avec succès.",
+              // action: (
+              //     <ToastAction altText="Annuler">Annuler</ToastAction>
+              // ),
+          });
+  
+          // Envoyer la notification en arrière-plan
+          UpdateEventAndNotify(eventData.id).catch((error) => {
+              console.error("Failed to send notification:", error);
+          });
+      } catch (error) {
+          console.error("Failed to update event:", error);
+          toast({
+              title: "Erreur lors de la modification de l'événement ❌",
+              description: "Une erreur est survenue lors de la modification de l'événement.",
+              // action: (
+              //     <ToastAction altText="Annuler">Annuler</ToastAction>
+              // ),
+          });
+      }
+  };
   return (
     <>
       <Dialog open={isMainDialogOpen} onOpenChange={setIsMainDialogOpen}>
@@ -545,6 +576,16 @@ export default function PopupUpdateEvent({
                       <TabsTrigger value="public">Public</TabsTrigger>
                     </TabsList>
                   </Tabs>
+                </div>
+
+                <div className="flex flex-col mt-4">
+                  <Label htmlFor="eventPicture" className="tex-left mb-2">
+                    Modifier l'image
+                  </Label>
+                  <ImageUpload 
+                  name="eventPicture"
+                  onFileSelect={handleFileChange} 
+                  />
                 </div>
 
                 <Separator className="my-4" />

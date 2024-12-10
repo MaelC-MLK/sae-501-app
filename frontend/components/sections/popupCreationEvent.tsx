@@ -316,7 +316,6 @@ export default function PopupCreationEvent({
           console.log("Event ID:", eventId);
   
           if (eventId !== null) {
-              await CreateEventAndNotify(eventId);
               toast({
                   title: "Événement créé ! ✅",
                   description: "Votre événement a été créé avec succès.",
@@ -324,6 +323,7 @@ export default function PopupCreationEvent({
                   //     <ToastAction altText="Annuler">Annuler</ToastAction>
                   // ),
               });
+              await CreateEventAndNotify(eventId);
           } else {
               console.error("Impossible d'extraire l'ID de l'événement.");
           }
