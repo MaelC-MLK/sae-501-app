@@ -14,6 +14,7 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination"
+import { Input } from "../ui/input"
 
 interface PaginatedEventsProps {
     events: EventProps[]
@@ -23,13 +24,10 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
     const [currentPage, setCurrentPage] = useState(1)
     const [loading, setLoading] = useState(true)
     const eventsPerPage = 6
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredEvents, setFilteredEvents] = useState(events);
 
     const totalPages = Math.ceil(events.length / eventsPerPage)
-
-    const currentEvents = events.slice(
-        (currentPage - 1) * eventsPerPage,
-        currentPage * eventsPerPage
-    )
 
     useEffect(() => {
         if (events.length > 0) {
@@ -37,29 +35,63 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
         }
     }, [events])
 
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            setFilteredEvents(
+                events.filter(event =>
+                    event.title.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+            );
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [searchTerm, events]);
+
     const handlePageClick = (page: number) => {
         if (page >= 1 && page <= totalPages) {
             setCurrentPage(page)
         }
     }
 
+    const handleSearchChange = (e: { target: { value: React.SetStateAction<string> } }) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const currentEvents = filteredEvents.slice(
+        (currentPage - 1) * eventsPerPage,
+        currentPage * eventsPerPage
+    )
+
     return (
         <div
             id="events-list"
-            className="flex flex-col justify-center items-center my-14 scroll-mt-20">
-            <h2 className="font-bold max-w-7xl justify-self-center w-full px-5 md:px-10 text-xl md:text-2xl  mb-5">
-                Tous les événements publics !
-            </h2>
+            className="flex flex-col justify-center items-center my-14 scroll-mt-20"
+        >
+            <div className="flex md:flex-row flex-col justify-between items-center w-full max-w-7xl mb-5 gap-2">
+                <h2 className="font-bold justify-self-center md:px-10 text-xl md:text-2xl">
+                    Tous les événements publics !
+                </h2>
+                <div className="flex w-full max-w-md items-center space-x-2 md:px-10">
+                    <Input
+                        type="text"
+                        placeholder="Rechercher..."
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                    />
+                </div>
+            </div>
 
             <div className="w-full justify-self-center max-w-7xl flex flex-wrap gap-4 mt-2 items-center justify-center px-5">
                 {loading ? (
                     Array.from({ length: eventsPerPage }).map((_, index) => (
                         <SkeletonCard key={index} />
                     ))
-                ) : (
+                ) : currentEvents.length > 0 ? (
                     currentEvents.map((event, index) => (
                         <CardEvent key={index} event={event} />
                     ))
+                ) : (
+                    <p>Aucun événement trouvé.</p>
                 )}
             </div>
 
