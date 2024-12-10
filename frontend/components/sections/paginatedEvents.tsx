@@ -44,6 +44,7 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredEvents, setFilteredEvents] = useState<EventProps[]>([]);
     const [sortOrder, setSortOrder] = useState('mostRecent');
+    const [location, setLocation] = useState('');
 
     const totalPages = Math.ceil(events.length / eventsPerPage)
 
@@ -58,7 +59,8 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
             console.log("Tri des événements avec ordre :", sortOrder);
 
             let sortedEvents = events.filter(event =>
-                event.title.toLowerCase().includes(searchTerm.toLowerCase())
+                event.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                event.location.toLowerCase().includes(location.toLowerCase())
             );
 
             sortedEvents = sortedEvents.sort((a, b) => {
@@ -72,7 +74,7 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
         }, 300);
 
         return () => clearTimeout(timeoutId);
-    }, [searchTerm, events, sortOrder]);
+    }, [searchTerm, events, sortOrder, location]);
 
 
 
@@ -85,6 +87,10 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
 
     const handleSearchChange = (e: { target: { value: React.SetStateAction<string> } }) => {
         setSearchTerm(e.target.value);
+    };
+
+    const handleLocationChange = (e: { target: { value: React.SetStateAction<string> } }) => {
+        setLocation(e.target.value);
     };
 
     const handleSortChange = (e: { target: { value: React.SetStateAction<string> } }) => {
@@ -111,6 +117,12 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
                         placeholder="Rechercher..."
                         value={searchTerm}
                         onChange={handleSearchChange}
+                    />
+                    <Input
+                        type="text"
+                        placeholder="Rechercher par ville..."
+                        value={location}
+                        onChange={handleLocationChange}
                     />
                     <Select value={sortOrder} onValueChange={setSortOrder}>
                         <SelectTrigger className="w-[180px]">
