@@ -24,11 +24,11 @@ class EventByUserController extends AbstractController
             'SELECT e
             FROM App\Entity\Event e
             JOIN e.users u
-            WHERE u.id = :userId AND e.is_draft = :isDraft AND e.supprime = :supprime' 
+            WHERE u.id = :userId AND e.is_draft = :isDraft AND e.date_start > :dateStart AND e.supprime IS NULL' 
         )->setParameters([
             'userId' => $userId,
-            'isDraft' => '0',
-            'supprime' => null
+            'isDraft' => 0,
+            'dateStart' => new \DateTime(),
         ]);
 
         $events = $query->getResult();

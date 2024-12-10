@@ -133,7 +133,7 @@ export default function Profile() {
                 </Button>
               </Link>
             </div>
-            <CarouselInscris events={events} />
+            {events.length > 0 ? (<CarouselInscris events={events} />) : (<p className="text-gray-800">Vous n'êtes inscrit à aucun événement</p>)}
           </div>
         </div>
       </div>

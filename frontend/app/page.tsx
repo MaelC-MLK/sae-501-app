@@ -31,8 +31,6 @@ export default function Home() {
       .catch(error => console.error("Erreur lors de la récupération des événements :", error));
   }, []);
 
-  console.log(events);
-
   return (
     <div className="mt-10 relative overflow-hidden">
       <div className="w-144 h-144 bg-primary rounded-full blur-6xl absolute -right-52 -top-64 -z-10" />

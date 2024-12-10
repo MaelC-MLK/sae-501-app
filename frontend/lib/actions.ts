@@ -100,8 +100,6 @@ export async function inviteFriend(email: string) {
 }
 
 export async function inviteToEvent(email: string, eventId: Number) {
-    console.log("Envoi de l'invitation avec :", email, eventId);
-
     const response = await fetch(`${process.env.API_BASE_URL}/api/events/invite`, {
         method: "POST",
         credentials: 'include',
@@ -122,7 +120,6 @@ export async function inviteToEvent(email: string, eventId: Number) {
         throw new Error(errorMessage);
     }
     
-    console.log("Réponse API réussie :", responseJson); // Utilisation directe
     return responseJson;
 }
 

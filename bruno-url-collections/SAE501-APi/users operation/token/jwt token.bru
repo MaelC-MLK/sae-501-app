@@ -1,0 +1,18 @@
+meta {
+  name: jwt token
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8080/api/auth
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "n8no.ttn@gmail.com",
+    "password": "ninotoutain"
+  }
+}

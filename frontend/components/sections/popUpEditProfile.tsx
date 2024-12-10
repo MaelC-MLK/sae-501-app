@@ -89,13 +89,12 @@ export function PopUpEditProfile({ user, onUpdate, userContext: { userContextUse
       const data = await UpdateUser(updatedUser);
 
       if (onUpdate) {
-        console.log(data);
         onUpdate(data); // Appelle le callback pour mettre à jour le parent
         setUser(data); // Met à jour le contexte utilisateur
       }
 
+      setError("");
       setOpen(false); // Ferme le pop-up après la mise à jour
-
     } catch (error: any) {
       setError(error.message);
     }
@@ -168,7 +167,7 @@ export function PopUpEditProfile({ user, onUpdate, userContext: { userContextUse
           </div>
         </div>
         <DialogFooter>
-          <Button type="button" onClick={handleSubmit} disabled={!!error}>
+          <Button type="button" onClick={handleSubmit}>
             Enregistrer les modifications
           </Button>
         </DialogFooter>

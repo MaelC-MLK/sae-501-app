@@ -36,8 +36,6 @@ export function PopUpDeleteUser({ user }: { user: User }) {
         body: JSON.stringify({id: user.sub}),
       });
 
-      console.log("response", response);
-
       if (!response.ok) {
         throw new Error(`Erreur ${response.status}: ${response.statusText}`);
       }
