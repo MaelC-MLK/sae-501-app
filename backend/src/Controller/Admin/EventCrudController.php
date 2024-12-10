@@ -39,7 +39,8 @@ class EventCrudController extends AbstractCrudController
                 ->setUploadedFileNamePattern(
                     fn (UploadedFile $file): string => sprintf('%s_%s.%s', date('YmdHis'), uniqid(), $file->guessExtension())
                 ),
-            AssociationField::new('users')->autocomplete()
+            AssociationField::new('users')->autocomplete(),
+            DateTimeField::new('supprime', 'Supprime')->setRequired(false),
         ];
     }
 

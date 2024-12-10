@@ -307,13 +307,10 @@ export default function PopupCreationEvent({
       const response = await createEvent(formData);
       setIsMainDialogOpen(false);
       resetForm();
-      console.log(response);
   
       if (response['@id']) {
           const idMatch = response['@id'].match(/\/api\/events\/(\d+)/);
           const eventId = idMatch ? parseInt(idMatch[1], 10) : null;
-  
-          console.log("Event ID:", eventId);
   
           if (eventId !== null) {
               await CreateEventAndNotify(eventId);
@@ -361,7 +358,6 @@ export default function PopupCreationEvent({
 
     try {
       const response = await createEvent(formData);
-      console.log("Event saved as draft:", response);
       setIsConfirmDialogOpen(false);
       setIsMainDialogOpen(false);
       resetForm();

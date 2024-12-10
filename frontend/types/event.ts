@@ -7,6 +7,7 @@ export interface EventProps {
     date_end: string;
     time_start: string;
     time_end: string;
+    isVisible: boolean;
     description: string;
     image: string;
     badge: string;
