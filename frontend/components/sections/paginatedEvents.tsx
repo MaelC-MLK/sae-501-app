@@ -14,18 +14,35 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { Input } from "../ui/input"
 
 interface PaginatedEventsProps {
     events: EventProps[]
 }
 
+function parseDate(dateString: string): Date {
+    const [datePart, timePart] = dateString.split(" - ");
+    const [day, month, year] = datePart.split("/").map(Number);
+    const [hours, minutes] = timePart.split(":").map(Number);
+    return new Date(year, month - 1, day, hours, minutes);
+}
+
+
 export function PaginatedEvents({ events }: PaginatedEventsProps) {
     const [currentPage, setCurrentPage] = useState(1)
     const [loading, setLoading] = useState(true)
     const eventsPerPage = 6
     const [searchTerm, setSearchTerm] = useState('');
-    const [filteredEvents, setFilteredEvents] = useState(events);
+    const [filteredEvents, setFilteredEvents] = useState<EventProps[]>([]);
     const [sortOrder, setSortOrder] = useState('mostRecent');
 
     const totalPages = Math.ceil(events.length / eventsPerPage)
@@ -38,21 +55,27 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            let sortedEvents = [...events].filter(event =>
+            console.log("Tri des événements avec ordre :", sortOrder);
+
+            let sortedEvents = events.filter(event =>
                 event.title.toLowerCase().includes(searchTerm.toLowerCase())
             );
 
-            if (sortOrder === 'mostRecent') {
-                sortedEvents.sort((a, b) => new Date(b.date_start).getTime() - new Date(a.date_start).getTime());
-            } else {
-                sortedEvents.sort((a, b) => new Date(a.date_start).getTime() - new Date(b.date_start).getTime());
-            }
+            sortedEvents = sortedEvents.sort((a, b) => {
+                const dateA = parseDate(a.date_start).getTime();
+                const dateB = parseDate(b.date_start).getTime();
+                return sortOrder === "mostRecent" ? dateA - dateB : dateB - dateA;
+            });
 
+            console.log("Événements triés :", sortedEvents);
             setFilteredEvents(sortedEvents);
         }, 300);
 
         return () => clearTimeout(timeoutId);
     }, [searchTerm, events, sortOrder]);
+
+
+
 
     const handlePageClick = (page: number) => {
         if (page >= 1 && page <= totalPages) {
@@ -82,17 +105,25 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
                 <h2 className="font-bold justify-self-center md:px-10 text-xl md:text-2xl">
                     Tous les événements publics !
                 </h2>
-                <div className="flex w-full max-w-md items-center space-x-2 md:px-10">
+                <div className="flex w-full max-w-xl items-center space-x-2 md:px-10">
                     <Input
                         type="text"
                         placeholder="Rechercher..."
                         value={searchTerm}
                         onChange={handleSearchChange}
                     />
-                    <select value={sortOrder} onChange={handleSortChange}>
-                        <option value="mostRecent">Du plus récent au moins récent</option>
-                        <option value="leastRecent">Du moins récent au plus récent</option>
-                    </select>
+                    <Select value={sortOrder} onValueChange={setSortOrder}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Filtrer" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Filtrer</SelectLabel>
+                                <SelectItem value="mostRecent">Du plus au moins récent</SelectItem>
+                                <SelectItem value="leastRecent">Du moins au plus récent</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                 </div>
             </div>
 
@@ -106,7 +137,9 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
                         <CardEvent key={index} event={event} />
                     ))
                 ) : (
-                    <p>Aucun événement trouvé.</p>
+                    <div className="h-96 flex items-center">
+                        <p>Aucun événement trouvé.</p>
+                    </div>
                 )}
             </div>
 
