@@ -131,7 +131,15 @@ export default function Event() {
     const startTime = format(dateStart, "HH:mm", { locale: fr });
     const endTime = format(dateEnd, "HH:mm", { locale: fr });
 
+    const participantLimit = event.limit;
+    const participantPercentage = (participantCount / participantLimit) * 100;
 
+    let badgeVariant: "secondary" | "default" | "destructive" | "outline" = "secondary";
+    if (participantPercentage >= 75 && participantPercentage < 100) {
+        badgeVariant = "default";
+    } else if (participantPercentage >= 100) {
+        badgeVariant = "destructive";
+    }
 
     return (
 
@@ -251,8 +259,8 @@ export default function Event() {
 
                             </p>
                         </div>
-                        <Badge variant="secondary" className="font-normal text-base">
-                            {participantCount}
+                        <Badge variant={badgeVariant} className={`${participantPercentage >= 75 && participantPercentage < 100 ? 'bg-warning hover:bg-warning' : null} font-normal text-base`}>
+                            {participantCount} / {participantLimit}
                         </Badge>
                     </div>
 
