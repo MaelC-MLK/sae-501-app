@@ -1,29 +1,79 @@
 <!DOCTYPE html>
 <html>
-<head>  
+<head>
     <meta charset="UTF-8">
     <title>Création de l'événement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #0a0e1b;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f2f5f9;
+            border-radius: 8px;
+            border: 1px solid #e3e8f0;
+        }
+
+        h1 {
+            color: #7d3cff;
+        }
+
+        p {
+            color: #747b8a;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #ffffff;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #e3e8f0;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #747b8a;
+        }
+    </style>
 </head>
 <body>
-    <h1>Nouvel événement : {{ event.title }}</h1>
-    <p>Bonjour,</p>
-    <p>Nous sommes ravis de vous informer qu'un nouvel événement <strong>{{ event.title }}</strong> a été créé.</p>
-    <p>Voici les détails de l'événement :</p>
-    <ul>
-        {% if event.dateStart %}
-            <li>Date de début : {{ event.dateStart|date('d/m/Y H:i') }}</li>
-        {% endif %}
-        {% if event.dateEnd %}
-            <li>Date de fin : {{ event.dateEnd|date('d/m/Y H:i') }}</li>
-        {% endif %}
-        {% if event.description %}
-            <li>Description : {{ event.description }}</li>
-        {% endif %}
-        {% if event.location %}
-            <li>Lieu : {{ event.location }}</li>
-        {% endif %}
-    </ul>
-    <p>Nous espérons vous voir nombreux à cet événement.</p>
-    <p>Merci de votre participation.</p>
+    <div class="container">
+        <h1>Nouvel événement : {{ event.title }}</h1>
+        <p>Bonjour,</p>
+        <p>Nous sommes ravis de vous informer qu'un nouvel événement <strong>{{ event.title }}</strong> a été créé.</p>
+        <p>Voici les détails de l'événement :</p>
+        <ul>
+            {% if event.dateStart %}
+                <li>Date de début : {{ event.dateStart|date('d/m/Y H:i') }}</li>
+            {% endif %}
+            {% if event.dateEnd %}
+                <li>Date de fin : {{ event.dateEnd|date('d/m/Y H:i') }}</li>
+            {% endif %}
+            {% if event.description %}
+                <li>Description : {{ event.description }}</li>
+            {% endif %}
+            {% if event.location %}
+                <li>Lieu : {{ event.location }}</li>
+            {% endif %}
+        </ul>
+        <p>Nous espérons vous voir nombreux à cet événement.</p>
+        <div class="footer">
+            <p>© {{ "now"|date("Y") }} Eventify. Tous droits réservés.</p>
+        </div>
+    </div>
 </body>
 </html>
