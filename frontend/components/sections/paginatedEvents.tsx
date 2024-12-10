@@ -26,6 +26,7 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
     const eventsPerPage = 6
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredEvents, setFilteredEvents] = useState(events);
+    const [sortOrder, setSortOrder] = useState('mostRecent');
 
     const totalPages = Math.ceil(events.length / eventsPerPage)
 
@@ -37,15 +38,21 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            setFilteredEvents(
-                events.filter(event =>
-                    event.title.toLowerCase().includes(searchTerm.toLowerCase())
-                )
+            let sortedEvents = [...events].filter(event =>
+                event.title.toLowerCase().includes(searchTerm.toLowerCase())
             );
+
+            if (sortOrder === 'mostRecent') {
+                sortedEvents.sort((a, b) => new Date(b.date_start).getTime() - new Date(a.date_start).getTime());
+            } else {
+                sortedEvents.sort((a, b) => new Date(a.date_start).getTime() - new Date(b.date_start).getTime());
+            }
+
+            setFilteredEvents(sortedEvents);
         }, 300);
 
         return () => clearTimeout(timeoutId);
-    }, [searchTerm, events]);
+    }, [searchTerm, events, sortOrder]);
 
     const handlePageClick = (page: number) => {
         if (page >= 1 && page <= totalPages) {
@@ -55,6 +62,10 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
 
     const handleSearchChange = (e: { target: { value: React.SetStateAction<string> } }) => {
         setSearchTerm(e.target.value);
+    };
+
+    const handleSortChange = (e: { target: { value: React.SetStateAction<string> } }) => {
+        setSortOrder(e.target.value);
     };
 
     const currentEvents = filteredEvents.slice(
@@ -78,6 +89,10 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
                         value={searchTerm}
                         onChange={handleSearchChange}
                     />
+                    <select value={sortOrder} onChange={handleSortChange}>
+                        <option value="mostRecent">Du plus récent au moins récent</option>
+                        <option value="leastRecent">Du moins récent au plus récent</option>
+                    </select>
                 </div>
             </div>
 
