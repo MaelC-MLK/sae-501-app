@@ -148,3 +148,19 @@ export async function fetchEventDrafts(userId: string) {
 
     return await response.json();
 }
+
+export async function fetchPublicEventById(eventId: number) {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/public/${eventId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('Erreur lors de la récupération de l\'événement');
+    }
+
+    return await response.json();
+}

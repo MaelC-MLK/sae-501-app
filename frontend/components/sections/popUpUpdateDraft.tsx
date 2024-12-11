@@ -78,6 +78,7 @@ const FormSchema = z.object({
   ),
   isVisible: z.boolean(),
   is_draft: z.boolean(),
+  limit: z.string(),
 });
 
 export default function PopupUpdateDraft({
@@ -149,6 +150,7 @@ export default function PopupUpdateDraft({
         })) || [],
       isVisible: eventData.isVisible,
       is_draft: eventData.is_draft,
+      limit: eventData.limit,
     },
   });
 
@@ -266,6 +268,7 @@ export default function PopupUpdateDraft({
       location: data.location || "",
       creator: `/api/users/${userContext.user.id}`,
       users: participants.map((participant) => `/api/users/${participant.id}`),
+      limit: data.limit.toString() || "5000",
     };  
   
     try {
@@ -309,6 +312,7 @@ export default function PopupUpdateDraft({
       creator: `/api/users/${userContext.user.id}`,
       users: participants.map((participant) => `/api/users/${participant.id}`),
       is_draft: "false",
+      limit: data.limit.toString() || "5000",
     };  
   
     try {
@@ -360,9 +364,9 @@ export default function PopupUpdateDraft({
             </div>
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-xl max-h-dvh overflow-y-auto">
+        <DialogContent className="sm:max-w-3xl max-h-dvh overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Modifier un le brouillon</DialogTitle>
+            <DialogTitle>Modifier le brouillon</DialogTitle>
             <DialogDescription>
               Veuillez remplir le formulaire.
             </DialogDescription>
@@ -392,13 +396,14 @@ export default function PopupUpdateDraft({
                     )}
                   />
                 </div>
-                <div className="grid gap-5 mt-4">
-                  <div className="flex flex-col">
+                <div className="flex flex-col md:flex-row gap-5 mt-4">
+                  <div className="flex flex-col w-full">
                     <Label htmlFor="date" className="mb-2">
                       Date
                     </Label>
                     <Popover>
                       <PopoverTrigger asChild>
+
                         <Button
                           id="date"
                           variant={"outline"}
@@ -410,7 +415,7 @@ export default function PopupUpdateDraft({
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {date?.from ? (
                             date.to &&
-                            date.from.getTime() !== date.to.getTime() ? (
+                              date.from.getTime() !== date.to.getTime() ? (
                               `${format(date.from, "dd MMMM yyyy", {
                                 locale: fr,
                               })} - ${format(date.to, "dd MMMM yyyy", {
@@ -534,7 +539,10 @@ export default function PopupUpdateDraft({
                     />
                   </div>
                 </div>
-                <div className="flex flex-col mt-4">
+
+                <div className="grid md:grid-cols-2 gap-5 mt-4">
+                  
+                <div className="flex flex-col w-full">
                   <Label htmlFor="location" className="mb-2">
                     Localisation
                   </Label>
@@ -555,6 +563,32 @@ export default function PopupUpdateDraft({
                       </FormItem>
                     )}
                   />
+                </div>
+                <div className="flex flex-col w-fit">
+                  <Label htmlFor="limit" className="mb-2">
+                    Limite de participants
+                  </Label>
+                  <FormField
+                    control={form.control}
+                    name="limit"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            id="limit"
+                            type="number"
+                            min={0}
+                            max={5000}
+                            placeholder="5000"
+                            autoComplete="off"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 </div>
 
                 <div className="flex flex-col mt-4">
@@ -597,7 +631,7 @@ export default function PopupUpdateDraft({
 
                 <Separator className="my-4" />
 
-                <div className="flex flex-col mt-4">
+                {/* <div className="flex flex-col mt-4">
                   <Label htmlFor="participants" className="mb-2">
                     Ajouter des participants
                   </Label>
@@ -648,9 +682,9 @@ export default function PopupUpdateDraft({
                       </div>
                     )}
                   </div>
-                </div>
+                </div> */}
 
-                <div className="flex flex-wrap mt-4 gap-2 mb-2">
+                {/* <div className="flex flex-wrap mt-4 gap-2 mb-2">
                   {participants.map((participant) => (
                     <div key={participant.id} className="relative">
                       <Avatar className="">
@@ -668,7 +702,7 @@ export default function PopupUpdateDraft({
                       />
                     </div>
                   ))}
-                </div>
+                </div> */}
               </div>
               <DialogFooter className="gap-2 md:gap-0 mt-6 sm:mt-0 sm:justify-between">
                 <DialogClose asChild>

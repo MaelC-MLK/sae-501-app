@@ -27,6 +27,7 @@
     --radius: 0.5rem; /* 8px */
 
     --dark-color: 224 71.4% 4.1%; /* hsl(224 71.4% 4.1%) */
+    --warning: 45 100% 50%; /* hsl(45 100% 50%) */
 
     
   }
@@ -329,4 +330,9 @@
     font-size: 12px;
   }
 
+}
+
+
+.fc-timegrid-event-harness-inset, .fc-daygrid-event-harness{
+  cursor: pointer;
 }

@@ -154,6 +154,15 @@ class Event
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $supprime = null;
 
+    #[ORM\Column(name: "`limit`", length: 4)]
+    #[Groups(['event:read', 'event:write'])]
+    #[Assert\Range(
+        min: 0,
+        max: 5000,
+        notInRangeMessage: 'La limite doit être comprise entre {{ min }} et {{ max }}.',
+    )]
+    private ?string $limit = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -378,4 +387,37 @@ class Event
         $this->supprime = new \DateTimeImmutable();
         return $this;
     }
+
+    // public function getLimit(): ?int
+    // {
+    //     return $this->limit;
+    // }
+
+    // public function setLimit($limit): static
+    // {
+    //     if (is_numeric($limit)) {
+    //         $this->limit = (int) $limit;
+    //     } else {
+    //         $this->limit = null;
+    //     }
+
+    //     return $this;
+    // }
+
+    public function getLimit(): ?int
+    {
+        return $this->limit;
+    }
+
+    public function setLimit($limitInt): static
+    {
+        if (is_numeric($limitInt)) {
+            $this->limit = (int) $limitInt;
+        } else {
+            $this->limit = null;
+        }
+    
+        return $this;
+    }
+
 }

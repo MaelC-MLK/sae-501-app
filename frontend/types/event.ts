@@ -15,6 +15,7 @@ export interface EventProps {
     isRecommended: number;
     users: Array<UserProps>;
     creator: UserProps;
+    limit: number;
 }
 
 export interface PopupCreationEventProps {

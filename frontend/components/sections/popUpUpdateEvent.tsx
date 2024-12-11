@@ -58,11 +58,13 @@ import { useDebouncedCallback } from "use-debounce";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import { UpdateEventAndNotify } from "@/lib/actions";
+import Image from "next/image";
 import { UpdateEventImage } from "@/lib/actions";
 import ImageUpload from "@/components/sections/dropZoneEventPopup";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
 
 
 const FormSchema = z.object({
@@ -85,6 +87,7 @@ const FormSchema = z.object({
   ),
   isVisible: z.boolean(),
   is_draft: z.boolean(),
+  limit: z.string(),
 });
 
 export default function PopupUpdateEvent({
@@ -146,6 +149,7 @@ export default function PopupUpdateEvent({
         })) || [],
       isVisible: eventData.extendedProps.isVisible,
       is_draft: eventData.extendedProps.is_draft,
+      limit: eventData.extendedProps.limit,
     },
   });
 
@@ -259,61 +263,65 @@ export default function PopupUpdateEvent({
   };
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-      if (userContext.user === null) {
-          console.error("User not found");
-          return;
-      }
-      const formData = {
-          title: data.title,
-          description: data.description || "",
-          date_start: combineDateAndTime(
-              date?.from || new Date(),
-              data.time_start
-          ).toString(),
-          date_end: combineDateAndTime(
-              date?.to || date?.from || new Date(),
-              data.time_end
-          ).toString(),
-          isVisible: isPrivate ? "false" : "true",
-          location: data.location || "",
-          creator: `/api/users/${userContext.user.id}`,
-          users: participants.map((participant) => `/api/users/${participant.id}`),
-      };
-  
-      try {
-          await UpdateEvent(formData, eventData.id);
+    if (userContext.user === null) {
+        console.error("User not found");
+        return;
+    }
+    const formData = {
+        title: data.title,
+        description: data.description || "",
+        date_start: combineDateAndTime(
+            date?.from || new Date(),
+            data.time_start
+        ).toString(),
+        date_end: combineDateAndTime(
+            date?.to || date?.from || new Date(),
+            data.time_end
+        ).toString(),
+        isVisible: isPrivate ? "false" : "true",
+        location: data.location || "",
+        creator: `/api/users/${userContext.user.id}`,
+        users: participants.map((participant) => `/api/users/${participant.id}`),
+        limit: data.limit.toString() || "5000",
+    };
 
-          // Vérifier si l'image a été modifiée
-          if (eventPicture) {
-              const imageFile = new FormData();
-              imageFile.append("imageFile", eventPicture);
-              await UpdateEventImage(eventData.id, imageFile);
-          }
-  
-          setIsMainDialogOpen(false);
-          toast({
-              title: "Événement modifié ! ✅",
-              description: "Votre événement a été modifié avec succès.",
-              // action: (
-              //     <ToastAction altText="Annuler">Annuler</ToastAction>
-              // ),
-          });
-  
-          // Envoyer la notification en arrière-plan
-          UpdateEventAndNotify(eventData.id).catch((error) => {
-              console.error("Failed to send notification:", error);
-          });
-      } catch (error) {
-          console.error("Failed to update event:", error);
-          toast({
-              title: "Erreur lors de la modification de l'événement ❌",
-              description: "Une erreur est survenue lors de la modification de l'événement.",
-              // action: (
-              //     <ToastAction altText="Annuler">Annuler</ToastAction>
-              // ),
-          });
-      }
-  };
+    try {
+        await UpdateEvent(formData, eventData.id);
+
+        // Vérifier si l'image a été modifiée
+        if (eventPicture) {
+          const imageFile = new FormData();
+          imageFile.append("imageFile", eventPicture);
+          await UpdateEventImage(eventData.id, imageFile);
+        }
+        
+        setIsMainDialogOpen(false);
+        toast({
+            title: "Événement modifié ! ✅",
+            description: "Votre événement a été modifié avec succès.",
+            // action: (
+            //     <ToastAction altText="Annuler">Annuler</ToastAction>
+            // ),
+        });
+
+        // Envoyer la notification en arrière-plan
+        UpdateEventAndNotify(eventData.id).catch((error) => {
+            console.error("Failed to send notification:", error);
+        });
+    } catch (error) {
+        console.error("Failed to update event:", error);
+        toast({
+            title: "Erreur lors de la modification de l'événement ❌",
+            description: "Une erreur est survenue lors de la modification de l'événement.",
+            // action: (
+            //     <ToastAction altText="Annuler">Annuler</ToastAction>
+            // ),
+        });
+    }
+};
+
+const maxVisibleParticipants = 5;
+const extraParticipantsCount = participants.length - maxVisibleParticipants;  
   return (
     <>
       <Dialog open={isMainDialogOpen} onOpenChange={setIsMainDialogOpen}>
@@ -343,7 +351,7 @@ export default function PopupUpdateEvent({
             </div>
           </button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-xl max-h-dvh overflow-y-auto">
+        <DialogContent className="sm:max-w-3xl max-h-dvh overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Modifier un événement</DialogTitle>
             <DialogDescription>
@@ -375,13 +383,14 @@ export default function PopupUpdateEvent({
                     )}
                   />
                 </div>
-                <div className="grid gap-5 mt-4">
-                  <div className="flex flex-col">
+                <div className="flex flex-col md:flex-row gap-5 mt-4">
+                  <div className="flex flex-col w-full">
                     <Label htmlFor="date" className="mb-2">
                       Date
                     </Label>
                     <Popover>
                       <PopoverTrigger asChild>
+
                         <Button
                           id="date"
                           variant={"outline"}
@@ -393,7 +402,7 @@ export default function PopupUpdateEvent({
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {date?.from ? (
                             date.to &&
-                            date.from.getTime() !== date.to.getTime() ? (
+                              date.from.getTime() !== date.to.getTime() ? (
                               `${format(date.from, "dd MMMM yyyy", {
                                 locale: fr,
                               })} - ${format(date.to, "dd MMMM yyyy", {
@@ -517,7 +526,9 @@ export default function PopupUpdateEvent({
                     />
                   </div>
                 </div>
-                <div className="flex flex-col mt-4">
+                <div className="grid md:grid-cols-2 gap-5 mt-4">
+                  
+                <div className="flex flex-col w-full">
                   <Label htmlFor="location" className="mb-2">
                     Localisation
                   </Label>
@@ -538,6 +549,32 @@ export default function PopupUpdateEvent({
                       </FormItem>
                     )}
                   />
+                </div>
+                <div className="flex flex-col w-fit">
+                  <Label htmlFor="limit" className="mb-2">
+                    Limite de participants
+                  </Label>
+                  <FormField
+                    control={form.control}
+                    name="limit"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            id="limit"
+                            type="number"
+                            min={0}
+                            max={5000}
+                            placeholder="5000"
+                            autoComplete="off"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 </div>
 
                 <div className="flex flex-col mt-4">
@@ -619,13 +656,15 @@ export default function PopupUpdateEvent({
                                 }
                               >
                                 <Avatar className="mr-2">
-                                  <AvatarImage
-                                    src={result.avatar}
+                                  <Image
+                                    src={result.avatar ? process.env.API_BASE_URL + "/uploads/users/" + result.avatar : "/images/profile-picture.webp"}
                                     alt={result.firstName}
-                                  />
-                                  <AvatarFallback>
-                                    {result.firstName.charAt(0)}
-                                  </AvatarFallback>
+                                    height={40}
+                                    width={40}
+                                    unoptimized={true}
+                                    className="rounded-full shrink-0 overflow-hidden object-cover"
+                                  >
+                                  </Image>
                                 </Avatar>
                                 <span className="capitalize">
                                   {result.firstName} {result.lastName}
@@ -644,16 +683,18 @@ export default function PopupUpdateEvent({
                 </div>
 
                 <div className="flex flex-wrap mt-4 gap-2 mb-2">
-                  {participants.map((participant) => (
+                  {participants.slice(0, maxVisibleParticipants).map((participant) => (
                     <div key={participant.id} className="relative">
                       <Avatar className="">
-                        <AvatarImage
-                          src={participant.avatar}
+                        <Image
+                          src={participant.avatar ? process.env.API_BASE_URL + "/uploads/users/" + participant.avatar : "/images/profile-picture.webp"}
                           alt={participant.firstName}
-                        />
-                        <AvatarFallback>
-                          {participant.firstName.charAt(0)}
-                        </AvatarFallback>
+                          height={40}
+                          width={40}
+                          unoptimized={true}
+                          className="rounded-full shrink-0 overflow-hidden object-cover"
+                        >
+                        </Image>
                       </Avatar>
                       <CrossCircledIcon
                         className="absolute -top-0.5 -right-0.5 h-4 w-4 text-black cursor-pointer bg-white rounded-full"
@@ -661,6 +702,11 @@ export default function PopupUpdateEvent({
                       />
                     </div>
                   ))}
+                  {extraParticipantsCount > 0 && (
+                    <div className="relative flex items-center justify-center w-10 h-10 bg-gray-200 rounded-full">
+                      <span className="text-sm font-medium text-gray-700">+{extraParticipantsCount}</span>
+                    </div>
+                  )}
                 </div>
               </div>
               <DialogFooter className="gap-2 md:gap-0 mt-6 sm:mt-0">

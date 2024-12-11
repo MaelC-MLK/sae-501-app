@@ -45,6 +45,7 @@ class EventController extends AbstractController
                 'image' => $event->getImage(),
                 'location' => $event->getLocation(),
                 'isRecommended' => $event->isRecommended(),
+                'limit' => $event->getLimit(),
                 'users' => $event->getUsers()->map(function ($user) {
                     return [
                         'id' => $user->getId(),
@@ -91,8 +92,6 @@ class EventController extends AbstractController
     }
 
 
-
-
     #[Route('/api/events/{id}/join', name: 'event_join', methods: ['PATCH'])]
     public function joinEvent(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -101,23 +100,28 @@ class EventController extends AbstractController
         if (!$user) {
             return new JsonResponse(['message' => 'Vous devez être connecté pour vous inscrire.'], JsonResponse::HTTP_UNAUTHORIZED);
         }
-
+    
         // Récupérer l'événement par ID
         $event = $entityManager->getRepository(Event::class)->find($id);
         if (!$event) {
             return new JsonResponse(['message' => 'Événement non trouvé.'], JsonResponse::HTTP_NOT_FOUND);
         }
-
+    
         // Vérifier si l'utilisateur est déjà inscrit
         if ($event->getUsers()->contains($user)) {
             return new JsonResponse(['message' => 'Vous êtes déjà inscrit à cet événement.'], JsonResponse::HTTP_BAD_REQUEST);
         }
-
+    
+        // Vérifier si le nombre de participants a atteint la limite
+        if ($event->getUsers()->count() >= $event->getLimit()) {
+            return new JsonResponse(['message' => 'Le nombre maximum de participants a été atteint.'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+    
         // Ajouter l'utilisateur à l'événement
         $event->addUser($user);
         $entityManager->persist($event);
         $entityManager->flush();
-
+    
         return new JsonResponse(['message' => 'Inscription réussie à l\'événement.'], JsonResponse::HTTP_OK);
     }
 
