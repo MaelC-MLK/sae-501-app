@@ -93,10 +93,6 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
         setLocation(e.target.value);
     };
 
-    const handleSortChange = (e: { target: { value: React.SetStateAction<string> } }) => {
-        setSortOrder(e.target.value);
-    };
-
     const currentEvents = filteredEvents.slice(
         (currentPage - 1) * eventsPerPage,
         currentPage * eventsPerPage
@@ -107,35 +103,38 @@ export function PaginatedEvents({ events }: PaginatedEventsProps) {
             id="events-list"
             className="flex flex-col justify-center items-center my-14 scroll-mt-20"
         >
-            <div className="flex md:flex-row flex-col justify-between items-center w-full max-w-7xl mb-5 gap-2">
-                <h2 className="font-bold justify-self-center md:px-10 text-xl md:text-2xl">
-                    Tous les événements publics !
+            <div className="flex lg:flex-row flex-col justify-between items-center w-full max-w-7xl mb-2 sm:mb-5 gap-2">
+                <h2 className="font-bold justify-self-center md:px-10 text-xl md:text-2xl text-nowrap">
+                    Tous les événements !
                 </h2>
-                <div className="flex w-full max-w-xl items-center space-x-2 md:px-10">
+                <div className="flex flex-col md:flex-row max-w-4xl w-full items-center px-4 sm:px-10 gap-2">
                     <Input
                         type="text"
                         placeholder="Rechercher..."
                         value={searchTerm}
                         onChange={handleSearchChange}
                     />
-                    <Input
-                        type="text"
-                        placeholder="Rechercher par ville..."
-                        value={location}
-                        onChange={handleLocationChange}
-                    />
-                    <Select value={sortOrder} onValueChange={setSortOrder}>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Filtrer" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Filtrer</SelectLabel>
-                                <SelectItem value="mostRecent">Du plus au moins récent</SelectItem>
-                                <SelectItem value="leastRecent">Du moins au plus récent</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+                    <div className="flex flex-row gap-2 w-full">
+                        <Input
+                            type="text"
+                            placeholder="Où ?"
+                            value={location}
+                            onChange={handleLocationChange}
+                            className="w-full"
+                        />
+                        <Select value={sortOrder} onValueChange={setSortOrder}>
+                            <SelectTrigger className="w-[210px]">
+                                <SelectValue placeholder="Trier" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Trier</SelectLabel>
+                                    <SelectItem value="mostRecent">Du plus au moins récent</SelectItem>
+                                    <SelectItem value="leastRecent">Du moins au plus récent</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
             </div>
 
