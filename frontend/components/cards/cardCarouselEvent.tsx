@@ -87,7 +87,9 @@ export function CardCarouselEvent({ event }: { event: EventProps }) {
                         </div>
                     ) : null}
                 </div>
-            </Link>
-        );
-    }
+            </div>
+
+        </Link>
+
+    );
 }
