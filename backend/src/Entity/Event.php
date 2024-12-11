@@ -25,6 +25,8 @@ use App\Controller\EventByCreatorController;
 use App\Controller\UpdateEventImageController;
 use App\Controller\EventDraftController;
 use App\Controller\MarkEventAsDeletedController;
+use App\Controller\EventByTokenController;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[Vich\Uploadable]
@@ -59,7 +61,13 @@ use App\Controller\MarkEventAsDeletedController;
             controller: EventDraftController::class,
             read: false,
         ),
-        new Get(),
+        new Get(
+            uriTemplate: '/events/token/{idToken}',
+            controller: EventByTokenController::class, 
+            read: false, 
+            requirements: ['idToken' => '[\w\-]+'], // UUID format
+            normalizationContext: ['groups' => ['event:read']],
+        ),
         new Put(),
         new Patch(),
         new Post(
@@ -154,6 +162,10 @@ class Event
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $supprime = null;
 
+    #[ORM\Column(length: 255, nullable: true, unique: true)]
+    #[Groups(['event:read'])]
+    private ?string $idToken = null;
+
     #[ORM\Column(name: "`limit`", length: 6)]
     #[Groups(['event:read', 'event:write'])]
     #[Assert\Range(
@@ -166,6 +178,7 @@ class Event
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->idToken = Uuid::v4()->toRfc4122(); // Génère un UUID unique
     }
 
     public function getId(): ?int
@@ -385,6 +398,18 @@ class Event
     public function markAsDeleted(): static
     {
         $this->supprime = new \DateTimeImmutable();
+        return $this;
+    }
+
+    public function getIdToken(): ?string
+    {
+        return $this->idToken;
+    }
+
+    public function setIdToken(?string $idToken): static
+    {
+        $this->idToken = $idToken;
+
         return $this;
     }
 

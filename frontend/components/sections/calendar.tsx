@@ -347,7 +347,7 @@ export default function Calendar() {
 
             {selectedEvent.extendedProps.isVisible && (
               <>
-                <Link target="_blank" className="relative group text-gray-500 hover:text-gray-700 px-1 float-right" href={`http://localhost:8090/event/${selectedEvent.id}`}                >
+                <Link target="_blank" className="relative group text-gray-500 hover:text-gray-700 px-1 float-right" href={`${process.env.APP_BASE_URL}/event/${selectedEvent.id}`}                >
                   <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2">
                     Page détail public
                   </div>

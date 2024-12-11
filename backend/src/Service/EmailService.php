@@ -17,13 +17,15 @@ class EmailService
         $this->twig = $twig;
     }
 
-    public function sendVerificationEmail(string $recipientEmail, string $token, int $eventId): void
+    public function sendVerificationEmail(string $recipientEmail, string $eventId, int $userId ): void
     {
-        $verificationLink = sprintf('http://localhost:8090/verify-email/%s/%d', $token, $eventId);
+        $verificationLink = sprintf('%s/verify-email/%s/%d', $_ENV['APP_FRONT_BASE_URL'],  $eventId, $userId);
+        $unregisterLink = sprintf('%s/unregister/%s/%d', $_ENV['APP_FRONT_BASE_URL'], $eventId, $userId);
 
         // Rendre le template Twig
         $htmlContent = $this->twig->render('emails/verification_email.html.twig', [
             'verification_link' => $verificationLink,
+            'unregister_link'=> $unregisterLink
         ]);
 
         $email = (new Email())
@@ -37,7 +39,7 @@ class EmailService
 
     public function sendRegisterEmail(string $recipientEmail, string $token): void
     {
-        $verificationLink = sprintf('http://localhost:8090/register/verify/%s', $token);
+        $verificationLink = sprintf('%s/register/verify/%s', $_ENV['APP_FRONT_BASE_URL'], $token);
 
         // Rendre le template Twig
         $htmlContent = $this->twig->render('emails/verification_email.html.twig', [
@@ -56,7 +58,7 @@ class EmailService
     public function sendInvitationEmail(string $recipientEmail): void
     {
         // URL statique pour l'inscription
-        $invitationLink = 'http://localhost:8090/register';
+        $invitationLink = $_ENV['APP_FRONT_BASE_URL'] . '/register';
     
         // Rendre le template Twig
         $htmlContent = $this->twig->render('emails/invitation_email.html.twig', [
@@ -153,7 +155,7 @@ class EmailService
 
     public function sendResetPasswordEmail(string $recipientEmail, string $token): void
     {
-        $resetLink = sprintf('http://localhost:8090/forgot-password/%s', $token);
+        $resetLink = sprintf('%s/forgot-password/%s', $_ENV['APP_FRONT_BASE_URL'], $token);
 
             // Rendre le template Twig
             $htmlContent = $this->twig->render('emails/reset_password.html.twig', [
