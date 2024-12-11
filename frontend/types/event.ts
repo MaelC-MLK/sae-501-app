@@ -13,6 +13,7 @@ export interface EventProps {
     badge: string;
     location: string;
     isRecommended: number;
+    idToken: string;
     users: Array<UserProps>;
     creator: UserProps;
 }

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Event;
 use App\Service\EmailService;
+use App\Service\CheckUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,7 +25,7 @@ class UserController extends AbstractController
 
     // Send token for public event
     #[Route('api/user/email', name: 'app_user_create', methods: ['POST'])]
-    public function createUserWithEmail(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function createUserWithEmail(Request $request, CheckUser $checkUser, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? null;
@@ -34,6 +35,25 @@ class UserController extends AbstractController
             return new JsonResponse(['error' => 'Email et ID de l\'événement sont requis.'], 400);
         }
 
+        $event = $entityManager->getRepository(Event::class)->find($eventId);
+
+        if(!$event){
+            return new JsonResponse(['error' => 'Événement introuvable.'], 404);
+        }
+
+        if($event->isIsVisible() == false){
+            $token = $request->cookies->get('eventify');
+            if(!$token){
+                return new JsonResponse(['error' => 'Vous devez être connecté pour vous inscrire à cet évenement'], 401);
+            }
+
+            $user = $checkUser->check($token);
+
+            if(!$user){
+                return new JsonResponse(['error' => 'Utilisateur non trouvé.'], 404);
+            }
+        }
+
         // Rechercher l'utilisateur par email
         $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
         if (!$user) {
@@ -41,34 +61,93 @@ class UserController extends AbstractController
             $user->setEmail($email);
         } else {
             // Vérifier si l'utilisateur est déjà inscrit à cet événement
-            $event = $entityManager->getRepository(Event::class)->find($eventId);
             if ($event && $event->getUsers()->contains($user)) {
                 return new JsonResponse(['error' => 'already registered'], 400);
             }
         }
 
-        // Générer un token de vérification
-        $token = Uuid::v4()->toRfc4122(); // Génération de token (UUID)
-        $user->setVerificationToken($token);
         $user->setActive(false);
 
-        // Définir la date d'expiration du token
-        $expiryDate = new \DateTime('+10 minutes');
-        $user->setTokenExpiry($expiryDate);
+        try {
+            $entityManager->persist($user);
+            $entityManager->flush();
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Impossible de créer l\'utilisateur : ' . $e->getMessage()], 500);
+        }
 
         // Envoyer l'email de vérification
         try {
-            $this->emailService->sendVerificationEmail($email, $token, $eventId);
+            $this->emailService->sendVerificationEmail($email, $event->getIdToken(), $user->getId());
         } catch (\Exception $e) {
             return new JsonResponse(['error' => 'Impossible d\'envoyer l\'email : ' . $e->getMessage()], 500);
         }
 
-        $entityManager->persist($user);
-        $entityManager->flush();
-
         return new JsonResponse(['message' => 'Utilisateur créé et email de vérification envoyé.'], 201);
     }
 
+    // Verify email for public event
+    #[Route('/api/verify-email/{idEvent}/{idUser}', name: 'verify_email', methods: ['GET'])]
+    public function verifyEmail(string $idEvent, int $idUser, EntityManagerInterface $entityManager): JsonResponse
+    {
+        // Rechercher l'événement par token
+        $event = $entityManager->getRepository(Event::class)->findOneBy(['idToken' => $idEvent]);
+        if (!$event) {
+            return new JsonResponse(['error' => 'Événement introuvable.'], 404);
+        }
+
+        // Rechercher l'utilisateur par id
+        $user = $entityManager->getRepository(User::class)->find($idUser);
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Token invalide ou déjà utilisé.'], 400);
+        }
+
+        // Vérifier si l'utilisateur est déjà inscrit à l'événement
+        if ($event->getUsers()->contains($user)) {
+            return new JsonResponse(['message' => 'Utilisateur déjà inscrit à l\'événement.'], 200);
+        }
+
+        // Ajouter l'utilisateur à l'événement
+        $event->addUser($user);
+        $user->addEvent($event);
+        $user->setActive(true);
+
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Utilisateur inscrit à l\'événement avec succès.'], 200);
+    }
+
+    // Unregister email for public event
+    #[Route('/api/user/email/unregister/{idEvent}/{idUser}', name: 'unregister_email', methods: ['GET'])]
+    public function unregisterEmail(string $idEvent, int $idUser, EntityManagerInterface $entityManager): JsonResponse
+    {
+        // Rechercher l'événement par token
+        $event = $entityManager->getRepository(Event::class)->findOneBy(['idToken' => $idEvent]);
+        if (!$event) {
+            return new JsonResponse(['error' => 'Événement introuvable.'], 404);
+        }
+
+        // Rechercher l'utilisateur par Id
+        $user = $entityManager->getRepository(User::class)->find($idUser);
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Token invalide ou déjà utilisé.'], 400);
+        }
+
+        // Vérifier si l'utilisateur est déjà inscrit à l'événement
+        if (!$event->getUsers()->contains($user)) {
+            return new JsonResponse(['message' => 'Utilisateur non inscrit'], 200);
+        }
+
+        // Retirer l'utilisateur de l'événement
+        $event->removeUser($user);
+        $user->removeEvent($event);
+
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Utilisateur inscrit à l\'événement avec succès.'], 200);
+    }
+    
     // Invite friend with mail
     #[Route('/api/invite', name: 'invite_friend', methods: ['POST'])]
     public function inviteFriend(Request $request, EntityManagerInterface $entityManager): JsonResponse
@@ -95,46 +174,6 @@ class UserController extends AbstractController
         }
 
         return new JsonResponse(['message' => 'Invitation envoyée avec succès.'], 201);
-    }
-
-    // Verify email for public event
-    #[Route('/api/verify-email/{token}/{id}', name: 'verify_email', methods: ['GET'])]
-    public function verifyEmail(string $token, int $id, EntityManagerInterface $entityManager): JsonResponse
-    {
-        // Rechercher l'utilisateur par token
-        $user = $entityManager->getRepository(User::class)->findOneBy(['verificationToken' => $token]);
-
-        if (!$user) {
-            return new JsonResponse(['error' => 'Token invalide ou déjà utilisé.'], 400);
-        }
-
-        // Vérifier si le token a expiré
-        if ($user->getTokenExpiry() < new \DateTime()) {
-            return new JsonResponse(['error' => 'Token expiré.'], 400);
-        }
-
-        // Rechercher l'événement par ID
-        $event = $entityManager->getRepository(Event::class)->find($id);
-        if (!$event) {
-            return new JsonResponse(['error' => 'Événement introuvable.'], 404);
-        }
-
-        // Vérifier si l'utilisateur est déjà inscrit à l'événement
-        if ($event->getUsers()->contains($user)) {
-            return new JsonResponse(['message' => 'Utilisateur déjà inscrit à l\'événement.'], 200);
-        }
-
-        // Ajouter l'utilisateur à l'événement
-        $event->addUser($user);
-        $user->addEvent($event);
-        $user->setActive(true);
-
-        // Supprimer le token après l'inscription
-        $user->setVerificationToken(null);
-        $user->setTokenExpiry(null);
-        $entityManager->flush();
-
-        return new JsonResponse(['message' => 'Utilisateur inscrit à l\'événement avec succès.'], 200);
     }
 
     // Send token for account creation
