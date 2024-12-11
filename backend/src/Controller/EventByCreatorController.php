@@ -28,6 +28,7 @@ class EventByCreatorController extends AbstractController
                 'image' => $event->getImage(),
                 'location' => $event->getLocation(),
                 'isRecommended' => $event->isRecommended(),
+                'idToken' => $event->getIdToken(),
                 'users' => array_map(function ($user) {
                     return [
                         'id' => $user->getId(),

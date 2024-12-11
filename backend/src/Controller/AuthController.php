@@ -88,7 +88,7 @@ class AuthController
         // Ajouter le cookie à la réponse
         $response->headers->setCookie($cookie);
 
-        $response->headers->set('Access-Control-Allow-Origin', 'http://localhost:8090');
+        $response->headers->set('Access-Control-Allow-Origin', $_ENV['APP_FRONT_BASE_URL'],);
         $response->headers->set('Access-Control-Allow-Credentials', 'true');
 
         // Retourner la réponse

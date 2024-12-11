@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Event;
 use App\Service\EmailService;
+use App\Service\CheckUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,9 +25,7 @@ class EventController extends AbstractController
 
     public function __invoke(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        $criteria = ['isVisible' => true, 'supprime' => null];
-        $events = $entityManager->getRepository(Event::class)->findBy($criteria);
-
+        $events = $entityManager->getRepository(Event::class)->findPublicEvents();
         $data = array_map(function (Event $event) {
             return [
                 'id' => $event->getId(),
@@ -45,6 +44,7 @@ class EventController extends AbstractController
                 'image' => $event->getImage(),
                 'location' => $event->getLocation(),
                 'isRecommended' => $event->isRecommended(),
+                'idToken' => $event->getIdToken(),
                 'users' => $event->getUsers()->map(function ($user) {
                     return [
                         'id' => $user->getId(),
@@ -62,7 +62,7 @@ class EventController extends AbstractController
 
 
     #[Route('/api/events/invite', name: 'invite_to_event', methods: ['POST'])]
-    public function inviteToEvent( Request $request, EntityManagerInterface $entityManager, EmailService $emailService
+    public function inviteToEvent( Request $request, CheckUser $checkUser, EntityManagerInterface $entityManager, EmailService $emailService
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? null;
@@ -81,7 +81,7 @@ class EventController extends AbstractController
             $emailService->sendInvitationEvent(
                 $email,
                 $event->getTitle(),
-                'http://localhost:8090/event/' . $eventId
+                $_ENV['APP_FRONT_BASE_URL'] . '/event/' . $eventId
             );
         } catch (\Exception $e) {
             return new JsonResponse(['error' => 'Impossible d\'envoyer l\'invitation : ' . $e->getMessage()], 500);
