@@ -273,7 +273,6 @@ export default function PopupUpdateDraft({
   
     try {
       const response = await UpdateEvent(formData, eventData.id);
-      console.log("Event updated:", response);
       setIsMainDialogOpen(false);
       // revalidatePath('/profile/calendar');
       onEventChange();
@@ -318,7 +317,6 @@ export default function PopupUpdateDraft({
   
     try {
       const response = await UpdateEvent(formData, eventData.id);
-      console.log("Event updated:", response);
       setIsMainDialogOpen(false);
       // revalidatePath('/profile/calendar');
       onEventChange();

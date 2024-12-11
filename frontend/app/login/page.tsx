@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { k2d } from "@/app/fonts/fonts"
+import PopUpForgotPassword from '@/components/sections/popUpForgotPassword';
 
 
 export default function Page() {
@@ -19,6 +20,7 @@ export default function Page() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const { setUser } = useUser();
     const router = useRouter();
 
@@ -54,7 +56,7 @@ export default function Page() {
                             <Input
                                 type="email"
                                 id="email"
-                                placeholder="Adresse mail"
+                                placeholder="example@mail.com"
                                 name="email"
                                 required
                                 className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"
@@ -62,21 +64,35 @@ export default function Page() {
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
-                        <div className="mb-2">
-                            <Label htmlFor="password" className='text-lg'>Mot de passe*</Label>
-                            <Input
-                                type="password"
-                                id="password"
-                                placeholder="Mot de passe"
-                                name="password"
-                                required
-                                className="mt-1 w-full p-2 border border-gray-300 rounded-md text-md h-10"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
+                        <div className="mb-2 relative">
+                            <Label htmlFor="password" className="text-lg">Mot de passe*</Label>
+                            <div className="relative w-full">
+                                <Input
+                                    type={showPassword ? "text" : "password"}
+                                    id="password"
+                                    placeholder="**********"
+                                    name="password"
+                                    required
+                                    className="mt-1 w-full p-2 pr-10 border border-gray-300 rounded-md text-md h-10"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                <button
+                                    type="button"
+                                    className="absolute top-1/2 right-3 transform -translate-y-1/2"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    <img
+                                        src={showPassword ? "/images/show.svg" : "/images/no-show.svg"}
+                                        alt="Toggle Password Visibility"
+                                        className="w-5 h-5"
+                                    />
+                                </button>
+                            </div>
                         </div>
+
                         <div className="text-right">
-                            <a href="#" className="text-primary hover:underline text-sm">Mot de passe oublié ?</a>
+                            <PopUpForgotPassword />
                         </div>
 
                         {error && <p className="text-red-500 text-sm mb-2 mt-3">{error}</p>}

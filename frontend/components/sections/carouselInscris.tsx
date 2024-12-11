@@ -9,31 +9,43 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { SkeletonCardCarousel } from "@/components/skeletons/skeletons";
+import { useState, useEffect } from "react";
 
 interface CarouselRecomProps {
   events: EventProps[];
 }
 
 export function CarouselInscris({ events }: CarouselRecomProps) {
-  console.log(events);
-  const loading = events.length === 0;
+  const [size, setSize] = useState('');
+  const [eventsList, setEventsList] = useState<any[]>([]);
+
+  useEffect(() => {
+    if(events.length == 1 ) {
+      setSize('md:basis-1/1 lg:basis-1/1');
+    }
+
+    if(events.length == 2 ) {
+      setSize('md:basis-1/2 lg:basis-1/2');
+    }
+
+    if(events.length >= 3 ) {
+      setSize('md:basis-1/2 lg:basis-1/3');
+    }
+
+    const eventsArray = events.map((event) => (
+      <CarouselItem key={event.id} className={size}>
+        <CardCarouselEvent event={event} />
+      </CarouselItem>
+    ));
+
+    setEventsList(eventsArray);
+
+  }, [events]);
 
   return (
     <Carousel className="w-full max-w-7xl justify-self-center px-5 sm:px-16">
       <CarouselContent>
-        {loading ? (
-          Array.from({ length: 3 }).map((_, index) => (
-            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-              <SkeletonCardCarousel />
-            </CarouselItem>
-          ))
-        ) : (
-          events.map((event, index) => (
-            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-              <CardCarouselEvent event={event} />
-            </CarouselItem>
-          ))
-        )}
+        {eventsList}
       </CarouselContent>
       <CarouselPrevious className="hover:scale-125 transition-transform duration-200 ml-10" />
       <CarouselNext className="hover:scale-125 transition-transform duration-200 mr-10" />

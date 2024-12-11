@@ -13,7 +13,6 @@ export default function Drafts() {
     if (user) {
       try {
         const events = await fetchEventDrafts(user.id);
-        console.log(events);
         setDrafts(events);
       } catch (error) {
         console.error("Erreur lors de la récupération des brouillons :", error);

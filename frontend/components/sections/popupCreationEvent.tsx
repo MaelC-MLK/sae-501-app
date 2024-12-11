@@ -313,16 +313,12 @@ export default function PopupCreationEvent({
       const response = await createEvent(formData);
       setIsMainDialogOpen(false);
       resetForm();
-      console.log(response);
   
       if (response['@id']) {
           const idMatch = response['@id'].match(/\/api\/events\/(\d+)/);
           const eventId = idMatch ? parseInt(idMatch[1], 10) : null;
   
-          console.log("Event ID:", eventId);
-  
           if (eventId !== null) {
-              await CreateEventAndNotify(eventId);
               toast({
                   title: "Événement créé ! ✅",
                   description: "Votre événement a été créé avec succès.",
@@ -330,6 +326,7 @@ export default function PopupCreationEvent({
                   //     <ToastAction altText="Annuler">Annuler</ToastAction>
                   // ),
               });
+              await CreateEventAndNotify(eventId);
           } else {
               console.error("Impossible d'extraire l'ID de l'événement.");
           }
@@ -365,7 +362,6 @@ export default function PopupCreationEvent({
 
     try {
       const response = await createEvent(formData);
-      console.log("Event saved as draft:", response);
       setIsConfirmDialogOpen(false);
       setIsMainDialogOpen(false);
       resetForm();
