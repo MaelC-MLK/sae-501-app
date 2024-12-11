@@ -26,7 +26,7 @@ import {
 import { Input } from "../ui/input"
 
 interface PaginatedEventsProps {
-    events: EventProps[]
+    events: EventProps[];
 }
 
 function parseDate(dateString: string): Date {

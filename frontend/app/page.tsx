@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { k2d } from "@/app/fonts/fonts";
 import Link from 'next/link';
 import { useUser } from '@/contexts/UserProvider';
+import PaginatedEventsReq from "@/components/sections/paginatedEventsReq";
 
 export default function Home() {
   const [events, setEvents] = useState([]);
@@ -81,7 +82,8 @@ export default function Home() {
 
       {!user && <SignUpCallToAction />}
 
-      <PaginatedEvents events={events} />
+      {/* <PaginatedEvents events={events} /> */}
+      <PaginatedEventsReq />
     </div>
   );
 }

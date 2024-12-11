@@ -24,6 +24,7 @@ class EventController extends AbstractController
 
     public function __invoke(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
+
         $criteria = ['isVisible' => true, 'supprime' => null];
         $events = $entityManager->getRepository(Event::class)->findBy($criteria);
 
@@ -60,9 +61,77 @@ class EventController extends AbstractController
         return new JsonResponse($data);
     }
 
+    #[Route('/api/events', name: 'get_paginated_events', methods: ['GET'])]
+    public function getPaginatedEvents(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        // Récupérer les paramètres `page` et `limit` depuis la requête
+        $page = max(1, (int) $request->query->get('page', 1));
+        $limit = max(1, (int) $request->query->get('limit', 10));
+        $offset = ($page - 1) * $limit;
+
+        // Critères pour filtrer les événements
+        $criteria = ['isVisible' => true, 'supprime' => null];
+        $repository = $entityManager->getRepository(Event::class);
+
+        // Récupérer les événements paginés
+        $events = $repository->findBy(
+            $criteria,
+            ['date_start' => 'ASC'], // Tri par date de début
+            $limit,
+            $offset
+        );
+
+        // Compter le total des événements pour calculer les pages totales
+        $totalEvents = $repository->count($criteria);
+        $totalPages = (int) ceil($totalEvents / $limit);
+
+        // Transformer les événements en tableau
+        $data = array_map(function (Event $event) {
+            return [
+                'id' => $event->getId(),
+                'creator' => [
+                    'id' => $event->getCreator()->getId(),
+                    'email' => $event->getCreator()->getEmail(),
+                    'firstName' => $event->getCreator()->getFirstName(),
+                    'lastName' => $event->getCreator()->getLastName(),
+                    'avatar' => $event->getCreator()->getAvatar(),
+                ],
+                'title' => $event->getTitle(),
+                'description' => $event->getDescription(),
+                'date_start' => $event->getDateStart()->format('d/m/Y - H:i'),
+                'date_end' => $event->getDateEnd()->format('d/m/Y - H:i'),
+                'isVisible' => $event->isIsVisible(),
+                'image' => $event->getImage(),
+                'location' => $event->getLocation(),
+                'isRecommended' => $event->isRecommended(),
+                'users' => $event->getUsers()->map(function ($user) {
+                    return [
+                        'id' => $user->getId(),
+                        'email' => $user->getEmail(),
+                        'firstName' => $user->getFirstName(),
+                        'lastName' => $user->getLastName(),
+                        'avatar' => $user->getAvatar(),
+                    ];
+                })->toArray(),
+            ];
+        }, $events);
+
+        // Retourner les données avec les informations de pagination
+        return new JsonResponse([
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'totalEvents' => $totalEvents,
+            'events' => $data,
+        ]);
+    }
+
+
 
     #[Route('/api/events/invite', name: 'invite_to_event', methods: ['POST'])]
-    public function inviteToEvent( Request $request, EntityManagerInterface $entityManager, EmailService $emailService
+    public function inviteToEvent(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        EmailService $emailService
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? null;
@@ -169,6 +238,4 @@ class EventController extends AbstractController
 
         return new JsonResponse(['message' => 'Désinscription réussie de l\'événement.'], JsonResponse::HTTP_OK);
     }
-
-
 }
