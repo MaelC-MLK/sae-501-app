@@ -231,6 +231,17 @@ export default function PopupUpdateDraft({
 
   const handleAddParticipant = (participant: any, event: React.MouseEvent) => {
     event.preventDefault();
+
+    const limit = parseInt(form.getValues().limit, 10);
+
+    if (participants.length >= limit) {
+        toast({
+            title: "Limite atteinte",
+            description: "Le nombre maximum de participants a été atteint.",
+        });
+        return;
+    }
+
     const updatedParticipants = [...participants, participant];
     setParticipants(updatedParticipants);
     form.setValue("users", updatedParticipants);
@@ -268,7 +279,7 @@ export default function PopupUpdateDraft({
       location: data.location || "",
       creator: `/api/users/${userContext.user.id}`,
       users: participants.map((participant) => `/api/users/${participant.id}`),
-      limit: data.limit.toString() || "5000",
+      limit: data.limit.toString() || "100",
     };  
   
     try {
@@ -312,7 +323,7 @@ export default function PopupUpdateDraft({
       creator: `/api/users/${userContext.user.id}`,
       users: participants.map((participant) => `/api/users/${participant.id}`),
       is_draft: "false",
-      limit: data.limit.toString() || "5000",
+      limit: data.limit.toString() || "100",
     };  
   
     try {
@@ -578,8 +589,8 @@ export default function PopupUpdateDraft({
                             id="limit"
                             type="number"
                             min={0}
-                            max={5000}
-                            placeholder="5000"
+                            max={100000}
+                            placeholder="100"
                             autoComplete="off"
                             {...field}
                           />

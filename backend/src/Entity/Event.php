@@ -154,11 +154,11 @@ class Event
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $supprime = null;
 
-    #[ORM\Column(name: "`limit`", length: 4)]
+    #[ORM\Column(name: "`limit`", length: 6)]
     #[Groups(['event:read', 'event:write'])]
     #[Assert\Range(
         min: 0,
-        max: 5000,
+        max: 100000,
         notInRangeMessage: 'La limite doit être comprise entre {{ min }} et {{ max }}.',
     )]
     private ?string $limit = null;
