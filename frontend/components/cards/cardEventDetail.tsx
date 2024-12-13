@@ -11,14 +11,14 @@ interface CardEventDetailProps {
 
 export function CardEventDetail({ event }: CardEventDetailProps) {
     const defaultImage = "/images/event.jpg";
-    const eventUrl = `http://localhost:8090/event/${event.id}`;
-
+    const eventUrl = `${process.env.APP_BASE_URL}/event/${event.idToken}`;
+    console.log(event.isVisible)
     return (
         <div className="w-full flex flex-col md:flex-row justify-between overflow-hidden">
             <div className="pb-6 md:p-6 flex flex-col gap-4 justify-between w-full md:w-2/3">
                 <div className='flex flex-row border-b-2'>
                     <h2 className="w-full items-start text-2xl font-bold">{event.title}</h2>
-                    <Badge variant="default" className="h-fit">Public</Badge>
+                    {event.isVisible ? <Badge variant="default" className="h-fit">Public</Badge> : <Badge variant="secondary" className="h-fit">Privé</Badge>}
                 </div>
                 <div>
                     {event.date_start.substring(0, 10) === event.date_end.substring(0, 10) ? (

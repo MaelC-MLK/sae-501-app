@@ -8,9 +8,6 @@ auth:
   path: /api/auth
   methods: ['POST']
 
-api_refresh_token:
-    path: /api/token/refresh
-
 admin_login:
     path: /admin/login
     controller: App\Controller\AdminSecurityController::login

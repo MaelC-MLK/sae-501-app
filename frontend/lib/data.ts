@@ -17,6 +17,27 @@ export async function fetchUserBy(value: string) {
     return await response.json();
 }
 
+export async function fetchEventByToken(token: string) {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/events/token/${token}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch event');
+    }
+
+    const data = await response.json();
+    return {
+        ...data,
+        start: parse(data.date_start, 'dd/MM/yyyy - HH:mm', new Date()),
+        end: parse(data.date_end, 'dd/MM/yyyy - HH:mm', new Date()),
+    };
+}
+
 export async function fetchUserEvents(userId: string) {
     const response = await fetch(`${process.env.API_BASE_URL}/api/events/user/${userId}`, {
             method: 'GET',
