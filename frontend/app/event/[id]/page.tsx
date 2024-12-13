@@ -21,10 +21,11 @@ import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast"
 import { checkUserRegistration, joinEvent, unregisterEvent } from "@/lib/data";
 import { revalidatePath } from "next/cache";
+import { fetchEventByToken } from "@/lib/data";
 
 export default function Event() {
     const { id } = useParams();
-    const events = useEvents();
+    const [event, setEvent] = useState<EventProps | null>(null);
     const [loading, setLoading] = React.useState(true);
     const { user } = useUser();
     const { toast } = useToast();
@@ -32,12 +33,19 @@ export default function Event() {
     const [participantCount, setParticipantCount] = useState<number>(0);
 
     useEffect(() => {
-        if (events.length > 0) {
-            setLoading(false);
-        }
-    }, [events]);
+        const fetchEvent = async () => {
+            try{
+                const data = await fetchEventByToken(id);
+                setEvent(data);
+            } catch (err) {
+                console.log(err)
+            } finally {
+                setLoading(false);
+            }
+          };
 
-    const event = events.find((event: EventProps) => event.id === Number(id));
+        fetchEvent();
+    }, []);
 
     useEffect(() => {
         if (event) {
@@ -69,7 +77,7 @@ export default function Event() {
     }
 
     const defaultImage = "/images/event_default.webp";
-    const eventUrl = `http://localhost:8090/event/${event.id}`;
+    const eventUrl = `${process.env.APP_BASE_URL}/event/${event.idToken}`;
 
     const handleJoinEvent = async () => {
         if (participantCount >= participantLimit) {
@@ -164,11 +172,11 @@ export default function Event() {
                     objectFit="cover"
                     className="max-h-96"
                 />
-                <Badge variant="secondary" className="absolute bg-foreground text-background top-5 right-5 md:hidden hover:bg-foreground">Public</Badge>
+                {event.isVisible ? <Badge variant="secondary" className="absolute bg-foreground text-background top-5 right-5 md:hidden hover:bg-foreground">Public</Badge> : <Badge variant="secondary" className="absolute bg-foreground text-background top-5 right-5 md:hidden hover:bg-foreground">Privé</Badge>}
             </div>
 
             <div className="max-w-7xl w-full mt-6 px-10 justify-self-center relative">
-                <Badge variant="secondary" className="absolute bg-foreground text-background top-0 right-10 text-base hidden md:block hover:bg-foreground">Public</Badge>
+                {event.isVisible ? <Badge variant="secondary" className="absolute bg-foreground text-background top-0 right-10 text-base hidden md:block hover:bg-foreground">Public</Badge> : <Badge variant="secondary" className="absolute bg-foreground text-background top-0 right-10 text-base hidden md:block hover:bg-foreground">Privé</Badge>}
                 {<h2 className={`${k2d.className} font-medium text-2xl md:w-10/12 lg:w-11/12`}>{event.title}</h2>}
 
                 {event.description ? (

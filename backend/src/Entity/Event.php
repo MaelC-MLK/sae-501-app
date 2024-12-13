@@ -25,6 +25,8 @@ use App\Controller\EventByCreatorController;
 use App\Controller\UpdateEventImageController;
 use App\Controller\EventDraftController;
 use App\Controller\MarkEventAsDeletedController;
+use App\Controller\EventByTokenController;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[Vich\Uploadable]
@@ -60,6 +62,13 @@ use App\Controller\MarkEventAsDeletedController;
             read: false,
         ),
         new Get(),
+        new Get(
+            uriTemplate: '/events/token/{idToken}',
+            controller: EventByTokenController::class, 
+            read: false, 
+            requirements: ['idToken' => '[\w\-]+'], // UUID format
+            normalizationContext: ['groups' => ['event:read']],
+        ),
         new Put(),
         new Patch(),
         new Post(
@@ -89,6 +98,7 @@ class Event
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['event:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -154,6 +164,10 @@ class Event
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $supprime = null;
 
+    #[ORM\Column(length: 255, nullable: true, unique: true)]
+    #[Groups(['event:read'])]
+    private ?string $idToken = null;
+
     #[ORM\Column(name: "`limit`", length: 6)]
     #[Groups(['event:read', 'event:write'])]
     #[Assert\Range(
@@ -166,6 +180,7 @@ class Event
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->idToken = Uuid::v4()->toRfc4122(); // Génère un UUID unique
     }
 
     public function getId(): ?int
@@ -388,23 +403,19 @@ class Event
         return $this;
     }
 
-    // public function getLimit(): ?int
-    // {
-    //     return $this->limit;
-    // }
+    public function getIdToken(): ?string
+    {
+        return $this->idToken;
+    }
 
-    // public function setLimit($limit): static
-    // {
-    //     if (is_numeric($limit)) {
-    //         $this->limit = (int) $limit;
-    //     } else {
-    //         $this->limit = null;
-    //     }
+    public function setIdToken(?string $idToken): static
+    {
+        $this->idToken = $idToken;
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
-    public function getLimit(): ?int
+    public function getLimit(): ?string
     {
         return $this->limit;
     }
