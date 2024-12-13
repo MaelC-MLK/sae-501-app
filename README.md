@@ -10,6 +10,9 @@ Voici la liste des nouvelles fonctionnalités disponibles (13/12/2024) :
  - Pouvoir modifier la photo de l'événement
  - Refonte de tous les templates twig
  - Correction et amélioriation de certaines fonctionnalités mineurs
+ - Modification des emails de verifications pour s'inscrire avec un mail
+ - Ajout de la désincription avec un utilisateur qui n'a pas de compte
+ - Lien par token pour tous les events pour le rendre accessible par lien
    
   
 ## Installation
