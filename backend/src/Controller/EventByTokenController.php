@@ -42,6 +42,7 @@ class EventByTokenController
             'location' => $event->getLocation(),
             'isRecommended' => $event->isRecommended(),
             'idToken' => $event->getIdToken(),
+            'limit' => $event->getLimit(),
             'users' => $event->getUsers()->map(function ($user) {
                 return [
                     'id' => $user->getId(),

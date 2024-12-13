@@ -61,6 +61,7 @@ use Symfony\Component\Uid\Uuid;
             controller: EventDraftController::class,
             read: false,
         ),
+        new Get(),
         new Get(
             uriTemplate: '/events/token/{idToken}',
             controller: EventByTokenController::class, 
@@ -97,6 +98,7 @@ class Event
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['event:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -413,23 +415,7 @@ class Event
         return $this;
     }
 
-    // public function getLimit(): ?int
-    // {
-    //     return $this->limit;
-    // }
-
-    // public function setLimit($limit): static
-    // {
-    //     if (is_numeric($limit)) {
-    //         $this->limit = (int) $limit;
-    //     } else {
-    //         $this->limit = null;
-    //     }
-
-    //     return $this;
-    // }
-
-    public function getLimit(): ?int
+    public function getLimit(): ?string
     {
         return $this->limit;
     }
