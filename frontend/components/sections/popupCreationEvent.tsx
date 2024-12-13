@@ -227,13 +227,23 @@ export default function PopupCreationEvent({
 
   const handleAddParticipant = (participant: any, event: React.MouseEvent) => {
     event.preventDefault();
+    const limit = parseInt(form.getValues().limit, 10);
+
+    if (participants.length >= limit) {
+        toast({
+            title: "Limite atteinte",
+            description: "Le nombre maximum de participants a été atteint.",
+        });
+        return;
+    }
+
     const updatedParticipants = [...participants, participant];
     setParticipants(updatedParticipants);
     form.setValue("users", updatedParticipants);
     setSearchTerm("");
     setSearchResults([]);
     setIsPopoverOpen(false);
-  };
+};
 
   const handleRemoveParticipant = (participantId: number) => {
     const updatedParticipants = participants.filter(participant => participant.id !== participantId);
@@ -296,7 +306,7 @@ export default function PopupCreationEvent({
     formData.append('is_draft', "false");
     formData.append('location', data.location || "");
     formData.append('creator', `/api/users/${userContext.user.id}`);
-    formData.append('limit', data.limit || "5000");
+    formData.append('limit', data.limit || "100");
 
 
     if (imageFile) {
@@ -356,7 +366,7 @@ export default function PopupCreationEvent({
     formData.append('is_draft', "true");
     formData.append('location', data.location || "");
     formData.append('creator', `/api/users/${userContext.user.id}`);
-    formData.append('limit', data.limit || "5000");
+    formData.append('limit', data.limit || "100");
     formData.append('users', "[]");
 
 
@@ -656,8 +666,8 @@ export default function PopupCreationEvent({
                             id="limit"
                             type="number"
                             min={0}
-                            max={5000}
-                            placeholder="5000"
+                            max={100000}
+                            placeholder="100"
                             autoComplete="off"
                             {...field}
                           />

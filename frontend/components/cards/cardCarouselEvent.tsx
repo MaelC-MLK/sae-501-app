@@ -90,6 +90,5 @@ export function CardCarouselEvent({ event }: { event: EventProps }) {
             </div>
 
         </Link>
-
     );
 }
