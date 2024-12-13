@@ -8,6 +8,9 @@ Voici la liste des nouvelles fonctionnalités disponibles (13/12/2024) :
  - Pouvoir définir une limite de nombre de participants à un événement
  - Rechercher les événements publics avec une barre de recherche
  - Pouvoir modifier la photo de l'événement
+ - Refonte de tous les templates twig
+ - Correction et amélioriation de certaines fonctionnalités mineurs
+   
   
 ## Installation
 
