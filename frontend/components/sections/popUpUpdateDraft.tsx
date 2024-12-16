@@ -54,6 +54,41 @@ import { fr } from "date-fns/locale";
 import { useUser } from "@/contexts/UserProvider";
 import { useDebouncedCallback } from "use-debounce";
 import { useToast } from "@/hooks/use-toast";
+import { Participant } from "@/types/user";
+
+interface SearchResult {
+  id: string;
+  name: string;
+  // Add other properties of the search result object here
+}
+
+interface User {
+  id: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  avatar?: string;
+}
+
+interface FormValues {
+  title: string;
+  description?: string;
+  location?: string;
+  date_start: string;
+  date_end: string;
+  time_start: string;
+  time_end: string;
+  users: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    avatar?: string;
+  }[];
+  isVisible: boolean;
+  is_draft: boolean;
+  limit: string;
+}
 
 const FormSchema = z.object({
   title: z.string().nonempty("Title is required"),
@@ -96,10 +131,11 @@ export default function PopupUpdateDraft({
   const [endTime, setEndTime] = useState<string>(
     format(new Date(dateEnd), "HH:mm")
   );
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [participants, setParticipants] = useState<any[]>(
-    eventData.users.map((user: any) => ({
+  const [searchTerm, setSearchTerm] = useState<string>("");  
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+
+  const [participants, setParticipants] = useState<Participant[]>(
+    eventData.users.map((user: User) => ({
       id: user.id,
       firstName: user.firstname,
       lastName: user.lastname,
@@ -107,8 +143,8 @@ export default function PopupUpdateDraft({
       avatar: user.avatar,
     })) || []
   );
-  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // const [setIsPopoverOpen] = useState<boolean>(false);
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPrivate, setIsPrivate] = useState<boolean>(
     !eventData.isVisible
   );
@@ -117,7 +153,8 @@ export default function PopupUpdateDraft({
   const {toast} = useToast();
 
 
-  const form = useForm<z.infer<typeof FormSchema>>({
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       title: eventData.title,
@@ -128,7 +165,7 @@ export default function PopupUpdateDraft({
       time_start: startTime,
       time_end: endTime,
       users:
-        eventData.users.map((user: any) => ({
+        eventData.users.map((user: User) => ({
           id: user.id,
           firstName: user.firstname,
           lastName: user.lastname,
@@ -178,68 +215,68 @@ export default function PopupUpdateDraft({
     }
   };
 
-  const handleStartTimeChange = (value: string) => {
-    setStartTime(value);
-  };
+  // const handleStartTimeChange = (value: string) => {
+  //   setStartTime(value);
+  // };
 
-  const handleEndTimeChange = (value: string) => {
-    setEndTime(value);
-  };
+  // const handleEndTimeChange = (value: string) => {
+  //   setEndTime(value);
+  // };
 
-  const handleSearchChange = useDebouncedCallback(async (value: string) => {
-    if (value.length > 0) {
-      try {
-        const results = await fetchUserBy(value);
-        const filteredResults = results.filter(
-          (user: any) =>
-            !participants.some((participant) => participant.id === user.id)
-        );
-        setSearchResults(filteredResults);
-      } catch (error) {
-        console.error("Failed to fetch search results:", error);
-      }
-    } else {
-      setSearchResults([]);
-    }
-  }, 300); // 300ms delay
+  // const handleSearchChange = useDebouncedCallback(async (value: string) => {
+  //   if (value.length > 0) {
+  //     try {
+  //       const results = await fetchUserBy(value);
+  //       const filteredResults: SearchResult[] = results.filter(
+  //         (user: User) =>
+  //           !participants.some((participant: Participant) => participant.id === Number(user.id))
+  //       );
+  //       setSearchResults(filteredResults);
+  //     } catch (error) {
+  //       console.error("Failed to fetch search results:", error);
+  //     }
+  //   } else {
+  //     setSearchResults([]);
+  //   }
+  // }, 300); // 300ms delay
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setSearchTerm(value);
-    setIsPopoverOpen(value.length > 0);
-    setIsLoading(true);
-    handleSearchChange(value);
-  };
+  // const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = event.target.value;
+  //   setSearchTerm(value);
+  //   // setIsPopoverOpen(value.length > 0);
+  //   // setIsLoading(true);
+  //   handleSearchChange(value);
+  // };
 
-  const handleAddParticipant = (participant: any, event: React.MouseEvent) => {
-    event.preventDefault();
+  // const handleAddParticipant = (participant: any, event: React.MouseEvent) => {
+  //   event.preventDefault();
 
-    const limit = parseInt(form.getValues().limit, 10);
+  //   const limit = parseInt(form.getValues().limit, 10);
 
-    if (participants.length >= limit) {
-        toast({
-            title: "Limite atteinte",
-            description: "Le nombre maximum de participants a été atteint.",
-        });
-        return;
-    }
+  //   if (participants.length >= limit) {
+  //       toast({
+  //           title: "Limite atteinte",
+  //           description: "Le nombre maximum de participants a été atteint.",
+  //       });
+  //       return;
+  //   }
 
-    const updatedParticipants = [...participants, participant];
-    setParticipants(updatedParticipants);
-    form.setValue("users", updatedParticipants);
-    setSearchTerm("");
-    setSearchResults([]);
-    setIsPopoverOpen(false);
-  };
+  //   const updatedParticipants = [...participants, participant];
+  //   setParticipants(updatedParticipants);
+  //   form.setValue("users", updatedParticipants);
+  //   setSearchTerm("");
+  //   setSearchResults([]);
+  //   // setIsPopoverOpen(false);
+  // };
 
-  const handleRemoveParticipant = (participantId: number) => {
-    const updatedParticipants = participants.filter(
-      (participant) => participant.id !== participantId
-    );
-    setParticipants(updatedParticipants);
-    form.setValue("users", updatedParticipants);
-    handleSearchChange(searchTerm);
-  };
+  // const handleRemoveParticipant = (participantId: number) => {
+  //   const updatedParticipants = participants.filter(
+  //     (participant) => participant.id !== participantId
+  //   );
+  //   setParticipants(updatedParticipants);
+  //   form.setValue("users", updatedParticipants);
+  //   handleSearchChange(searchTerm);
+  // };
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     if (userContext.user === null) {
@@ -633,7 +670,7 @@ export default function PopupUpdateDraft({
                     {isPopoverOpen && (
                       <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 bottom-12 ">
                         <ScrollArea className="h-fit max-h-60 overflow-y-auto">
-                          {isLoading ? (
+                          // {isLoading ? (
                             <UserSearchSkeleton />
                           ) : searchResults.length > 0 ? (
                             searchResults.map((result) => (

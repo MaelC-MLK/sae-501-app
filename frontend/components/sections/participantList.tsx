@@ -1,12 +1,20 @@
 import Image from "next/image";
-import { Avatar, Button } from "some-component-library"; // Adjust the import path as necessary
+import { Avatar } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
-function ParticipantsList({ participants, onRemoveParticipant }) {
+interface Participant {
+  id: string;
+  firstName: string;
+  lastName: string;
+  avatar?: string;
+}
+
+function ParticipantsList({ participants, onRemoveParticipant }: { participants: Participant[], onRemoveParticipant: (id: string) => void }) {
   return (
     <div className="p-4">
       <h2 className="text-lg font-semibold mb-4">Liste des participants</h2>
       <ul className="space-y-2">
-        {participants.map((participant: any) => (
+        {participants.map((participant: Participant) => (
           <li key={participant.id} className="flex items-center justify-between">
             <div className="flex items-center">
               <Avatar className="mr-2">

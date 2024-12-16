@@ -42,14 +42,6 @@ interface Event {
   };
 }
 
-interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  avatar: string;
-}
-
 let userContext: ReturnType<typeof useUser>;
 let setEvents: React.Dispatch<React.SetStateAction<Event[]>>;
 let setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -62,7 +54,7 @@ export async function loadEvents() {
       const userEvents = await fetchUserEvents(userId);
       const creatorEvents = await fetchEventsByCreator(userId);
       const combinedEvents = [...userEvents, ...creatorEvents].map(
-        (event: any) => ({
+        (event) => ({
           ...event,
           backgroundColor: event.creator_id == userId ? "#FFD700" : "#ADD8E6",
           borderColor: event.creator_id == userId ? "#FFD700" : "#ADD8E6",
@@ -102,18 +94,18 @@ export default function Calendar() {
   setLoading = setLoadingState;
 
   useEffect(() => {
-      const timeoutId = setTimeout(() => {
-        if (!userContext.user) {
-          router.push("/login");
-          setLoading(false);
-        }
-      }, 10); // Timeout de 10 secondes
-  
+    const timeoutId = setTimeout(() => {
       if (!userContext.user) {
-        return () => clearTimeout(timeoutId);
+        router.push("/login");
+        setLoading(false);
       }
-      loadEvents();
-    }, [userContext.user, router]);
+    }, 10000); // Timeout de 10 secondes
+  
+    if (!userContext.user) {
+      return () => clearTimeout(timeoutId);
+    }
+    loadEvents();
+  }, [userContext, router]);
 
   const loadEvents = async () => {
     if (!userContext.user) return;

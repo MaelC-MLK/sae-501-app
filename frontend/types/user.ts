@@ -12,3 +12,11 @@ export interface UserRegister {
     firstName: string,
     lastName: string,
 }
+
+ export interface Participant {
+    id: number;
+    firstname: string;
+    lastname: string;
+    email: string;
+    avatar?: string;
+  }

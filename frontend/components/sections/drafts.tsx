@@ -1,16 +1,16 @@
 import { CardDraft } from "@/components/cards/cardDraft";
 import { fetchEventDrafts } from "@/lib/data";
 import { useUser } from "@/contexts/UserProvider";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { SkeletonDraftCard } from "@/components/skeletons/skeletons";
-import { EventDraft } from "@/types"; // Assuming you have a type for EventDraft
+import { EventDraft } from "@/types/event"; // Assuming you have a type for EventDraft
 
 export default function Drafts() {
   const [drafts, setDrafts] = useState<EventDraft[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
 
-  const loadDrafts = async () => {
+  const loadDrafts = useCallback(async () => {
     if (user) {
       try {
         const events = await fetchEventDrafts(user.id);
@@ -21,7 +21,7 @@ export default function Drafts() {
         setLoading(false);
       }
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     loadDrafts();
