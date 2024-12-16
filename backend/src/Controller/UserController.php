@@ -199,50 +199,54 @@ class UserController extends AbstractController
         $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
         if($existingUser){
-            // Verifier si il a été déconnecté et donc qu'il est déjà inscrit
-            if($existingUser->getLogout() == null){
+            // Verifier s'il a deja un compte anonyme
+            if($existingUser->getLogout() == null && $existingUser->getPassword() == null && $existingUser->getFirstName() == null &&  $existingUser->getLastName() == null){
                 $user = $existingUser;
-
-                if($existingUser->getPassword() == null && $existingUser->getFirstName() == null &&  $existingUser->getLastName() == null)
-                {
-                    $firstName = $data['firstName'] ?? null;
-                    $lastName = $data['lastName'] ?? null;
-                    $plainPassword = $data['plainPassword'] ?? null;
-
-                    if (empty($firstName) || empty($lastName) || empty($plainPassword)) {
-                        return new JsonResponse(['error' => 'Informations incomplètes'], 400);
-                    }
-
-                    $user->setFirstName($firstName);
-                    $user->setLastName($lastName);
-            
-                    // Hasher le mot de passe
-                    $password = $passwordHasher->hashPassword($user, $plainPassword);
-                    $user->setPassword($password);
-                } 
             }
-            else {
+            // Verifier si il a déjà été deconnecté et désactivé
+            else if ($existingUser->getLogout() == null && $existingUser->isActive() == false) {
+                try {
+                    $user = $existingUser;
+                    // Générer un token de vérification
+                    $token = Uuid::v4()->toRfc4122(); // Génération de token (UUID)
+                    $user->setVerificationToken($token);
+
+                    // Définir la date d'expiration du token
+                    $expiryDate = new \DateTime('+10 minutes');
+                    $user->setTokenExpiry($expiryDate);
+
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+
+                    $this->emailService->sendRegisterEmail($email, $token);
+                } catch (\Exception $e) {
+                    return new JsonResponse(['error' => 'Impossible d\'envoyer l\'email : ' . $e->getMessage()], 500);
+                }
+        
+                return new JsonResponse(['message' => 'Utilisateur créé et email de vérification envoyé.'], 201);
+            } else {
                 return new JsonResponse(["error" => "L'utilisateur existe déjà"], 422);
             }
         }
         else{
-            $firstName = $data['firstName'] ?? null;
-            $lastName = $data['lastName'] ?? null;
-            $plainPassword = $data['plainPassword'] ?? null;
-
-            if (empty($firstName) || empty($lastName) || empty($plainPassword)) {
-                return new JsonResponse(['error' => 'Informations incomplètes'], 400);
-            }
-
             $user = new User();
             $user->setEmail($email);
-            $user->setFirstName($firstName);
-            $user->setLastName($lastName);
-    
-            // Hasher le mot de passe
-            $password = $passwordHasher->hashPassword($user, $plainPassword);
-            $user->setPassword($password);
         }
+
+        $firstName = $data['firstName'] ?? null;
+        $lastName = $data['lastName'] ?? null;
+        $plainPassword = $data['plainPassword'] ?? null;
+
+        if (empty($firstName) || empty($lastName) || empty($plainPassword)) {
+            return new JsonResponse(['error' => 'Informations incomplètes'], 400);
+        }
+
+        $user->setFirstName($firstName);
+        $user->setLastName($lastName);
+    
+        // Hasher le mot de passe
+        $password = $passwordHasher->hashPassword($user, $plainPassword);
+        $user->setPassword($password);
 
         // Générer un token de vérification
         $token = Uuid::v4()->toRfc4122(); // Génération de token (UUID)
