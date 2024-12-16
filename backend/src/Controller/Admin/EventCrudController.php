@@ -25,9 +25,10 @@ class EventCrudController extends AbstractCrudController
     {
         return [
             TextField::new('title'),
-            TextField::new('description'),
             DateTimeField::new('date_start', 'Start Date'),
             DateTimeField::new('date_end', 'End Date'),
+            TextField::new('limit', 'Limit'),
+            TextField::new('description'),
             TextField::new('location', 'Location'),
             BooleanField::new('isVisible', 'Visible')->setRequired(false),
             BooleanField::new('isDraft', 'Draft')->setRequired(false),

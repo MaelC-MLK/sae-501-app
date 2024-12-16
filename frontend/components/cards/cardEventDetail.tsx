@@ -4,6 +4,7 @@ import { Badge } from '../ui/badge';
 import { EventProps } from "@/types/event";
 import { PopupJoinPublicEvent } from '../sections/popupJoinPublicEvent';
 import { PopupShareEvent } from '../sections/popupShareEvent';
+import { PopupJoinPrivateEvent } from '../sections/popupJoinPrivateEvent';
 
 interface CardEventDetailProps {
     event: EventProps;
@@ -12,7 +13,6 @@ interface CardEventDetailProps {
 export function CardEventDetail({ event }: CardEventDetailProps) {
     const defaultImage = "/images/event.jpg";
     const eventUrl = `${process.env.APP_BASE_URL}/event/${event.idToken}`;
-    console.log(event.isVisible)
     return (
         <div className="w-full flex flex-col md:flex-row justify-between overflow-hidden">
             <div className="pb-6 md:p-6 flex flex-col gap-4 justify-between w-full md:w-2/3">
@@ -34,7 +34,7 @@ export function CardEventDetail({ event }: CardEventDetailProps) {
                     <p className="mt-4 text-sm text-gray-700">{event.description}</p>
                 </div>
                 <div className="mt-4 flex space-x-3">
-                    <PopupJoinPublicEvent eventId={event.id} />
+                    {event.isVisible ? <PopupJoinPublicEvent eventId={event.id}/> : <PopupJoinPrivateEvent />}
                     <PopupShareEvent eventUrl={eventUrl} />
                 </div>
             </div>
