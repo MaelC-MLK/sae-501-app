@@ -82,7 +82,7 @@ class EventController extends AbstractController
             $emailService->sendInvitationEvent(
                 $email,
                 $event->getTitle(),
-                $_ENV['APP_FRONT_BASE_URL'] . '/event/' . $eventId
+                $_ENV['APP_FRONT_BASE_URL'] . '/event/' . $event->getIdToken()
             );
         } catch (\Exception $e) {
             return new JsonResponse(['error' => 'Impossible d\'envoyer l\'invitation : ' . $e->getMessage()], 500);
