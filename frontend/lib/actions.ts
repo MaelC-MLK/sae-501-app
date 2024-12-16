@@ -2,7 +2,21 @@
 
 import { loadEvents } from "@/components/sections/calendar";
 
-export async function createEvent(eventData: Record<string, unknown>) {
+interface EventData {
+    title: string;
+    description?: string;
+    date_start: string;
+    date_end: string;
+    isVisible: string;
+    is_draft: string;
+    location?: string;
+    creator: string;
+    limit: string;
+    imageFile?: File;
+    users: string;
+  }
+
+export async function createEvent(eventData: FormData) {
     const response = await fetch(`${process.env.API_BASE_URL}/api/events`, {
         method: 'POST',
         credentials: 'include',

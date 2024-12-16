@@ -102,8 +102,8 @@ export default function PopupCreationEvent({
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [participants, setParticipants] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<{ id: number; firstName: string; lastName: string; email: string; avatar?: string }[]>([]);
+  const [participants, setParticipants] = useState<{ id: number; firstName: string; lastName: string; email: string; avatar?: string }[]>([]);
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPrivate, setIsPrivate] = useState<boolean>(true);
@@ -116,6 +116,8 @@ export default function PopupCreationEvent({
   const [isParticipantsModalOpen, setIsParticipantsModalOpen] = useState<boolean>(false);
   const [participantSearchTerm, setParticipantSearchTerm] = useState<string>("");
   const participantSearchInputRef = useRef<HTMLInputElement>(null);
+
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -157,20 +159,20 @@ export default function PopupCreationEvent({
     now.setMinutes(roundedMinutes);
     now.setSeconds(0);
     now.setMilliseconds(0);
-
+  
     const startHour = now.getHours().toString().padStart(2, "0");
     const startMinute = now.getMinutes().toString().padStart(2, "0");
     const startTimeValue = `${startHour}:${startMinute}`;
     setStartTime(startTimeValue);
     form.setValue("time_start", startTimeValue);
-
+  
     const end = new Date(now.getTime() + 60 * 60 * 1000);
     const endHour = end.getHours().toString().padStart(2, "0");
     const endMinute = end.getMinutes().toString().padStart(2, "0");
     const endTimeValue = `${endHour}:${endMinute}`;
     setEndTime(endTimeValue);
     form.setValue("time_end", endTimeValue);
-  }, []);
+  }, [form]);
 
   const handleSelect = (selectedDate: DateRange | undefined) => {
     if (!selectedDate?.from) {
@@ -192,16 +194,14 @@ export default function PopupCreationEvent({
   };
 
   const handleSearchChange = useDebouncedCallback(async (value: string) => {
-
-
     if (value.length > 0) {
       try {
         const results = await fetchUserBy(value);
-
-        const filteredResults = results.filter((user: any) =>
+  
+        const filteredResults = results.filter((user: { id: number; firstName: string; lastName: string; email: string; avatar?: string }) =>
           !participants.some(participant => participant.id === user.id)
         );
-
+  
         setSearchResults(filteredResults);
       } catch (error) {
         console.error("Failed to fetch search results:", error);
@@ -222,10 +222,10 @@ export default function PopupCreationEvent({
     handleSearchChange(value);
   };
 
-  const handleAddParticipant = (participant: any, event: React.MouseEvent) => {
+  const handleAddParticipant = (participant: { id: number; firstName: string; lastName: string; email: string; avatar?: string }, event: React.MouseEvent) => {
     event.preventDefault();
     const limit = parseInt(form.getValues().limit, 10);
-
+  
     if (participants.length >= limit) {
         toast({
             title: "Limite atteinte",
@@ -233,14 +233,14 @@ export default function PopupCreationEvent({
         });
         return;
     }
-
+  
     const updatedParticipants = [...participants, participant];
     setParticipants(updatedParticipants);
     form.setValue("users", updatedParticipants);
     setSearchTerm("");
     setSearchResults([]);
     setIsPopoverOpen(false);
-};
+  };
 
   const handleRemoveParticipant = (participantId: number) => {
     const updatedParticipants = participants.filter(participant => participant.id !== participantId);
@@ -298,55 +298,47 @@ export default function PopupCreationEvent({
     formData.append('description', data.description || "");
     formData.append('date_start', combineDateAndTime(date?.from || new Date(), data.time_start).toString());
     formData.append('date_end', combineDateAndTime(date?.to || date?.from || new Date(), data.time_end).toString());
-
     formData.append('isVisible', isPrivate ? "false" : "true");
     formData.append('is_draft', "false");
     formData.append('location', data.location || "");
     formData.append('creator', `/api/users/${userContext.user.id}`);
     formData.append('limit', data.limit || "100");
-
-
+  
     if (imageFile) {
       formData.append('imageFile', imageFile);
     }
-
-
+  
     const participantsArray = participants.map(participant => `/api/users/${participant.id}`);
     formData.append('users', JSON.stringify(participantsArray));
-
-
-
+  
     try {
       const response = await createEvent(formData);
       resetForm();
   
       if (response['@id']) {
-          const idMatch = response['@id'].match(/\/api\/events\/(\d+)/);
-          const eventId = idMatch ? parseInt(idMatch[1], 10) : null;
+        const idMatch = response['@id'].match(/\/api\/events\/(\d+)/);
+        const eventId = idMatch ? parseInt(idMatch[1], 10) : null;
   
-          if (eventId !== null) {
-              toast({
-                  title: "Événement créé ! ✅",
-                  description: "Votre événement a été créé avec succès.",
-                  // action: (
-                  //     <ToastAction altText="Annuler">Annuler</ToastAction>
-                  // ),
-              });
-              await CreateEventAndNotify(eventId);
-          } else {
-              console.error("Impossible d'extraire l'ID de l'événement.");
-          }
+        if (eventId !== null) {
+          toast({
+            title: "Événement créé ! ✅",
+            description: "Votre événement a été créé avec succès.",
+          });
+          await CreateEventAndNotify(eventId);
+        } else {
+          console.error("Impossible d'extraire l'ID de l'événement.");
+        }
       } else {
-          console.error("L'ID de la réponse est indéfini.");
+        console.error("L'ID de la réponse est indéfini.");
       }
-  } catch (error) {
+    } catch (error) {
       console.error("Failed to create event:", error);
       toast({
-          title: "Erreur lors de la création de l'événement ❌",
+        title: "Erreur lors de la création de l'événement ❌",
       });
-  }
+    }
   };
-
+  
   const saveDraft = async (data: z.infer<typeof FormSchema>) => {
     if (userContext.user === null) {
       console.error("User not found");
@@ -357,24 +349,23 @@ export default function PopupCreationEvent({
     formData.append('description', data.description || "");
     formData.append('date_start', combineDateAndTime(date?.from || new Date(), data.time_start).toString());
     formData.append('date_end', combineDateAndTime(date?.to || date?.from || new Date(), data.time_end).toString());
-
+  
     formData.append('isVisible', "false");
     formData.append('is_draft', "true");
     formData.append('location', data.location || "");
     formData.append('creator', `/api/users/${userContext.user.id}`);
     formData.append('limit', data.limit || "100");
     formData.append('users', "[]");
-
-
+  
     try {
-      const response = await createEvent(formData);
+      await createEvent(formData);
       setIsMainDialogOpen(false);
       resetForm();
       toast({
         title: "Événement enregistré en brouillon ! ✅",
         description: "Votre événement a été enregistré en brouillon avec succès.",
       });
-
+  
     } catch (error) {
       console.error("Failed to save draft:", error);
       toast({
@@ -382,8 +373,8 @@ export default function PopupCreationEvent({
       });
     }
   };
-
-  function ParticipantsList({ participants, onRemoveParticipant, searchTerm }: { participants: any[], onRemoveParticipant: (id: number) => void, searchTerm: string }) {
+  
+  function ParticipantsList({ participants, onRemoveParticipant, searchTerm }: { participants: { id: number; firstName: string; lastName: string; email: string; avatar?: string }[], onRemoveParticipant: (id: number) => void, searchTerm: string }) {
     const filteredParticipants = participants.filter(participant =>
       participant.firstName.toLowerCase().includes((searchTerm || "").toLowerCase()) ||
       participant.lastName.toLowerCase().includes((searchTerm || "").toLowerCase()) ||
@@ -853,7 +844,7 @@ export default function PopupCreationEvent({
           <DialogHeader>
             <DialogTitle>Enregistrer en brouillon ?</DialogTitle>
             <DialogDescription>
-              Voulez-vous enregistrer cet événement en tant que brouillon ? L'image ne sera pas enregistrée ainsi que les participants.
+              Voulez-vous enregistrer cet événement en tant que brouillon ? L&apos;image ne sera pas enregistrée ainsi que les participants.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
