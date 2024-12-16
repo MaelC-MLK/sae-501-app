@@ -219,4 +219,6 @@ export async function UpdateUserPassword(userId: string, currentPassword: string
       const errorResponse = await response.json();
       throw new Error(errorResponse.message || "Erreur lors de la mise à jour du mot de passe");
     }
+
+    return true;
   }

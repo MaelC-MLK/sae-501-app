@@ -306,6 +306,7 @@ class UserController extends AbstractController
         // Mise à jour du mot de passe
         $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
         $user->setPassword($hashedPassword);
+        $user->setLogout(new \DateTime());
 
         // Sauvegarde dans la base de données
         $entityManager->persist($user);
