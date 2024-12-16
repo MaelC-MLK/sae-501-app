@@ -1,0 +1,19 @@
+# Utilisez une image de base appropriée
+FROM node:18-alpine AS build
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Copier les fichiers de package et installer les dépendances
+COPY ./frontend/package*.json ./
+RUN npm install || cat /root/.npm/_logs/*-debug.log
+
+# Copier le reste des fichiers de l'application et construire l'application
+COPY ./frontend ./
+RUN npm run build
+
+# Utiliser une image de serveur web pour servir les fichiers statiques
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 3000
+CMD ["nginx", "-g", "daemon off;"]

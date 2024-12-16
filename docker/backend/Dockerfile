@@ -1,27 +1,26 @@
-# Use the official PHP 8.2 FPM image as the base image
-FROM php:8.2-fpm
+# Utilisez une image de base appropriée
+FROM php:7.4-fpm
 
-# Set the working directory to /app
-WORKDIR /app/backend
+# Installer les dépendances nécessaires
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
 
-# Install necessary dependencies
-RUN apt-get update && \
-    apt-get install -y \
-    git \
-    unzip \
-    libzip-dev \
-    libpq-dev \
-    libonig-dev \
-    libicu-dev && \
-    docker-php-ext-install pdo_mysql intl && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+# Définir le répertoire de travail
+WORKDIR /var/www/html
 
-RUN echo "extension=intl.so" >> /usr/local/etc/php/conf.d/docker-php-ext-intl.ini
+# Copier les fichiers de l'application
+COPY . .
 
-# RUN sudo chmod 777 -R ./public/uploads
-
-# Install Composer globally
+# Installer les dépendances PHP
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN composer install --no-dev --optimize-autoloader
 
-# Expose port 9000 for PHP-FPM
+# Exposer le port
 EXPOSE 9000
+
+# Démarrer le serveur PHP-FPM
+CMD ["php-fpm"]
