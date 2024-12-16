@@ -13,7 +13,7 @@ import { useUser } from '@/contexts/UserProvider';
 
 export default function Home() {
   const [events, setEvents] = useState([]);
-  const { user, setUser } = useUser();
+  const { user } = useUser();
 
   useEffect(() => {
     fetch(`${process.env.API_BASE_URL}/api/events/public`)

@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { deleteEventAndNotify } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
-import { UpdateEventAndNotify } from "@/lib/actions";
 
 export default function PopupDeleteEvent({
   eventId,
