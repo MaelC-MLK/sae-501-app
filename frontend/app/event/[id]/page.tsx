@@ -53,17 +53,17 @@ export default function Event() {
         if (user && event) {
             const fetchRegistrationStatus = async () => {
                 try {
-                    const status = await checkUserRegistration(user.id, event.id);
+                    const status = await checkUserRegistration({ id: user.id }, event.id);
                     setIsRegistered(status);
                 } catch (error) {
                     console.error("Failed to fetch registration status", error);
                 }
             };
-
+    
             fetchRegistrationStatus();
         }
     }, [user, event]);
-
+    
     if (loading) {
         return (
             <SkeletonEventDetails />
