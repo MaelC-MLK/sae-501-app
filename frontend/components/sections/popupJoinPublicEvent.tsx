@@ -26,7 +26,7 @@ export function PopupJoinPublicEvent({ eventId }: PopupJoinPublicEventProps) {
         setLoading(true);
         setError(null);
         try {           
-            await signUserInvite(email, eventId);
+            await signUserInvite(email, eventId.toString());
             setIsOpen(false);
         } catch (err: unknown) {
             setError((err as Error).message);
