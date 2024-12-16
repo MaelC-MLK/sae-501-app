@@ -205,25 +205,7 @@ class UserController extends AbstractController
             }
             // Verifier si il a déjà été deconnecté et désactivé
             else if ($existingUser->getLogout() == null && $existingUser->isActive() == false) {
-                try {
-                    $user = $existingUser;
-                    // Générer un token de vérification
-                    $token = Uuid::v4()->toRfc4122(); // Génération de token (UUID)
-                    $user->setVerificationToken($token);
-
-                    // Définir la date d'expiration du token
-                    $expiryDate = new \DateTime('+10 minutes');
-                    $user->setTokenExpiry($expiryDate);
-
-                    $entityManager->persist($user);
-                    $entityManager->flush();
-
-                    $this->emailService->sendRegisterEmail($email, $token);
-                } catch (\Exception $e) {
-                    return new JsonResponse(['error' => 'Impossible d\'envoyer l\'email : ' . $e->getMessage()], 500);
-                }
-        
-                return new JsonResponse(['message' => 'Utilisateur créé et email de vérification envoyé.'], 201);
+                $user = $existingUser;
             } else {
                 return new JsonResponse(["error" => "L'utilisateur existe déjà"], 422);
             }
