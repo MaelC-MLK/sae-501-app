@@ -25,7 +25,6 @@ class EventController extends AbstractController
 
     public function __invoke(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-<<<<<<< HEAD
         $events = $entityManager->getRepository(Event::class)->findPublicEvents();
         $data = array_map(function (Event $event) {
             return [
@@ -58,11 +57,9 @@ class EventController extends AbstractController
                 })->toArray(),
             ];
         }, $events);
-=======
 
         $criteria = ['isVisible' => true, 'supprime' => null];
         $events = $entityManager->getRepository(Event::class)->findBy($criteria);
->>>>>>> 9511515350a5e1e1ec69d31da5a60540c4a0c3d2
 
         return new JsonResponse($data);
     }
@@ -189,263 +186,11 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/api/events', name: 'get_paginated_events', methods: ['GET'])]
-    public function getPaginatedEvents(Request $request, EntityManagerInterface $entityManager): JsonResponse
-    {
-        // Récupérer les paramètres `page`, `limit`, `search` et `order` depuis la requête
-        $page = max(1, (int) $request->query->get('page', 1));
-        $limit = max(1, (int) $request->query->get('limit', 10));
-        $search = $request->query->get('search', '');
-        $order = $request->query->get('order', 'mostRecent');
-        $startDate = $request->query->get('startDate', '');
-        $endDate = $request->query->get('endDate', '');
-        $offset = ($page - 1) * $limit;
-
-        $repository = $entityManager->getRepository(Event::class);
-
-        // Récupérer les événements paginés
-        $queryBuilder = $repository->createQueryBuilder('e')
-            ->where('e.isVisible = :isVisible')
-            ->andWhere('e.supprime IS NULL')
-            ->andWhere('e.date_start >= :now')
-            ->setParameter('now', new \DateTime())
-            ->setParameter('isVisible', true);
-
-        if (!empty($search)) {
-            $queryBuilder->andWhere('e.title LIKE :search')
-                ->setParameter('search', '%' . $search . '%');
-        }
-
-        if (!empty($startDate)) {
-            $queryBuilder->andWhere('e.date_start >= :startDate')
-                ->setParameter('startDate', new \DateTime($startDate));
-        }
-    
-        if (!empty($endDate)) {
-            // Ajouter un jour à endDate pour inclure toute la journée
-            $endDateTime = new \DateTime($endDate);
-            $endDateTime->modify('+1 day'); // Passer à minuit du lendemain
-            $queryBuilder->andWhere('e.date_end < :endDate')
-                ->setParameter('endDate', $endDateTime);
-        }
-              
-
-        if ($order === 'mostRecent') {
-            $queryBuilder->orderBy('e.date_start', 'ASC');
-        } else {
-            $queryBuilder->orderBy('e.date_start', 'DESC');
-        }
-
-        $queryBuilder->setFirstResult($offset)
-            ->setMaxResults($limit);
-
-        $events = $queryBuilder->getQuery()->getResult();
-
-        // Compter le total des événements pour calculer les pages totales
-        $countQueryBuilder = $repository->createQueryBuilder('e')
-            ->select('COUNT(e.id)')
-            ->where('e.isVisible = :isVisible')
-            ->andWhere('e.supprime IS NULL')
-            ->andWhere('e.date_start >= :now')
-            ->setParameter('isVisible', true)
-            ->setParameter('now', new \DateTime());
-
-        if (!empty($search)) {
-            $countQueryBuilder->andWhere('e.title LIKE :search')
-                ->setParameter('search', '%' . $search . '%');
-        }
-
-        if (!empty($startDate)) {
-            $countQueryBuilder->andWhere('e.date_start >= :startDate')
-                ->setParameter('startDate', new \DateTime($startDate));
-        }
-    
-        if (!empty($endDate)) {
-            $endDateTime = new \DateTime($endDate);
-            $endDateTime->modify('+1 day'); // Passer à minuit du lendemain
-            $countQueryBuilder->andWhere('e.date_end < :endDate')
-                ->setParameter('endDate', $endDateTime);
-        }
-              
-
-        $totalEvents = $countQueryBuilder->getQuery()->getSingleScalarResult();
-        $totalPages = (int) ceil($totalEvents / $limit);
-
-        // Transformer les événements en tableau
-        $data = array_map(function (Event $event) {
-            return [
-                'id' => $event->getId(),
-                'creator' => [
-                    'id' => $event->getCreator()->getId(),
-                    'email' => $event->getCreator()->getEmail(),
-                    'firstName' => $event->getCreator()->getFirstName(),
-                    'lastName' => $event->getCreator()->getLastName(),
-                    'avatar' => $event->getCreator()->getAvatar(),
-                ],
-                'title' => $event->getTitle(),
-                'description' => $event->getDescription(),
-                'date_start' => $event->getDateStart()->format('d/m/Y - H:i'),
-                'date_end' => $event->getDateEnd()->format('d/m/Y - H:i'),
-                'isVisible' => $event->isIsVisible(),
-                'image' => $event->getImage(),
-                'location' => $event->getLocation(),
-                'isRecommended' => $event->isRecommended(),
-                'users' => $event->getUsers()->map(function ($user) {
-                    return [
-                        'id' => $user->getId(),
-                        'email' => $user->getEmail(),
-                        'firstName' => $user->getFirstName(),
-                        'lastName' => $user->getLastName(),
-                        'avatar' => $user->getAvatar(),
-                    ];
-                })->toArray(),
-            ];
-        }, $events);
-
-        // Retourner les données avec les informations de pagination
-        return new JsonResponse([
-            'currentPage' => $page,
-            'totalPages' => $totalPages,
-            'totalEvents' => $totalEvents,
-            'events' => $data,
-        ]);
-    }
-
-
-
-    #[Route('/api/events', name: 'get_paginated_events', methods: ['GET'])]
-    public function getPaginatedEvents(Request $request, EntityManagerInterface $entityManager): JsonResponse
-    {
-        // Récupérer les paramètres `page`, `limit`, `search` et `order` depuis la requête
-        $page = max(1, (int) $request->query->get('page', 1));
-        $limit = max(1, (int) $request->query->get('limit', 10));
-        $search = $request->query->get('search', '');
-        $order = $request->query->get('order', 'mostRecent');
-        $startDate = $request->query->get('startDate', '');
-        $endDate = $request->query->get('endDate', '');
-        $offset = ($page - 1) * $limit;
-
-        $repository = $entityManager->getRepository(Event::class);
-
-        // Récupérer les événements paginés
-        $queryBuilder = $repository->createQueryBuilder('e')
-            ->where('e.isVisible = :isVisible')
-            ->andWhere('e.supprime IS NULL')
-            ->andWhere('e.date_start >= :now')
-            ->setParameter('now', new \DateTime())
-            ->setParameter('isVisible', true);
-
-        if (!empty($search)) {
-            $queryBuilder->andWhere('e.title LIKE :search')
-                ->setParameter('search', '%' . $search . '%');
-        }
-
-        if (!empty($startDate)) {
-            $queryBuilder->andWhere('e.date_start >= :startDate')
-                ->setParameter('startDate', new \DateTime($startDate));
-        }
-    
-        if (!empty($endDate)) {
-            // Ajouter un jour à endDate pour inclure toute la journée
-            $endDateTime = new \DateTime($endDate);
-            $endDateTime->modify('+1 day'); // Passer à minuit du lendemain
-            $queryBuilder->andWhere('e.date_end < :endDate')
-                ->setParameter('endDate', $endDateTime);
-        }
-              
-
-        if ($order === 'mostRecent') {
-            $queryBuilder->orderBy('e.date_start', 'ASC');
-        } else {
-            $queryBuilder->orderBy('e.date_start', 'DESC');
-        }
-
-        $queryBuilder->setFirstResult($offset)
-            ->setMaxResults($limit);
-
-        $events = $queryBuilder->getQuery()->getResult();
-
-        // Compter le total des événements pour calculer les pages totales
-        $countQueryBuilder = $repository->createQueryBuilder('e')
-            ->select('COUNT(e.id)')
-            ->where('e.isVisible = :isVisible')
-            ->andWhere('e.supprime IS NULL')
-            ->andWhere('e.date_start >= :now')
-            ->setParameter('isVisible', true)
-            ->setParameter('now', new \DateTime());
-
-        if (!empty($search)) {
-            $countQueryBuilder->andWhere('e.title LIKE :search')
-                ->setParameter('search', '%' . $search . '%');
-        }
-
-        if (!empty($startDate)) {
-            $countQueryBuilder->andWhere('e.date_start >= :startDate')
-                ->setParameter('startDate', new \DateTime($startDate));
-        }
-    
-        if (!empty($endDate)) {
-            $endDateTime = new \DateTime($endDate);
-            $endDateTime->modify('+1 day'); // Passer à minuit du lendemain
-            $countQueryBuilder->andWhere('e.date_end < :endDate')
-                ->setParameter('endDate', $endDateTime);
-        }
-              
-
-        $totalEvents = $countQueryBuilder->getQuery()->getSingleScalarResult();
-        $totalPages = (int) ceil($totalEvents / $limit);
-
-        // Transformer les événements en tableau
-        $data = array_map(function (Event $event) {
-            return [
-                'id' => $event->getId(),
-                'creator' => [
-                    'id' => $event->getCreator()->getId(),
-                    'email' => $event->getCreator()->getEmail(),
-                    'firstName' => $event->getCreator()->getFirstName(),
-                    'lastName' => $event->getCreator()->getLastName(),
-                    'avatar' => $event->getCreator()->getAvatar(),
-                ],
-                'title' => $event->getTitle(),
-                'description' => $event->getDescription(),
-                'date_start' => $event->getDateStart()->format('d/m/Y - H:i'),
-                'date_end' => $event->getDateEnd()->format('d/m/Y - H:i'),
-                'isVisible' => $event->isIsVisible(),
-                'image' => $event->getImage(),
-                'location' => $event->getLocation(),
-                'isRecommended' => $event->isRecommended(),
-                'users' => $event->getUsers()->map(function ($user) {
-                    return [
-                        'id' => $user->getId(),
-                        'email' => $user->getEmail(),
-                        'firstName' => $user->getFirstName(),
-                        'lastName' => $user->getLastName(),
-                        'avatar' => $user->getAvatar(),
-                    ];
-                })->toArray(),
-            ];
-        }, $events);
-
-        // Retourner les données avec les informations de pagination
-        return new JsonResponse([
-            'currentPage' => $page,
-            'totalPages' => $totalPages,
-            'totalEvents' => $totalEvents,
-            'events' => $data,
-        ]);
-    }
 
 
 
     #[Route('/api/events/invite', name: 'invite_to_event', methods: ['POST'])]
-<<<<<<< HEAD
-    public function inviteToEvent( Request $request, CheckUser $checkUser, EntityManagerInterface $entityManager, EmailService $emailService
-=======
-    public function inviteToEvent(
-        Request $request,
-        EntityManagerInterface $entityManager,
-        EmailService $emailService
->>>>>>> 9511515350a5e1e1ec69d31da5a60540c4a0c3d2
+    public function inviteToEvent( Request $request, EntityManagerInterface $entityManager, EmailService $emailService
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? null;

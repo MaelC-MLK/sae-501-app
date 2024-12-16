@@ -47,18 +47,18 @@ security:
   access_control:
     - { path: ^/api/events, roles: PUBLIC_ACCESS }
     - { path: ^/api/events/public, roles: PUBLIC_ACCESS }
-      - { path: ^/api/events/token/.*, roles: PUBLIC_ACCESS}
-      - { path: ^/api/user/email, roles: PUBLIC_ACCESS }
-      - { path: ^/api/user/email/unregister, roles: PUBLIC_ACCESS }
-      - { path: ^/api/verify-email/.*, roles: PUBLIC_ACCESS }
-      - { path: ^/api/verify-email-register, roles: PUBLIC_ACCESS } 
-      - { path: ^/api/user/register, roles: PUBLIC_ACCESS, methods: [POST] } # Allows accessing the Swagger UI docs
-      - { path: ^/$, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
-      - { path: ^/api/docs, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI docs
-      - { path: ^/api/auth, roles: PUBLIC_ACCESS }
-      - { path: ^/admin/login, roles: PUBLIC_ACCESS }
-      - { path: ^/api/events/invite, roles: PUBLIC_ACCESS, methods: [POST] }
-      - { path: ^/admin/logout, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-      - { path: ^/admin, roles: ROLE_ADMIN }
-      - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+    - { path: ^/api/events/token/.*, roles: PUBLIC_ACCESS}
+    - { path: ^/api/user/email, roles: PUBLIC_ACCESS }
+    - { path: ^/api/user/email/unregister, roles: PUBLIC_ACCESS }
+    - { path: ^/api/verify-email/.*, roles: PUBLIC_ACCESS }
+    - { path: ^/api/verify-email-register, roles: PUBLIC_ACCESS } 
+    - { path: ^/api/user/register, roles: PUBLIC_ACCESS, methods: [POST] } # Allows accessing the Swagger UI docs
+    - { path: ^/$, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
+    - { path: ^/api/docs, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI docs
+    - { path: ^/api/auth, roles: PUBLIC_ACCESS }
+    - { path: ^/admin/login, roles: PUBLIC_ACCESS }
+    - { path: ^/api/events/invite, roles: PUBLIC_ACCESS, methods: [POST] }
+    - { path: ^/admin/logout, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/admin, roles: ROLE_ADMIN }
+    - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
       

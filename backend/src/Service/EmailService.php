@@ -44,6 +44,7 @@ class EmailService
         // Rendre le template Twig
         $htmlContent = $this->twig->render('emails/verification_email.html.twig', [
             'verification_link' => $verificationLink,
+            'unregister_link'=> ''
         ]);
 
         $email = (new Email())
