@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -45,7 +45,7 @@ import {
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import UserSearchSkeleton from "@/components/skeletons/skeletons";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UpdateEvent } from "@/lib/actions";
@@ -55,7 +55,6 @@ import { PopupUpdateEventProps } from "@/types/event";
 import { fr } from "date-fns/locale";
 import { useUser } from "@/contexts/UserProvider";
 import { useDebouncedCallback } from "use-debounce";
-import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import { UpdateEventAndNotify } from "@/lib/actions";
 import Image from "next/image";

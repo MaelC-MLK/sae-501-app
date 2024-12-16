@@ -3,7 +3,6 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import Image from 'next/image';
-import ScrollButton from "@/components/ui/scrollButton";
 import { CarouselRecom } from "@/components/sections/carouselRecom";
 import { SignUpCallToAction } from "@/components/sections/signUpCallToAction";
 import { PaginatedEvents } from "@/components/sections/paginatedEvents";

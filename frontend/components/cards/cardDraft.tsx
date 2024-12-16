@@ -7,7 +7,6 @@ import PopupUpdateDraft from "@/components/sections/popUpUpdateDraft";
 import { Button } from "@/components/ui/button";
 import { deleteEvent } from "@/lib/actions";
 import { k2d } from "@/app/fonts/fonts";
-import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 
 export function CardDraft({ event, onEventChange }: { event: EventProps, onEventChange: () => void }) {

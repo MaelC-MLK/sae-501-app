@@ -1,14 +1,12 @@
 "use client";
 
 import { usePathname } from 'next/navigation';
-import localFont from "next/font/local";
 import "./globals.css";
 import { EventProvider } from "@/components/EventContext";
 import Navbar from "@/components/navigation/navbar";
 import Footer from "@/components/layout/footer";
 import { UserProvider } from "@/contexts/UserProvider";
 import { inter } from '@/app/fonts/fonts';
-import { k2d } from '@/app/fonts/fonts';
 import { Toaster } from "@/components/ui/toaster";
 import CookieConsentPopup from "@/components/sections/CookieConsentPopup";
 

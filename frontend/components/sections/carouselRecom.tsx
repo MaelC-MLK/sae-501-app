@@ -1,5 +1,4 @@
 import * as React from "react";
-import { CardEvent } from "@/components/cards/cardEvent";
 import { CardCarouselEvent } from "@/components/cards/cardCarouselEvent";
 
 import { EventProps } from "@/types/event";

@@ -16,8 +16,6 @@ export function CardCarouselEvent({ event }: { event: EventProps }) {
 
     const formattedDateStart = format(dateStart, "EEEE d MMMM yyyy", { locale: fr });
     const formattedDateEnd = format(dateEnd, "EEEE d MMMM yyyy", { locale: fr });
-    const formattedDateStartShort = format(dateStart, "dd/MM/yyyy", { locale: fr });
-    const formattedDateEndShort = format(dateEnd, "dd/MM/yyyy", { locale: fr });
     const participantLimit = event.limit;
     const participantCount = event.users.length;
     const participantPercentage = (participantCount / participantLimit) * 100;

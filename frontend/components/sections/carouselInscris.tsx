@@ -8,7 +8,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { SkeletonCardCarousel } from "@/components/skeletons/skeletons";
 import { useState, useEffect } from "react";
 
 interface CarouselRecomProps {

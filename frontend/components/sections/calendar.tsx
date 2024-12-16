@@ -22,7 +22,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {k2d} from "@/app/fonts/fonts";
-import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import { unregisterEvent } from "@/lib/data";
 import Link from "next/link";

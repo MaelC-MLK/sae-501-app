@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
-import { revalidatePath } from 'next/cache'
 
 import { Button } from "@/components/ui/button";
 import {
@@ -22,7 +21,7 @@ import { CalendarIcon } from "@radix-ui/react-icons";
 import { ClockIcon } from "@radix-ui/react-icons";
 import { CrossCircledIcon } from "@radix-ui/react-icons";
 
-import { addDays, format, set } from "date-fns";
+import { format } from "date-fns";
 import { DateRange } from "react-day-picker";
 import { useForm } from "react-hook-form";
 
@@ -39,7 +38,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -67,7 +65,6 @@ import ImageUpload from "@/components/sections/dropZoneEventPopup";
 
 import { useDebouncedCallback } from 'use-debounce';
 import { useUser } from "@/contexts/UserProvider";
-import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import { CreateEventAndNotify } from "@/lib/actions";

@@ -7,9 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import Image from 'next/image';
 import Link from 'next/link';
-import { useUser } from '@/contexts/UserProvider';
 import { k2d } from "@/app/fonts/fonts"
-import { useRouter } from 'next/navigation';
 import { PopUpEmailRegister } from '@/components/sections/popUpEmailRegister';
 
 export default function Page() {

@@ -1,8 +1,8 @@
 "use client";
 
-import { revalidatePath } from 'next/cache'
+
 import React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CalendarIcon, ClockIcon, CrossCircledIcon } from "@radix-ui/react-icons";
+import { CalendarIcon, ClockIcon } from "@radix-ui/react-icons";
 import { format, parse } from "date-fns";
 import { DateRange } from "react-day-picker";
 import { useForm } from "react-hook-form";
@@ -46,17 +46,14 @@ import {
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import UserSearchSkeleton from "@/components/skeletons/skeletons";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UpdateEvent } from "@/lib/actions";
 import { Separator } from "@/components/ui/separator";
 import { fetchUserBy } from "@/lib/data";
 import { PopupUpdateEventProps } from "@/types/event";
-import { fr, is } from "date-fns/locale";
+import { fr } from "date-fns/locale";
 import { useUser } from "@/contexts/UserProvider";
 import { useDebouncedCallback } from "use-debounce";
-import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 
 const FormSchema = z.object({
@@ -90,14 +87,6 @@ export default function PopupUpdateDraft({
   const dateStart = parse(eventData.date_start, "dd/MM/yyyy - HH:mm", new Date());
   const dateEnd = parse(eventData.date_end, "dd/MM/yyyy - HH:mm", new Date());
 
-  const formattedDateStart = format(dateStart, "EEEE d MMMM yyyy", { locale: fr });
-  const formattedDateEnd = format(dateEnd, "EEEE d MMMM yyyy", { locale: fr });
-  const formattedDateStartShort = format(dateStart, "dd/MM/yyyy", { locale: fr });
-  const formattedDateEndShort = format(dateEnd, "dd/MM/yyyy", { locale: fr });
-
-  // const startTime = format(dateStart, "HH:mm", { locale: fr });
-  // const endTime = format(dateEnd, "HH:mm", { locale: fr });
-
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(dateStart),
     to: new Date(dateEnd),
@@ -124,7 +113,6 @@ export default function PopupUpdateDraft({
   const [isPrivate, setIsPrivate] = useState<boolean>(
     !eventData.isVisible
   );
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const [isMainDialogOpen, setIsMainDialogOpen] = useState<boolean>(false);
   const userContext = useUser();
   const {toast} = useToast();

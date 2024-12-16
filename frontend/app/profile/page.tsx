@@ -4,14 +4,12 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { PopUpEditProfile } from "@/components/sections/popUpEditProfile";
-import { PopUpDeleteUser } from "@/components/sections/popUpDeleteUser";
 import { PopUpLogout } from "@/components/sections/popUpLogout";
 import { PopUpJoinEventify } from "@/components/sections/popUpJoinEventify";
 import Link from "next/link";
 import { k2d } from "@/app/fonts/fonts"
 import { useUser } from "@/contexts/UserProvider";
 import { useRouter } from "next/navigation";
-import { PaginatedEvents } from "@/components/sections/paginatedEvents";
 import { CarouselInscris } from "@/components/sections/carouselInscris";
 import { fetchUserEvents } from "@/lib/data";
 import { fetchUserById } from "@/lib/data";

@@ -6,8 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { authenticate } from "@/lib/utils";
 import { useUser } from '@/contexts/UserProvider';
-import { UserProps } from "@/types/user";
-import { set } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';

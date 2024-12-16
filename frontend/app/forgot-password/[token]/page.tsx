@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Loading from '@/components/ui/loading';
-import { Check, CheckCircleIcon } from 'lucide-react';
+import { CheckCircleIcon } from 'lucide-react';
 
 export default function ForgotPasswordPage({ params }: { params: { token: string } }) {
     const { token } = params;

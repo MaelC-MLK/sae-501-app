@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { useUser } from "@/contexts/UserProvider";
 import { useRouter } from "next/navigation";
 import Drafts from "@/components/sections/drafts";
-import { SkeletonPage } from "@/components/skeletons/skeletons";
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
