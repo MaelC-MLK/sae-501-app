@@ -39,7 +39,7 @@ export function PopupJoinPublicEvent({ eventId }: PopupJoinPublicEventProps) {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button variant={'default'} className='w-full sm:w-auto'>S'inscrire</Button>
+                <Button variant={'default'} className='w-full sm:w-auto'>S&apos;inscrire</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>

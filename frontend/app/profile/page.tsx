@@ -74,7 +74,7 @@ export default function Profile() {
     return (
       <div className="flex items-center justify-center min-h-screen flex-col gap-4">
         <p className="text-red-500">Erreur : {error}</p>
-        <Button onClick={() => router.push("/")}>Revenir à l'accueil</Button>
+        <Button onClick={() => router.push("/")}>Revenir à l&apos;accueil</Button>
       </div>
     );
   }

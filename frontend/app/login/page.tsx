@@ -111,7 +111,7 @@ export default function Page() {
                             )
                             }
                             <div className="text-center mt-2">
-                                <p className="text-sm">Vous n'avez pas de compte ? <Link href="/register" className="text-primary hover:underline">Inscrivez-vous</Link></p>
+                                <p className="text-sm">Vous n&apos;avez pas de compte ? <Link href="/register" className="text-primary hover:underline">Inscrivez-vous</Link></p>
                             </div>
                         </div>
 
