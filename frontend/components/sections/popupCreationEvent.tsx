@@ -185,13 +185,6 @@ export default function PopupCreationEvent({
     }
   };
 
-  const handleStartTimeChange = (value: string) => {
-    setStartTime(value);
-  };
-
-  const handleEndTimeChange = (value: string) => {
-    setEndTime(value);
-  };
 
   const handleSearchChange = useDebouncedCallback(async (value: string) => {
     if (value.length > 0) {

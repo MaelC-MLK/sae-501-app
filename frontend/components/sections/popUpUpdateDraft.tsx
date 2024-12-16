@@ -52,13 +52,6 @@ import { PopupUpdateEventProps } from "@/types/event";
 import { fr } from "date-fns/locale";
 import { useUser } from "@/contexts/UserProvider";
 import { useToast } from "@/hooks/use-toast";
-import { Participant } from "@/types/user";
-
-interface SearchResult {
-  id: string;
-  name: string;
-  // Add other properties of the search result object here
-}
 
 interface User {
   id: string;
