@@ -13,8 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
-import { UpdateUserImage } from "@/lib/actions";
-import { UpdateUser } from "@/lib/actions";
+import { UpdateUserImage, UpdateUser } from "@/lib/actions";
+import { PopUpEditPassword } from "@/components/sections/popUpEditPassword";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -37,44 +37,52 @@ interface PopUpEditProfileProps {
 }
 
 export function PopUpEditProfile({ user, onUpdate, userContext: { userContextUser, setUser } }: PopUpEditProfileProps) {
-  const [firstName, setfirstName] = useState(user?.firstName || "");
-  const [lastName, setlastName] = useState(user?.lastName || "");
+  const [firstName, setFirstName] = useState(user?.firstName || "");
+  const [lastName, setLastName] = useState(user?.lastName || "");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  const [open, setOpen] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [open, setOpen] = useState(false); // État du premier pop-up
+  const [passwordOpen, setPasswordOpen] = useState(false); // État du second pop-up
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
-      setfirstName(user.firstName || "");
-      setlastName(user.lastName || "");
+      setFirstName(user.firstName || "");
+      setLastName(user.lastName || "");
     }
   }, [user]);
 
+  const handlePasswordUpdate = () => {
+    setPasswordOpen(false); // Ferme le pop-up après la mise à jour du mot de passe
+  };
+
   const validateNoNumbersOrSpecialChars = (str: string) => {
-      const noNumbersOrSpecialCharsRegex = /^[a-zA-Z\sÀ-ÖØ-öø-ÿ-]+$/;
-      return noNumbersOrSpecialCharsRegex.test(str);
+    const regex = /^[a-zA-Z\sÀ-ÖØ-öø-ÿ-]+$/;
+    return regex.test(str);
   };
 
   const handleSubmit = async () => {
     try {
+      setIsLoading(true);
+      setError("");
+
       if (!user || !user.id) {
         throw new Error("Utilisateur non défini ou ID manquant");
       }
 
       if (!validateNoNumbersOrSpecialChars(firstName)) {
-          setError('Le prénom doit contenir uniquement des lettres ou - ');
-          return;
+        setError("Le prénom doit contenir uniquement des lettres ou -");
+        return;
       }
 
       if (!validateNoNumbersOrSpecialChars(lastName)) {
-          setError('Le nom doit contenir uniquement des lettres ou - ');
-          return;
+        setError("Le nom doit contenir uniquement des lettres ou -");
+        return;
       }
-  
-      var updatedUser = {
-        "@context": "string", // Remplace par le bon contexte
+
+      const updatedUser = {
         "@id": `${process.env.API_BASE_URL}/api/users/${user.id}`,
-        "@type": "string",
         "id": user.id,
         "firstName": firstName,
         "lastName": lastName,
@@ -89,14 +97,15 @@ export function PopUpEditProfile({ user, onUpdate, userContext: { userContextUse
       const data = await UpdateUser(updatedUser);
 
       if (onUpdate) {
-        onUpdate(data); // Appelle le callback pour mettre à jour le parent
-        setUser(data); // Met à jour le contexte utilisateur
+        onUpdate(data); // Met à jour dans le composant parent
+        setUser(data); // Met à jour dans le contexte
       }
 
-      setError("");
-      setOpen(false); // Ferme le pop-up après la mise à jour
+      setOpen(false); // Ferme le pop-up
     } catch (error: any) {
-      setError(error.message);
+      setError(error.message || "Une erreur s'est produite lors de la mise à jour.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -104,74 +113,94 @@ export function PopUpEditProfile({ user, onUpdate, userContext: { userContextUse
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       if (!ALLOWED_FILE_TYPES.includes(selectedFile.type)) {
-        setError('Veuillez sélectionner uniquement des fichiers JPG, PNG ou WEBP.');
+        setError("Veuillez sélectionner uniquement des fichiers JPG, PNG ou WEBP.");
         return;
       }
       if (selectedFile.size > MAX_FILE_SIZE) {
-        setError('La taille du fichier ne doit pas dépasser 2MB.');
+        setError("La taille du fichier ne doit pas dépasser 2MB.");
         return;
       }
       setProfilePicture(selectedFile);
-      setError('');
-    } else {
-      setError('Veuillez sélectionner uniquement des fichiers JPG, PNG ou WEBP.');
+      setImagePreview(URL.createObjectURL(selectedFile)); // Prévisualisation
+      setError("");
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Modifier le profil</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Modifier le profil</DialogTitle>
-          <DialogDescription>
-            Apportez des modifications à votre profil ici. Cliquez sur enregistrer lorsque vous avez terminé.
-          </DialogDescription>
-        </DialogHeader>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="firstName" className="text-right">
-              Prénom
-            </Label>
-            <Input
-              id="firstName"
-              value={firstName}
-              onChange={(e) => setfirstName(e.target.value)}
-              className="col-span-3"
-            />
+    <>
+      {/* Premier pop-up : Modifier le profil */}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline">Modifier le profil</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Modifier le profil</DialogTitle>
+            <DialogDescription>
+              Apportez des modifications à votre profil ici. Cliquez sur enregistrer lorsque vous avez terminé.
+            </DialogDescription>
+          </DialogHeader>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="firstName" className="text-right">
+                Prénom
+              </Label>
+              <Input
+                id="firstName"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="lastName" className="text-right">
+                Nom
+              </Label>
+              <Input
+                id="lastName"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="profilePicture" className="text-right">
+                Photo de profil
+              </Label>
+              <Input
+                type="file"
+                id="profilePicture"
+                onChange={handleFileChange}
+                className="col-span-3"
+              />
+            </div>
+            {imagePreview && (
+              <div className="col-span-3">
+                <img src={imagePreview} alt="Preview" className="w-24 h-24 rounded-full" />
+              </div>
+            )}
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="profilePicture" className="text-right">
+                
+              </Label>
+              <Button type="button" variant="secondary" className="col-span-3" onClick={() => setPasswordOpen(true)}>
+                Modifier le mot de passe
+              </Button>
+            </div>
+            
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="lastName" className="text-right">
-              Nom
-            </Label>
-            <Input
-              id="lastName"
-              value={lastName}
-              onChange={(e) => setlastName(e.target.value)}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="profilePicture" className="text-right">
-              Photo de profil
-            </Label>
-            <Input
-              type="file"
-              id="profilePicture"
-              onChange={handleFileChange}
-              className="col-span-3"
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button type="button" onClick={handleSubmit}>
-            Enregistrer les modifications
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <DialogFooter>
+            <Button type="button" onClick={handleSubmit} disabled={isLoading}>
+              {isLoading ? "Enregistrement..." : "Enregistrer les modifications"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Second pop-up : Modifier le mot de passe */}
+      
+      {passwordOpen && <PopUpEditPassword user={user} userContext={{ userContextUser, setUser }} onPasswordUpdate={handlePasswordUpdate} />}
+    </>
   );
 }

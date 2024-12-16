@@ -225,4 +225,46 @@ class UserController extends AbstractController
 
         return new JsonResponse(['message' => 'Utilisateur inscrit avec succès.'], 200);
     }
+
+
+    // Update password
+    #[Route('/api/users/{id}/update-password', name: 'update_password', methods: ['PATCH'])]
+    public function updatePassword(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $passwordHasher
+    ): JsonResponse {
+        // Récupération des données JSON de la requête
+        $data = json_decode($request->getContent(), true);
+        $currentPassword = $data['currentPassword'] ?? '';
+        $newPassword = $data['newPassword'] ?? '';
+
+        // Validation des champs
+        if (empty($currentPassword) || empty($newPassword)) {
+            return new JsonResponse(['message' => 'Les champs mot de passe actuel et nouveau mot de passe sont requis.'], 400);
+        }
+
+        // Récupération de l'utilisateur depuis la base de données
+        $user = $entityManager->getRepository(User::class)->find($id);
+        if (!$user) {
+            return new JsonResponse(['message' => 'Utilisateur non trouvé.'], 404);
+        }
+
+        // Vérification du mot de passe actuel
+        if (!$passwordHasher->isPasswordValid($user, $currentPassword)) {
+            return new JsonResponse(['message' => 'Mot de passe actuel incorrect.'], 403);
+        }
+
+        // Mise à jour du mot de passe
+        $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
+        $user->setPassword($hashedPassword);
+
+        // Sauvegarde dans la base de données
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Mot de passe mis à jour avec succès.'], 200);
+    }
 }
+
