@@ -24,7 +24,7 @@ const Footer: React.FC = () => {
                         <Link href="/mentions-legales">Mentions légales</Link>
                     </li>
                     <li>
-                        <Link href="/conditions-utilisation">Conditions d'utilisation</Link>
+                        <Link href="/conditions-utilisation">Conditions d&apos;utilisation</Link>
                     </li>
                     <li>
                         <Link href="/politique-confidentialite">Politique de confidentialité</Link>

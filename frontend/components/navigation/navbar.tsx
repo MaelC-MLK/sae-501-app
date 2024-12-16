@@ -6,10 +6,8 @@ import { useUser } from '@/contexts/UserProvider';
 import { k2d } from '@/app/fonts/fonts';
 import Image from 'next/image';
 
-
 const Navbar = () => {
-    const { user, setUser } = useUser();
-
+    const { user } = useUser();
 
     return (
         <div className="flex justify-center py-2 px-5 border-b-2 border-foreground/15 w-full fixed z-50 top-0 bg-background">
@@ -75,7 +73,7 @@ const Navbar = () => {
                                 <Button variant="outline">Se connecter</Button>
                             </Link>
                             <Link href="/register">
-                                <Button variant="default">S'inscrire</Button>
+                                <Button variant="default">S&apos;inscrire</Button>
                             </Link>
                         </>
                     )}

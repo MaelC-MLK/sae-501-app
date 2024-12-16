@@ -19,7 +19,7 @@ export default function VerifyEmailPage({ params }: { params: { token: string, i
                 const res = await fetch(`${process.env.API_BASE_URL}/api/verify-email/${token}/${id}`);
                 if (res.ok) {
                     const data = await res.json();
-                    if (data.message === 'Utilisateur déjà inscrit à l\'événement.') {
+                    if (data.message === 'Utilisateur déjà inscrit à l&apos;événement.') {
                         setStatus('alreadyVerified');
                         setMessage(data.message);
                     } else {
@@ -31,7 +31,7 @@ export default function VerifyEmailPage({ params }: { params: { token: string, i
                     setStatus('error');
                     setMessage(data.error || 'Token invalide.');
                 }
-            } catch (err) {
+            } catch {
                 setStatus('error');
                 setMessage('Erreur lors de la vérification.');
             }
@@ -43,7 +43,7 @@ export default function VerifyEmailPage({ params }: { params: { token: string, i
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
-                {status === 'loading' && <h1>Vérification de l'email...</h1>}
+                {status === 'loading' && <h1>Vérification de l&apos;email...</h1>}
                 {(status === 'success' || status === 'alreadyVerified' || status === 'error') && (
                     <>
                         <h1 className='text-lg font-semibold'>{message}</h1>
@@ -53,7 +53,7 @@ export default function VerifyEmailPage({ params }: { params: { token: string, i
                                 size={'lg'}
                                 className="mt-4"
                             >
-                                Retour à l'accueil
+                                Retour à l&apos;accueil
                             </Button>
                         </Link>
                     </>

@@ -1,4 +1,3 @@
-"use client";
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
@@ -14,11 +13,14 @@ import { CarouselInscris } from "@/components/sections/carouselInscris";
 import { fetchUserEvents } from "@/lib/data";
 import { fetchUserById } from "@/lib/data";
 import { SkeletonProfile } from "@/components/skeletons/skeletons";
+import { EventProps } from "@/types/event";
+import { UserProps } from "@/types/user";
 
 export default function Profile() {
   const userContext = useUser();
-  const [events, setEvents] = useState<any[]>([]);
-  const [userData, setUserData] = useState<any>();
+  const [events, setEvents] = useState<EventProps[]>([]);
+  const [userData, setUserData] = useState<UserProps | null>(null);
+
   const [error, setError] = useState("");
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [loadingUserData, setLoadingUserData] = useState(true);
@@ -104,7 +106,7 @@ export default function Profile() {
             <div className="flex flex-col items-center">
               <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white">
                 <Image
-                  src={userData.avatar ? `${process.env.API_BASE_URL}/uploads/users/` + userData?.avatar : '/images/profile-picture.webp'}
+                  src={userData?.avatar ? `${process.env.API_BASE_URL}/uploads/users/` + userData.avatar : '/images/profile-picture.webp'}
                   alt="Profile Picture"
                   layout="fill"
                   objectFit="cover"
@@ -131,7 +133,7 @@ export default function Profile() {
                 </Button>
               </Link>
             </div>
-            {events.length > 0 ? (<CarouselInscris events={events} />) : (<p className="text-gray-800">Vous n'êtes inscrit à aucun événement</p>)}
+            {events.length > 0 ? (<CarouselInscris events={events} />) : (<p className="text-gray-800">Vous n&apos;êtes inscrit à aucun événement</p>)}
           </div>
         </div>
       </div>

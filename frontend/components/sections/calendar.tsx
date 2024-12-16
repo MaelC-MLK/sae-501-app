@@ -5,6 +5,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import frLocale from "@fullcalendar/core/locales/fr";
+import { EventApi } from "@fullcalendar/core";
 import "@/app/globals.css";
 import { fetchUserEvents, fetchEventsByCreator } from "@/lib/data";
 import PopupDeleteEvent from "@/components/sections/popupDeleteEvent";
@@ -26,8 +27,31 @@ import { useToast } from "@/hooks/use-toast";
 import { unregisterEvent } from "@/lib/data";
 import Link from "next/link";
 
+interface Event {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  isVisible: boolean;
+  creator_id: string;
+  extendedProps: {
+    users: { id: string }[];
+    isVisible: boolean;
+    location?: string;
+    description?: string;
+  };
+}
+
+interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  avatar: string;
+}
+
 let userContext: ReturnType<typeof useUser>;
-let setEvents: React.Dispatch<React.SetStateAction<any[]>>;
+let setEvents: React.Dispatch<React.SetStateAction<Event[]>>;
 let setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 
 export async function loadEvents() {
@@ -38,7 +62,7 @@ export async function loadEvents() {
       const userEvents = await fetchUserEvents(userId);
       const creatorEvents = await fetchEventsByCreator(userId);
       const combinedEvents = [...userEvents, ...creatorEvents].map(
-        (event) => ({
+        (event: any) => ({
           ...event,
           backgroundColor: event.creator_id == userId ? "#FFD700" : "#ADD8E6",
           borderColor: event.creator_id == userId ? "#FFD700" : "#ADD8E6",
@@ -62,18 +86,8 @@ export default function Calendar() {
     center: "",
     right: "timeGridDay,timeGridWeek,dayGridMonth",
   });
-  const [events, setEventsState] = useState<
-    {
-      id: string;
-      title: string;
-      start: Date;
-      end: Date;
-      isVisible: boolean;
-      creator_id: string;
-    }[]
-  >([]);
-  const [selectedEvent, setSelectedEvent] = useState<any>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [events, setEventsState] = useState<Event[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPopupDeleteOpen, setIsPopupDeleteOpen] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [filter, setFilter] = useState("all");
@@ -82,32 +96,24 @@ export default function Calendar() {
   const router = useRouter();
   const [loading, setLoadingState] = useState(true);
   const userId = userContext.user ? userContext.user.id : null;
-  const [customButtons, setCustomButtons] = useState({
-    myCustomButton: {
-      text: 'custom!',
-      click: function() {
-        alert('clicked the custom button!');
-      }
-    }
-  });
   const {toast} = useToast();
 
   setEvents = setEventsState;
   setLoading = setLoadingState;
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
+      const timeoutId = setTimeout(() => {
+        if (!userContext.user) {
+          router.push("/login");
+          setLoading(false);
+        }
+      }, 10); // Timeout de 10 secondes
+  
       if (!userContext.user) {
-        router.push("/login");
-        setLoading(false);
+        return () => clearTimeout(timeoutId);
       }
-    }, 10); // Timeout de 10 secondes
-
-    if (!userContext.user) {
-      return () => clearTimeout(timeoutId);
-    }
-    loadEvents();
-  }, [userContext.user]);
+      loadEvents();
+    }, [userContext.user, router]);
 
   const loadEvents = async () => {
     if (!userContext.user) return;
@@ -164,7 +170,7 @@ export default function Calendar() {
   const handleUnsubscribeClick = async () => {
     if (selectedEvent) {
       try {
-        await unregisterEvent(selectedEvent.id);
+        await unregisterEvent(Number(selectedEvent.id));
         await loadEvents();
         closeModal();
       } catch (error) {
@@ -174,7 +180,7 @@ export default function Calendar() {
   };
 
   const isUserParticipant = selectedEvent?.extendedProps.users.some(
-    (user: any) => user.id === userId
+    (user) => user.id === userId
   );
 
   useEffect(() => {
@@ -190,14 +196,27 @@ export default function Calendar() {
     }
   }, [calendarView]);
 
-  const handleEventClick = (clickInfo: any) => {
+  const handleEventClick = (clickInfo: { jsEvent: MouseEvent; event: EventApi }) => {
     const { clientX, clientY } = clickInfo.jsEvent;
     const { innerWidth, innerHeight } = window;
   
     const isLeftHalf = clientX < innerWidth / 2;
     const isBottomQuarter = clientY > (innerHeight * 3) / 4;
   
-    setSelectedEvent(clickInfo.event);
+    setSelectedEvent({
+      id: clickInfo.event.id,
+      title: clickInfo.event.title,
+      start: clickInfo.event.start!,
+      end: clickInfo.event.end!,
+      isVisible: clickInfo.event.extendedProps.isVisible,
+      creator_id: clickInfo.event.extendedProps.creator_id,
+      extendedProps: {
+        users: clickInfo.event.extendedProps.users,
+        isVisible: clickInfo.event.extendedProps.isVisible,
+        location: clickInfo.event.extendedProps.location,
+        description: clickInfo.event.extendedProps.description,
+      },
+    });
     setModalPosition({
       top: isBottomQuarter ? clientY - 200 : clientY,
       left: isLeftHalf ? clientX + 20 : clientX - 320,
@@ -397,14 +416,14 @@ export default function Calendar() {
               </button>
             )}
 
-            {selectedEvent.extendedProps.creator_id == userId && (
+            {selectedEvent.creator_id == userId && (
               <>
                 <button
                   className="relative group text-gray-500 hover:text-gray-700 px-1 float-right"
                   onClick={() => setIsPopupDeleteOpen(true)}
                 >
                   <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2">
-                    Supprimer l'événement
+                    Supprimer l&apos;événement
                   </div>
                   <div className="rounded-full p-2 group-hover:bg-gray-200">
                     <svg
@@ -432,7 +451,7 @@ export default function Calendar() {
               <div
                 className="w-4 h-4 rounded-full shrink-0 absolute top-10"
                 style={{
-                  backgroundColor: selectedEvent.extendedProps.creator_id == userId ? "#FFD700" : "#ADD8E6",
+                  backgroundColor: selectedEvent.creator_id == userId ? "#FFD700" : "#ADD8E6",
                 }}
               ></div>
               <h2 className="text-xl font-semibold ml-7 mt-9 mb-4">
@@ -512,10 +531,10 @@ export default function Calendar() {
         </div>
       )}
 
-      {isPopupDeleteOpen && (
+      {isPopupDeleteOpen && selectedEvent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <PopupDeleteEvent
-            eventId={selectedEvent.id}
+            eventId={Number(selectedEvent.id)}
             onClose={closePopupDelete}
             onDelete={handleDeleteClick}
           />

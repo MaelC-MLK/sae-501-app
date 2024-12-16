@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import Image from 'next/image';
 import { notFound } from "next/navigation";
 import { useParams } from "next/navigation";
-import { useEvents } from "@/components/EventContext";
 import { EventProps } from "@/types/event";
 import { Badge } from '@/components/ui/badge';
 import { PopupJoinPublicEvent } from '@/components/sections/popupJoinPublicEvent';
@@ -20,7 +19,6 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast"
 import { checkUserRegistration, joinEvent, unregisterEvent } from "@/lib/data";
-import { revalidatePath } from "next/cache";
 import { fetchEventByToken } from "@/lib/data";
 
 export default function Event() {
@@ -45,7 +43,7 @@ export default function Event() {
           };
 
         fetchEvent();
-    }, []);
+    }, [id]);
 
     useEffect(() => {
         if (event) {
@@ -113,6 +111,7 @@ export default function Event() {
                     <ToastAction onClick={handleJoinEvent} altText="Réessayer">Réessayer</ToastAction>
                 ),
             });
+            console.log(error);
         }
     };
 
@@ -137,6 +136,7 @@ export default function Event() {
                     <ToastAction onClick={handleJoinEvent} altText="Réessayer">Réessayer</ToastAction>
                 ),
             });
+            console.log(error);
         }
     };
 
