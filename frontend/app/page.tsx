@@ -6,12 +6,11 @@ import Image from 'next/image';
 import ScrollButton from "@/components/ui/scrollButton";
 import { CarouselRecom } from "@/components/sections/carouselRecom";
 import { SignUpCallToAction } from "@/components/sections/signUpCallToAction";
-import { PaginatedEvents } from "@/components/sections/paginatedEvents";
 import { Button } from "@/components/ui/button";
 import { k2d } from "@/app/fonts/fonts";
 import Link from 'next/link';
 import { useUser } from '@/contexts/UserProvider';
-import PaginatedEventsReq from "@/components/sections/paginatedEventsReq";
+import PaginatedEvents from "@/components/sections/paginatedEvents";
 
 export default function Home() {
   const [events, setEvents] = useState([]);
@@ -82,8 +81,7 @@ export default function Home() {
 
       {!user && <SignUpCallToAction />}
 
-      {/* <PaginatedEvents events={events} /> */}
-      <PaginatedEventsReq />
+      <PaginatedEvents />
     </div>
   );
 }

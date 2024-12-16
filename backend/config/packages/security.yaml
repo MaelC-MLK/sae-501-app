@@ -45,7 +45,8 @@ security:
       # Désactivez stateless pour permettre l'utilisation de sessions
 
   access_control:
-      - { path: ^/api/events/public, roles: PUBLIC_ACCESS }
+      - { path: ^/api/events, roles: PUBLIC_ACCESS }
+    - { path: ^/api/events/public, roles: PUBLIC_ACCESS }
       - { path: ^/api/events/token/.*, roles: PUBLIC_ACCESS}
       - { path: ^/api/user/email, roles: PUBLIC_ACCESS }
       - { path: ^/api/user/email/unregister, roles: PUBLIC_ACCESS }
