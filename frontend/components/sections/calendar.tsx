@@ -71,6 +71,7 @@ export default function Calendar() {
       end: Date;
       isVisible: boolean;
       creator_id: string;
+      idToken: string;
     }[]
   >([]);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
@@ -345,11 +346,10 @@ export default function Calendar() {
               </div>
             </button>
 
-            {selectedEvent.extendedProps.isVisible && (
-              <>
-                <Link target="_blank" className="relative group text-gray-500 hover:text-gray-700 px-1 float-right" href={`${process.env.APP_BASE_URL}/event/${selectedEvent.id}`}                >
+            
+                <Link target="_blank" className="relative group text-gray-500 hover:text-gray-700 px-1 float-right" href={`${process.env.APP_BASE_URL}/event/${selectedEvent.extendedProps.idToken}`}                >
                   <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2">
-                    Page détail public
+                    Page détail
                   </div>
                   <div className="rounded-full p-2 group-hover:bg-gray-200">
                     <svg
@@ -368,8 +368,7 @@ export default function Calendar() {
                     </svg>
                   </div>
                 </Link>
-              </>
-            )}
+              
 
             {isUserParticipant && (
               <button

@@ -3,7 +3,6 @@
 import { usePathname } from 'next/navigation';
 import localFont from "next/font/local";
 import "./globals.css";
-import { EventProvider } from "@/components/EventContext";
 import Navbar from "@/components/navigation/navbar";
 import Footer from "@/components/layout/footer";
 import { UserProvider } from "@/contexts/UserProvider";
@@ -32,10 +31,8 @@ export default function RootLayout({
       >
         <UserProvider initialUser={null}>
           <Navbar />
-          <EventProvider>
             <main className="flex-grow min-h-screen">{children}</main>
             <Toaster />
-          </EventProvider>
           {!isProfileCalendarRoute && <Footer />}
           <CookieConsentPopup />
         </UserProvider>

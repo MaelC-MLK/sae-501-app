@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import Image from 'next/image';
 import { notFound } from "next/navigation";
 import { useParams } from "next/navigation";
-import { useEvents } from "@/components/EventContext";
 import { EventProps } from "@/types/event";
 import { Badge } from '@/components/ui/badge';
 import { PopupJoinPublicEvent } from '@/components/sections/popupJoinPublicEvent';
@@ -22,6 +21,7 @@ import { ToastAction } from "@/components/ui/toast"
 import { checkUserRegistration, joinEvent, unregisterEvent } from "@/lib/data";
 import { revalidatePath } from "next/cache";
 import { fetchEventByToken } from "@/lib/data";
+import { PopupJoinPrivateEvent } from "@/components/sections/popupJoinPrivateEvent";
 
 export default function Event() {
     const { id } = useParams();
@@ -349,7 +349,7 @@ export default function Event() {
                         )
                     ) : (
                         participantCount < participantLimit && (
-                            <PopupJoinPublicEvent eventId={event.id}  />
+                            event.isVisible ? <PopupJoinPublicEvent eventId={event.id}/> : <PopupJoinPrivateEvent/>
                         )
                     )}
                     <PopupShareEvent eventUrl={eventUrl} />
