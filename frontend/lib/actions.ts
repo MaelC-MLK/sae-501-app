@@ -201,3 +201,22 @@ export async function CreateEventAndNotify(id: number){
     const result = await response.json();
     return result;
 }
+
+export async function UpdateUserPassword(userId: string, currentPassword: string, newPassword: string) {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/users/${userId}/update-password`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        currentPassword,
+        newPassword,
+      }),
+    });
+  
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw new Error(errorResponse.message || "Erreur lors de la mise à jour du mot de passe");
+    }
+  }
