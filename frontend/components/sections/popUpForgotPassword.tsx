@@ -11,8 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "../ui/separator";
-import Link from "next/link";
 
 export default function PopUpForgotPassword() {
     const [email, setEmail] = useState("");
@@ -56,10 +54,12 @@ export default function PopUpForgotPassword() {
 
             setSuccess(true);
 
-        } catch (err: string | any) {
+        } catch (err: unknown) {
             setSuccess(false);
-            if(err.message.includes("Username could not be found.")) {
-                setError("Aucun compte n'a été trouvé avec cet email");
+            if(err instanceof Error) {
+                if(err.message.includes("Username could not be found.")) {
+                    setError("Aucun compte n'a été trouvé avec cet email");
+                }
             }
             else {
                 setError("une erreur est survenue");

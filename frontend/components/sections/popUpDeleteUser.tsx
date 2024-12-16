@@ -9,10 +9,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import React, {useState } from "react";
+import React, { useState } from "react";
 
 interface User {
   id: string;
@@ -47,9 +45,11 @@ export function PopUpDeleteUser({ user }: { user: User }) {
 
       window.location.href = '/';
 
-    } catch (error : any) {
+    } catch (error: unknown) {
       console.error("Erreur lors de la mise à jour :", error);
-      alert(`Erreur : ${error.message}`);
+      if (error instanceof Error) {
+        alert(`Erreur : ${error.message}`);
+      }
     }
   };
 

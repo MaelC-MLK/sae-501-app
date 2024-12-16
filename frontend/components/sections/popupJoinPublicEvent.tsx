@@ -28,8 +28,8 @@ export function PopupJoinPublicEvent({ eventId }: PopupJoinPublicEventProps) {
         try {           
             await signUserInvite(email, eventId);
             setIsOpen(false);
-        } catch (err: string | any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError((err as Error).message);
         } finally {
             setLoading(false);
         }
@@ -72,7 +72,7 @@ export function PopupJoinPublicEvent({ eventId }: PopupJoinPublicEventProps) {
                         onClick={handleSubmit} 
                         disabled={loading}
                     >
-                        {loading ? 'En cours...' : "S'inscrire"}
+                        {loading ? 'En cours...' : "S&apos;inscrire"}
                     </Button>
                 </DialogFooter>
                 <div className="flex flex-row items-center justify-center gap-3 mt-4">

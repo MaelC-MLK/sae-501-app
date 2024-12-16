@@ -36,7 +36,7 @@ interface PopUpEditProfileProps {
   userContext: UserContext;
 }
 
-export function PopUpEditProfile({ user, onUpdate, userContext: { userContextUser, setUser } }: PopUpEditProfileProps) {
+export function PopUpEditProfile({ user, onUpdate, userContext: { setUser } }: PopUpEditProfileProps) {
   const [firstName, setfirstName] = useState(user?.firstName || "");
   const [lastName, setlastName] = useState(user?.lastName || "");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
@@ -71,7 +71,7 @@ export function PopUpEditProfile({ user, onUpdate, userContext: { userContextUse
           return;
       }
   
-      var updatedUser = {
+      const updatedUser = {
         "@context": "string", // Remplace par le bon contexte
         "@id": `${process.env.API_BASE_URL}/api/users/${user.id}`,
         "@type": "string",
@@ -95,8 +95,10 @@ export function PopUpEditProfile({ user, onUpdate, userContext: { userContextUse
 
       setError("");
       setOpen(false); // Ferme le pop-up après la mise à jour
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      }
     }
   };
 

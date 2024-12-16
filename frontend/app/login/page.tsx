@@ -9,9 +9,8 @@ import { useUser } from '@/contexts/UserProvider';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { k2d } from "@/app/fonts/fonts"
+import { k2d } from "@/app/fonts/fonts";
 import PopUpForgotPassword from '@/components/sections/popUpForgotPassword';
-
 
 export default function Page() {
     const [email, setEmail] = useState('');
@@ -35,7 +34,7 @@ export default function Page() {
             else {
                 setError('Email ou mot de passe incorrect');
             }
-        } catch (err) {
+        } catch {
             setError('Email ou mot de passe incorrect');
         } finally {
             setLoading(false);
@@ -80,10 +79,11 @@ export default function Page() {
                                     className="absolute top-1/2 right-3 transform -translate-y-1/2"
                                     onClick={() => setShowPassword(!showPassword)}
                                 >
-                                    <img
+                                    <Image
                                         src={showPassword ? "/images/show.svg" : "/images/no-show.svg"}
                                         alt="Toggle Password Visibility"
-                                        className="w-5 h-5"
+                                        width={20}
+                                        height={20}
                                     />
                                 </button>
                             </div>

@@ -16,7 +16,7 @@ interface CarouselRecomProps {
 
 export function CarouselInscris({ events }: CarouselRecomProps) {
   const [size, setSize] = useState('');
-  const [eventsList, setEventsList] = useState<any[]>([]);
+  const [eventsList, setEventsList] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
     if(events.length == 1 ) {
@@ -39,7 +39,7 @@ export function CarouselInscris({ events }: CarouselRecomProps) {
 
     setEventsList(eventsArray);
 
-  }, [events]);
+  }, [events, size]);
 
   return (
     <Carousel className="w-full max-w-7xl justify-self-center px-5 sm:px-16">

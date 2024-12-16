@@ -1,15 +1,16 @@
 // /lib/action.ts
 
-import { error } from "console";
 import { loadEvents } from "@/components/sections/calendar";
 
-export async function createEvent(eventData: any) {
+export async function createEvent(eventData: Record<string, unknown>) {
     const response = await fetch(`${process.env.API_BASE_URL}/api/events`, {
         method: 'POST',
         credentials: 'include',
         headers: {
+            'Content-Type': 'application/merge-patch+json',
+            'Accept': 'application/json',
         },
-        body: eventData,
+        body: JSON.stringify(eventData),
     });
     if (!response.ok) {
         throw new Error('Failed to create event');
@@ -19,7 +20,7 @@ export async function createEvent(eventData: any) {
     return newEvent;
 }
 
-export async function UpdateEvent(eventData: any, eventId: string) {
+export async function UpdateEvent(eventData: Record<string, unknown>, eventId: string) {
     const response = await fetch(`${process.env.API_BASE_URL}/api/events/${eventId}`, {
         method: 'PATCH',
         credentials: 'include',
@@ -53,7 +54,7 @@ export async function deleteEvent(eventId: string) {
 }
 
 
-export async function signUserInvite(email: any, eventId: any) {
+export async function signUserInvite(email: string, eventId: string) {
     const response = await fetch(`${process.env.API_BASE_URL}/api/user/email`, {
         method: "POST",
         credentials: 'include',
@@ -99,7 +100,7 @@ export async function inviteFriend(email: string) {
     return responseJson;
 }
 
-export async function inviteToEvent(email: string, eventId: Number) {
+export async function inviteToEvent(email: string, eventId: number) {
     const response = await fetch(`${process.env.API_BASE_URL}/api/events/invite`, {
         method: "POST",
         credentials: 'include',
@@ -123,7 +124,7 @@ export async function inviteToEvent(email: string, eventId: Number) {
     return responseJson;
 }
 
-export async function UpdateUser(user: any) {
+export async function UpdateUser(user: { id: string; [key: string]: unknown }) {
     const response = await fetch(`${process.env.API_BASE_URL}/api/users/${user.id}`, {
         method: 'PUT',
         credentials: 'include',
@@ -139,7 +140,7 @@ export async function UpdateUser(user: any) {
     return updatedUser;
 }
 
-export async function UpdateUserImage(user: any, image: any) {
+export async function UpdateUserImage(user: { id: string }, image: FormData) {
     const response = await fetch(`${process.env.API_BASE_URL}/api/users/${user.id}/update-image`, {
         method: 'POST',
         credentials: 'include',
@@ -152,7 +153,7 @@ export async function UpdateUserImage(user: any, image: any) {
     return updatedUser;
 }
 
-export async function UpdateEventImage(id: any, image: any) {
+export async function UpdateEventImage(id: string, image: FormData) {
     const response = await fetch(`${process.env.API_BASE_URL}/api/events/${id}/update-image`, {
         method: 'POST',
         credentials: 'include',
@@ -178,7 +179,7 @@ export async function deleteEventAndNotify(id: number) {
     return result;
 }
 
-export async function UpdateEventAndNotify(id: number){
+export async function UpdateEventAndNotify(id: number) {
     const response = await fetch(`${process.env.API_BASE_URL}/api/events/${id}/notify-update`, {
         method: 'POST',
         credentials: 'include',
@@ -190,7 +191,7 @@ export async function UpdateEventAndNotify(id: number){
     return result;
 }
 
-export async function CreateEventAndNotify(id: number){
+export async function CreateEventAndNotify(id: number) {
     const response = await fetch(`${process.env.API_BASE_URL}/api/events/${id}/notify-create`, {
         method: 'POST',
         credentials: 'include',

@@ -28,17 +28,11 @@ export function PopUpJoinEventify() {
             await inviteFriend(email);
             setIsOpen(false); // Ferme la pop-up si l'invitation est réussie
             setEmail(""); // Réinitialise le champ email
-        } catch (err: any) {
-            setError(err.message || "Une erreur s'est produite.");
+        } catch (err: unknown) {
+            setError((err as Error).message || "Une erreur s&apos;est produite.");
         } finally {
             setLoading(false);
         }
-    };
-
-    const handleClose = () => {
-        setIsOpen(false);
-        setEmail("");
-        setError(null); // Réinitialise l'état en cas de réouverture
     };
 
     return (
@@ -53,7 +47,7 @@ export function PopUpJoinEventify() {
                 <DialogHeader>
                     <DialogTitle>Plus on est de fous, plus on rit !</DialogTitle>
                     <DialogDescription>
-                        Un e-mail leur sera envoyé pour leur permettre de s'inscrire rapidement.
+                        Un e-mail leur sera envoyé pour leur permettre de s&apos;inscrire rapidement.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">

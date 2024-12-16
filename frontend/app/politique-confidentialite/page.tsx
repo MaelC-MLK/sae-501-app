@@ -6,7 +6,7 @@ export default function PolitiqueConfidentialite() {
     <div className="container mx-auto px-4 pb-10 pt-20">
       <h1 className={`${k2d.className} text-3xl font-bold`}>Politique de Confidentialité</h1>
 
-    <p className='text-sm md:text-base text-muted-foreground mt-1 mb-6'>Dernière modification : <span>04/12/2024</span></p>
+      <p className='text-sm md:text-base text-muted-foreground mt-1 mb-6'>Dernière modification : <span>04/12/2024</span></p>
       
       <section className="mb-6">
         <h2 className="text-2xl font-semibold mb-2">1. Introduction</h2>
@@ -22,7 +22,7 @@ export default function PolitiqueConfidentialite() {
         <ul className="list-disc list-inside ml-4">
           <li>Informations de contact (nom, prénom, adresse e-mail)</li>
           <li>Informations de compte (adresse e-mail, mot de passe)</li>
-          <li>Informations sur les événements (détails de l'événement, participants)</li>
+          <li>Informations sur les événements (détails de l&apos;événement, participants)</li>
         </ul>
       </section>
       <section className="mb-6">
@@ -45,19 +45,19 @@ export default function PolitiqueConfidentialite() {
           <li>Avec votre consentement</li>
           <li>Pour se conformer à des obligations légales</li>
           <li>Pour protéger nos droits et notre propriété</li>
-          <li>En cas de fusion ou d'acquisition</li>
+          <li>En cas de fusion ou d&apos;acquisition</li>
         </ul>
       </section>
       <section className="mb-6">
         <h2 className="text-2xl font-semibold mb-2">5. Sécurité des informations</h2>
         <p>
-          Nous mettons en œuvre des mesures de sécurité pour protéger vos informations personnelles contre tout accès, utilisation ou divulgation non autorisés. Cependant, aucune méthode de transmission sur Internet ou de stockage électronique n'est totalement sécurisée, et nous ne pouvons garantir une sécurité absolue.
+          Nous mettons en œuvre des mesures de sécurité pour protéger vos informations personnelles contre tout accès, utilisation ou divulgation non autorisés. Cependant, aucune méthode de transmission sur Internet ou de stockage électronique n&apos;est totalement sécurisée, et nous ne pouvons garantir une sécurité absolue.
         </p>
       </section>
       <section className="mb-6">
         <h2 className="text-2xl font-semibold mb-2">6. Vos droits</h2>
         <p>
-          Vous avez le droit d'accéder à vos informations personnelles, de les corriger, de les supprimer ou de limiter leur utilisation. Vous pouvez également vous opposer à leur traitement ou demander leur portabilité. Pour exercer ces droits, veuillez nous contacter à l'adresse suivante : contact@eventify.com.
+          Vous avez le droit d&apos;accéder à vos informations personnelles, de les corriger, de les supprimer ou de limiter leur utilisation. Vous pouvez également vous opposer à leur traitement ou demander leur portabilité. Pour exercer ces droits, veuillez nous contacter à l&apos;adresse suivante : contact@eventify.com.
         </p>
       </section>
       <section className="mb-6">
@@ -69,7 +69,7 @@ export default function PolitiqueConfidentialite() {
       <section className="mb-6">
         <h2 className="text-2xl font-semibold mb-2">8. Contact</h2>
         <p>
-          Si vous avez des questions ou des préoccupations concernant cette politique de confidentialité, veuillez nous contacter à l'adresse suivante : contact@eventify.com.
+          Si vous avez des questions ou des préoccupations concernant cette politique de confidentialité, veuillez nous contacter à l&apos;adresse suivante : contact@eventify.com.
         </p>
       </section>
     </div>

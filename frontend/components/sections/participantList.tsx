@@ -1,11 +1,12 @@
 import Image from "next/image";
+import { Avatar, Button } from "some-component-library"; // Adjust the import path as necessary
 
 function ParticipantsList({ participants, onRemoveParticipant }) {
   return (
     <div className="p-4">
       <h2 className="text-lg font-semibold mb-4">Liste des participants</h2>
       <ul className="space-y-2">
-        {participants.map((participant) => (
+        {participants.map((participant: any) => (
           <li key={participant.id} className="flex items-center justify-between">
             <div className="flex items-center">
               <Avatar className="mr-2">
@@ -29,3 +30,5 @@ function ParticipantsList({ participants, onRemoveParticipant }) {
     </div>
   );
 }
+
+export default ParticipantsList;

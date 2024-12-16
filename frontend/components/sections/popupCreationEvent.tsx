@@ -53,9 +53,9 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import UserSearchSkeleton from "@/components/skeletons/skeletons";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createEvent } from "@/lib/actions";
 import { fetchUserBy } from "@/lib/data";
 
@@ -318,7 +318,6 @@ export default function PopupCreationEvent({
 
     try {
       const response = await createEvent(formData);
-      setIsMainDialogOpen(false);
       resetForm();
   
       if (response['@id']) {
@@ -369,7 +368,6 @@ export default function PopupCreationEvent({
 
     try {
       const response = await createEvent(formData);
-      setIsConfirmDialogOpen(false);
       setIsMainDialogOpen(false);
       resetForm();
       toast({

@@ -40,24 +40,24 @@ export async function fetchEventByToken(token: string) {
 
 export async function fetchUserEvents(userId: string) {
     const response = await fetch(`${process.env.API_BASE_URL}/api/events/user/${userId}`, {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-    
-        if (!response.ok) {
-            throw new Error('Failed to fetch user events');
-        }
-    
-        const data = await response.json();
-        return data.map((event: any) => ({
-            ...event,
-            start: parse(event.date_start, 'dd/MM/yyyy - HH:mm', new Date()),
-            end: parse(event.date_end, 'dd/MM/yyyy - HH:mm', new Date()),
-        }));
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch user events');
     }
+
+    const data = await response.json();
+    return data.map((event: { date_start: string; date_end: string }) => ({
+        ...event,
+        start: parse(event.date_start, 'dd/MM/yyyy - HH:mm', new Date()),
+        end: parse(event.date_end, 'dd/MM/yyyy - HH:mm', new Date()),
+    }));
+}
 
 export async function fetchEventsByCreator(creatorId: string) {
 
@@ -74,14 +74,14 @@ export async function fetchEventsByCreator(creatorId: string) {
     }
 
     const data = await response.json();
-    return data.map((event: any) => ({
+    return data.map((event: { date_start: string; date_end: string }) => ({
         ...event,
         start: parse(event.date_start, 'dd/MM/yyyy - HH:mm', new Date()),
         end: parse(event.date_end, 'dd/MM/yyyy - HH:mm', new Date()),
     }));
 }
 
-export const checkUserRegistration = async (user: any, eventId: number): Promise<boolean | null> => {
+export const checkUserRegistration = async (user: { id: string }, eventId: number): Promise<boolean | null> => {
     if (!user || !eventId) return null;
 
     try {

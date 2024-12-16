@@ -39,9 +39,11 @@ export function PopUpLogout() {
 
       router.push('/');
 
-    } catch (error : any) {
+    } catch (error: unknown) {
       console.error("Erreur lors de la mise à jour :", error);
-      alert(`Erreur : ${error.message}`);
+      if (error instanceof Error) {
+        alert(`Erreur : ${error.message}`);
+      }
     }
   };
 

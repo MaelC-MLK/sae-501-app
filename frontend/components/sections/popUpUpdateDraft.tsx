@@ -1,8 +1,7 @@
 "use client";
 
-
 import React from "react";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -196,16 +195,11 @@ export default function PopupUpdateDraft({
             !participants.some((participant) => participant.id === user.id)
         );
         setSearchResults(filteredResults);
-
-
       } catch (error) {
         console.error("Failed to fetch search results:", error);
-      } finally {
-        setIsLoading(false);
       }
     } else {
       setSearchResults([]);
-      setIsLoading(false);
     }
   }, 300); // 300ms delay
 
@@ -271,17 +265,13 @@ export default function PopupUpdateDraft({
     };  
   
     try {
-      const response = await UpdateEvent(formData, eventData.id);
+      await UpdateEvent(formData, eventData.id);
       setIsMainDialogOpen(false);
-      // revalidatePath('/profile/calendar');
       onEventChange();
       toast({
         title: "Brouillon modifié ! ✅",
         description: "Votre événement a été modifié avec succès.",
-        // action: (
-        //     <ToastAction altText="Annuler">Annuler</ToastAction>
-        // ),
-    });
+      });
     } catch (error) {
       console.error("Failed to update event:", error);
       toast({
@@ -315,16 +305,12 @@ export default function PopupUpdateDraft({
     };  
   
     try {
-      const response = await UpdateEvent(formData, eventData.id);
+      await UpdateEvent(formData, eventData.id);
       setIsMainDialogOpen(false);
-      // revalidatePath('/profile/calendar');
       onEventChange();
       toast({
         title: "Brouillon restauré ! ✅",
         description: "Votre événement a été restauré avec succès.",
-        // action: (
-        //     <ToastAction altText="Annuler">Annuler</ToastAction>
-        // ),
       });
 
     } catch (error) {
@@ -721,7 +707,6 @@ export default function PopupUpdateDraft({
                   Modifier
                 </Button>
                 <Button
-                  // type="submit"
                   onClick={(e) => {e.preventDefault(); handleRestoreEvent(form.getValues())}}
                   >
                   Restaurer

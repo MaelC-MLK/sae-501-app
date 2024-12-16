@@ -202,7 +202,7 @@ export default function PopupUpdateEvent({
       try {
         const results = await fetchUserBy(value);
         const filteredResults = results.filter(
-          (user: any) =>
+          (user: { id: number }) =>
             !participants.some((participant) => participant.id === user.id)
         );
         setSearchResults(filteredResults);
@@ -225,7 +225,10 @@ export default function PopupUpdateEvent({
     handleSearchChange(value);
   };
 
-  const handleAddParticipant = (participant: any, event: React.MouseEvent) => {
+  const handleAddParticipant = (
+    participant: { id: number; firstName: string; lastName: string; email: string; avatar?: string },
+    event: React.MouseEvent
+  ) => {
     event.preventDefault();
     const limit = parseInt(form.getValues().limit, 10);
 

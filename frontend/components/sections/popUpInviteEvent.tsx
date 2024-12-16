@@ -33,17 +33,11 @@ export function PopUpInviteEvent({ eventId, eventTitle }: PopUpInviteEventProps)
             await inviteToEvent(email, eventId); // Appel à la nouvelle fonction
             setIsOpen(false); // Ferme la pop-up si l'invitation est réussie
             setEmail(""); // Réinitialise le champ email
-        } catch (err: any) {
-            setError(err.message || "Une erreur s'est produite.");
+        } catch (err: unknown) {
+            setError((err as Error).message || "Une erreur s'est produite.");
         } finally {
             setLoading(false);
         }
-    };
-
-    const handleClose = () => {
-        setIsOpen(false);
-        setEmail("");
-        setError(null); // Réinitialise l'état en cas de réouverture
     };
 
     return (
@@ -61,7 +55,7 @@ export function PopUpInviteEvent({ eventId, eventTitle }: PopUpInviteEventProps)
                 <DialogHeader>
                     <DialogTitle>Plus on est de fous, plus on rit !</DialogTitle>
                     <DialogDescription>
-                        Invitez un ami à l'événement {eventTitle}. Un e-mail lui sera envoyé pour s'inscrire.
+                        Invitez un ami à l&apos;événement {eventTitle}. Un e-mail lui sera envoyé pour s&apos;inscrire.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">

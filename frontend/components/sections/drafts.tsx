@@ -3,9 +3,10 @@ import { fetchEventDrafts } from "@/lib/data";
 import { useUser } from "@/contexts/UserProvider";
 import { useEffect, useState } from "react";
 import { SkeletonDraftCard } from "@/components/skeletons/skeletons";
+import { EventDraft } from "@/types"; // Assuming you have a type for EventDraft
 
 export default function Drafts() {
-  const [drafts, setDrafts] = useState<any[]>([]);
+  const [drafts, setDrafts] = useState<EventDraft[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
 
@@ -24,7 +25,7 @@ export default function Drafts() {
 
   useEffect(() => {
     loadDrafts();
-  }, [user]);
+  }, [user, loadDrafts]);
 
   if (loading) {
     return (

@@ -33,3 +33,22 @@ export interface PopupUpdateEventProps {
 export interface PopupJoinPublicEventProps {
     eventId: number;
 }
+
+export interface EventDraft {
+    id: number;
+    title: string;
+    date_start: string;
+    date_end: string;
+    time_start: string;
+    time_end: string;
+    isVisible: boolean;
+    description: string;
+    image: string;
+    badge: string;
+    location: string;
+    isRecommended: number;
+    idToken: string;
+    users: Array<UserProps>;
+    creator: UserProps;
+    limit: number;
+}

@@ -36,7 +36,7 @@ export function PopupShareEvent({ eventUrl }: { eventUrl: string }) {
         try {
             await navigator.clipboard.writeText(eventUrl);
             setCopySuccess('Lien copié dans le presse-papiers.');
-        } catch (err) {
+        } catch {
             setCopySuccess('Échec de la copie du lien.');
         }
     };

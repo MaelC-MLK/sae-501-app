@@ -11,7 +11,7 @@ export default function MentionsLegales() {
       <section className="mb-6">
         <h2 className="text-2xl font-semibold mb-2">Éditeur du site</h2>
         <p>
-          Nom de l'entreprise : Eventify<br />
+          Nom de l&apos;entreprise : Eventify<br />
           Adresse : 12 All. André Maurois, 87065 Limoges, France<br />
           Téléphone : +33 1 23 45 67 89<br />
           Email : contact@eventify.com<br />
@@ -21,7 +21,7 @@ export default function MentionsLegales() {
       <section className="mb-6">
         <h2 className="text-2xl font-semibold mb-2">Hébergement</h2>
         <p>
-          Nom de l'hébergeur : Pulsheberg<br />
+          Nom de l&apos;hébergeur : Pulsheberg<br />
           {/* Adresse : 2 Rue Kellermann, 59100 Roubaix, France<br /> */}
           {/* Téléphone : +33 9 72 10 10 07<br /> */}
           Site web : <a href="https://pulseheberg.com/" className="text-primary hover:underline">www.pulseheberg.com</a>
@@ -30,25 +30,25 @@ export default function MentionsLegales() {
       <section className="mb-6">
         <h2 className="text-2xl font-semibold mb-2">Propriété intellectuelle</h2>
         <p>
-          Le contenu du site Eventify, incluant, de façon non limitative, les graphismes, images, textes, vidéos, animations, sons, logos, gifs et icônes ainsi que leur mise en forme sont la propriété exclusive de la société Eventify à l'exception des marques, logos ou contenus appartenant à d'autres sociétés partenaires ou auteurs.
+          Le contenu du site Eventify, incluant, de façon non limitative, les graphismes, images, textes, vidéos, animations, sons, logos, gifs et icônes ainsi que leur mise en forme sont la propriété exclusive de la société Eventify à l&apos;exception des marques, logos ou contenus appartenant à d&apos;autres sociétés partenaires ou auteurs.
         </p>
       </section>
       <section className="mb-6">
         <h2 className="text-2xl font-semibold mb-2">Données personnelles</h2>
         <p>
-          Conformément à la loi Informatique et Libertés du 6 janvier 1978, vous disposez d'un droit d'accès, de rectification, de modification et de suppression des données qui vous concernent. Vous pouvez exercer ce droit en envoyant un courrier à l'adresse suivante : Eventify, 12 All. André Maurois, 87065 Limoges, France ou par email à contact@eventify.com.
+          Conformément à la loi Informatique et Libertés du 6 janvier 1978, vous disposez d&apos;un droit d&apos;accès, de rectification, de modification et de suppression des données qui vous concernent. Vous pouvez exercer ce droit en envoyant un courrier à l&apos;adresse suivante : Eventify, 12 All. André Maurois, 87065 Limoges, France ou par email à contact@eventify.com.
         </p>
       </section>
       <section className="mb-6">
         <h2 className="text-2xl font-semibold mb-2">Cookies</h2>
         <p>
-          Le site Eventify peut-être amené à vous demander l'acceptation des cookies pour des besoins de statistiques et d'affichage. Un cookie est une information déposée sur votre disque dur par le serveur du site que vous visitez. Il contient plusieurs données qui sont stockées sur votre ordinateur dans un simple fichier texte auquel un serveur accède pour lire et enregistrer des informations.
+          Le site Eventify peut-être amené à vous demander l&apos;acceptation des cookies pour des besoins de statistiques et d&apos;affichage. Un cookie est une information déposée sur votre disque dur par le serveur du site que vous visitez. Il contient plusieurs données qui sont stockées sur votre ordinateur dans un simple fichier texte auquel un serveur accède pour lire et enregistrer des informations.
         </p>
       </section>
       <section className="mb-6">
         <h2 className="text-2xl font-semibold mb-2">Liens hypertextes</h2>
         <p>
-          Le site Eventify peut contenir des liens hypertextes vers d'autres sites présents sur le réseau Internet. Les liens vers ces autres ressources vous font quitter le site Eventify. Il est possible de créer un lien vers la page de présentation de ce site sans autorisation expresse de Eventify. Aucune autorisation ou demande d'information préalable ne peut être exigée par l'éditeur à l'égard d'un site qui souhaite établir un lien vers le site de l'éditeur. Il convient toutefois d'afficher ce site dans une nouvelle fenêtre du navigateur. Cependant, Eventify se réserve le droit de demander la suppression d'un lien qu'il estime non conforme à l'objet du site Eventify.
+          Le site Eventify peut contenir des liens hypertextes vers d&apos;autres sites présents sur le réseau Internet. Les liens vers ces autres ressources vous font quitter le site Eventify. Il est possible de créer un lien vers la page de présentation de ce site sans autorisation expresse de Eventify. Aucune autorisation ou demande d&apos;information préalable ne peut être exigée par l&apos;éditeur à l&apos;égard d&apos;un site qui souhaite établir un lien vers le site de l&apos;éditeur. Il convient toutefois d&apos;afficher ce site dans une nouvelle fenêtre du navigateur. Cependant, Eventify se réserve le droit de demander la suppression d&apos;un lien qu&apos;il estime non conforme à l&apos;objet du site Eventify.
         </p>
       </section>
     </div>

@@ -7,7 +7,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
@@ -50,7 +49,7 @@ export function PopUpEmailRegister({ user, open, setOpen }: { user: UserRegister
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>C'est presque bon !</DialogTitle>
+          <DialogTitle>C&apos;est presque bon !</DialogTitle>
           {error && <DialogDescription className="text-red-500">{error}</DialogDescription>}
           <DialogDescription>
             Un email de confirmation a été envoyé à {user.email}. Veuillez cliquer sur le lien pour activer votre compte
@@ -58,7 +57,7 @@ export function PopUpEmailRegister({ user, open, setOpen }: { user: UserRegister
         </DialogHeader>
         <DialogFooter>
           <Button type="button" variant="destructive" onClick={handleSubmit}>
-            Renvoyer l'email de confirmation
+            Renvoyer l&apos;email de confirmation
           </Button>
         </DialogFooter>
       </DialogContent>
