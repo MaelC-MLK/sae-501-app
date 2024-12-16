@@ -196,7 +196,7 @@ export default function Calendar() {
     const isBottomQuarter = clientY > (innerHeight * 3) / 4;
   
     setSelectedEvent({
-      id: clickInfo.event.id,
+      id: clickInfo.event.id.toString(),
       title: clickInfo.event.title,
       start: clickInfo.event.start!,
       end: clickInfo.event.end!,
@@ -230,7 +230,7 @@ export default function Calendar() {
   const handleDeleteClick = async () => {
     if (selectedEvent) {
       try {
-        await deleteEvent(selectedEvent.id);
+        await deleteEvent(selectedEvent.id.toString());
         await loadEvents(); // Recharger les événements après la suppression
         closeModal();
         setIsPopupDeleteOpen(false);
@@ -435,7 +435,29 @@ export default function Calendar() {
                   </div>
                 </button>
 
-                <PopupUpdateEvent eventData={selectedEvent} />
+                <PopupUpdateEvent eventData={{ 
+                  ...selectedEvent, 
+                  id: Number(selectedEvent.id),
+                  start: selectedEvent.start.toISOString(),
+                  end: selectedEvent.end.toISOString(),
+                  extendedProps: {
+                    ...selectedEvent.extendedProps,
+                    date_start: selectedEvent.start.toISOString(),
+                    date_end: selectedEvent.end.toISOString(),
+                    image: "", // Provide a default or actual value
+                    is_draft: false, // Provide a default or actual value
+                    limit: "", // Provide a default or actual value
+                    description: selectedEvent.extendedProps.description || "", // Provide a default value
+                    location: selectedEvent.extendedProps.location || "", // Provide a default value
+                    users: selectedEvent.extendedProps.users.map(user => ({
+                      id: Number(user.id),
+                      firstname: "", // Provide a default or actual value
+                      lastname: "", // Provide a default or actual value
+                      email: "", // Provide a default or actual value
+                      // avatar: user.avatar || "" // Provide a default or actual value
+                    }))
+                  }
+                }} />
               </>
             )}
 
