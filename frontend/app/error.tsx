@@ -13,7 +13,7 @@ const Custom500 = () => {
             <p className="mb-4">Désolé, une erreur est survenue sur le serveur.</p>
             <Link href={"/"}>
                 <Button variant={"default"} size={"lg"}>
-                    Retour à l'accueil
+                    Retour à l&apos;accueil
                 </Button>
             </Link>
         </div>

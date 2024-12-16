@@ -21,8 +21,10 @@ const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 interface User {
   id: string;
-  firstName: string;
-  lastName: string;
+  firstName: string | null;
+  lastName: string | null;
+  email: string;
+  avatar: string | null;
 }
 
 interface UserContext {

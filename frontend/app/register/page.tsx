@@ -188,7 +188,9 @@ export default function Page() {
                                 className="absolute top-1/2 right-3 transform -translate-y-1/2"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
-                                <img
+                                <Image
+                                    width={20}
+                                    height={20}
                                     src={showPassword ? "/images/show.svg" : "/images/no-show.svg"}
                                     alt="Toggle Password Visibility"
                                     className="w-5 h-5"
@@ -215,7 +217,9 @@ export default function Page() {
                                 className="absolute top-1/2 right-3 transform -translate-y-1/2"
                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                             >
-                                <img
+                                <Image
+                                    width={20}
+                                    height={20}
                                     src={showConfirmPassword ? "/images/show.svg" : "/images/no-show.svg"}
                                     alt="Toggle Password Visibility"
                                     className="w-5 h-5"
@@ -232,7 +236,7 @@ export default function Page() {
                             onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
                         />
                         <Label htmlFor="terms" className="ml-2">
-                            J'accepte les <Link href="/conditions-utilisation" className="text-primary hover:underline">conditions d'utilisation</Link> et la <Link href="/politique-confidentialite" className="text-primary hover:underline">politique de confidentialité</Link>.
+                            J&apos;accepte les <Link href="/conditions-utilisation" className="text-primary hover:underline">conditions d&apos;utilisation</Link> et la <Link href="/politique-confidentialite" className="text-primary hover:underline">politique de confidentialité</Link>.
                         </Label>
                     </div>
 

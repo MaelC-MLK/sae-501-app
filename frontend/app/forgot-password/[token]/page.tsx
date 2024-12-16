@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Loading from '@/components/ui/loading';
 import { CheckCircleIcon } from 'lucide-react';
+import Image from 'next/image';
 
 export default function ForgotPasswordPage({ params }: { params: { token: string } }) {
     const { token } = params;
     const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'input' | null>('input');
-    const [message, setMessage] = useState<string | null>(null);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
@@ -93,7 +93,9 @@ export default function ForgotPasswordPage({ params }: { params: { token: string
                                         className="absolute top-1/2 right-3 transform -translate-y-1/2"
                                         onClick={() => setShowPassword(!showPassword)}
                                     >
-                                        <img
+                                        <Image
+                                            width={20}
+                                            height={20}
                                             src={showPassword ? "/images/show.svg" : "/images/no-show.svg"}
                                             alt="Toggle Password Visibility"
                                             className="w-5 h-5"
@@ -116,7 +118,9 @@ export default function ForgotPasswordPage({ params }: { params: { token: string
                                         className="absolute top-1/2 right-3 transform -translate-y-1/2"
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                     >
-                                        <img
+                                        <Image
+                                            width={20}
+                                            height={20}
                                             src={showConfirmPassword ? "/images/show.svg" : "/images/no-show.svg"}
                                             alt="Toggle Password Visibility"
                                             className="w-5 h-5"

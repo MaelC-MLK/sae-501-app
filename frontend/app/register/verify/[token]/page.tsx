@@ -31,7 +31,7 @@ export default function VerifyEmailPage({ params }: { params: { token: string } 
                     setStatus('error');
                     setMessage(data.error || 'Token invalide.');
                 }
-            } catch (err) {
+            } catch {
                 setStatus('error');
                 setMessage('Erreur lors de la vérification.');
             }
@@ -43,7 +43,7 @@ export default function VerifyEmailPage({ params }: { params: { token: string } 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
-                {status === 'loading' && <h1>Vérification de l'email...</h1>}
+                {status === 'loading' && <h1>Vérification de l&apos;email...</h1>}
                 {(status === 'success' || status === 'alreadyVerified' || status === 'error') && (
                     <>
                         <h1 className='text-lg font-semibold'>{message}</h1>
@@ -53,7 +53,7 @@ export default function VerifyEmailPage({ params }: { params: { token: string } 
                                 size={'lg'}
                                 className="mt-4"
                             >
-                                Retour à l'accueil
+                                Retour à l&apos;accueil
                             </Button>
                         </Link>
                     </>
