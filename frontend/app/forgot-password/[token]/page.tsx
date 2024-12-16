@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Loading } from '@/components/ui/loading';
+import Loading from '@/components/ui/loading';
 import { Check, CheckCircleIcon } from 'lucide-react';
 
 export default function ForgotPasswordPage({ params }: { params: { token: string } }) {
@@ -56,9 +56,9 @@ export default function ForgotPasswordPage({ params }: { params: { token: string
 
             setStatus('success');
         } catch (err) {
-            if (err.message.includes('expiré')) {
+            if (err instanceof Error && err.message.includes('expiré')) {
                 setError('Le lien est expiré');
-            } else if (err.message.includes('utilisé')) {
+            } else if (err instanceof Error && err.message.includes('utilisé')) {
                 setError('Le lien a déjà été utilisé');
             }
             else {
