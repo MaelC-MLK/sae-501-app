@@ -42,7 +42,7 @@ class EmailService
         $verificationLink = sprintf('%s/register/verify/%s', $_ENV['APP_FRONT_BASE_URL'], $token);
 
         // Rendre le template Twig
-        $htmlContent = $this->twig->render('emails/verification_email.html.twig', [
+        $htmlContent = $this->twig->render('emails/verification_email_register.html.twig', [
             'verification_link' => $verificationLink,
             'unregister_link'=> ''
         ]);

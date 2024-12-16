@@ -199,8 +199,27 @@ class UserController extends AbstractController
         $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
         if($existingUser){
-            if($existingUser->getVerificationToken() !== null && $existingUser->getLogout() == null){
+            // Verifier si il a été déconnecté et donc qu'il est déjà inscrit
+            if($existingUser->getLogout() == null){
                 $user = $existingUser;
+
+                if($existingUser->getPassword() == null && $existingUser->getFirstName() == null &&  $existingUser->getLastName() == null)
+                {
+                    $firstName = $data['firstName'] ?? null;
+                    $lastName = $data['lastName'] ?? null;
+                    $plainPassword = $data['plainPassword'] ?? null;
+
+                    if (empty($firstName) || empty($lastName) || empty($plainPassword)) {
+                        return new JsonResponse(['error' => 'Informations incomplètes'], 400);
+                    }
+
+                    $user->setFirstName($firstName);
+                    $user->setLastName($lastName);
+            
+                    // Hasher le mot de passe
+                    $password = $passwordHasher->hashPassword($user, $plainPassword);
+                    $user->setPassword($password);
+                } 
             }
             else {
                 return new JsonResponse(["error" => "L'utilisateur existe déjà"], 422);
