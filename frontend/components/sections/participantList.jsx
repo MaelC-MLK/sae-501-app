@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-function ParticipantsList({ participants, onRemoveParticipant }: { participants: any[], onRemoveParticipant: (id: number) => void }) {
+function ParticipantsList({ participants, onRemoveParticipant }) {
   return (
     <div className="p-4">
       <h2 className="text-lg font-semibold mb-4">Liste des participants</h2>
