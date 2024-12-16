@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
 import { UpdateUserImage, UpdateUser } from "@/lib/actions";
 import { PopUpEditPassword } from "@/components/sections/popUpEditPassword";
+import { Separator } from "../ui/separator";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -142,9 +143,9 @@ export function PopUpEditProfile({ user, onUpdate, userContext: { userContextUse
           </DialogHeader>
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="firstName" className="text-right">
-                Prénom
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="firstName">
+                Prénom :
               </Label>
               <Input
                 id="firstName"
@@ -153,9 +154,9 @@ export function PopUpEditProfile({ user, onUpdate, userContext: { userContextUse
                 className="col-span-3"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="lastName" className="text-right">
-                Nom
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="lastName" >
+                Nom : 
               </Label>
               <Input
                 id="lastName"
@@ -164,15 +165,15 @@ export function PopUpEditProfile({ user, onUpdate, userContext: { userContextUse
                 className="col-span-3"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="profilePicture" className="text-right">
-                Photo de profil
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="profilePicture" >
+                Photo de profil : 
               </Label>
               <Input
                 type="file"
                 id="profilePicture"
                 onChange={handleFileChange}
-                className="col-span-3"
+                className=""
               />
             </div>
             {imagePreview && (
@@ -180,26 +181,23 @@ export function PopUpEditProfile({ user, onUpdate, userContext: { userContextUse
                 <img src={imagePreview} alt="Preview" className="w-24 h-24 rounded-full" />
               </div>
             )}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="profilePicture" className="text-right">
-                
-              </Label>
-              <Button type="button" variant="secondary" className="col-span-3" onClick={() => setPasswordOpen(true)}>
-                Modifier le mot de passe
-              </Button>
-            </div>
-            
+
           </div>
-          <DialogFooter>
+
+          <DialogFooter className="sm:flex-col">
             <Button type="button" onClick={handleSubmit} disabled={isLoading}>
               {isLoading ? "Enregistrement..." : "Enregistrer les modifications"}
             </Button>
           </DialogFooter>
+          <div className="flex flex-row items-center justify-center gap-3 mt-2">
+            <Separator className="shrink" />
+          </div>
+          <Button type="button" variant="secondary" className="w-full" onClick={() => setPasswordOpen(true)}>
+            Modifier le mot de passe
+          </Button>
         </DialogContent>
       </Dialog>
 
-      {/* Second pop-up : Modifier le mot de passe */}
-      
       {passwordOpen && <PopUpEditPassword user={user} userContext={{ userContextUser, setUser }} onPasswordUpdate={handlePasswordUpdate} />}
     </>
   );
