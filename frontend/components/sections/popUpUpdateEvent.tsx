@@ -272,16 +272,19 @@ export default function PopupUpdateEvent({
     if (file) {
         if (!ALLOWED_FILE_TYPES.includes(file.type)) {
             setError('Veuillez sélectionner uniquement des fichiers JPG, PNG ou WEBP.');
+            console.log(error);
             return;
         }
         if (file.size > MAX_FILE_SIZE) {
             setError('La taille du fichier ne doit pas dépasser 2MB.');
+            console.log(error);
             return;
         }
         setEventPicture(file);
         setError('');
     } else {
         setError('Veuillez sélectionner uniquement des fichiers JPG, PNG ou WEBP.');
+        console.log(error);
     }
 };
 

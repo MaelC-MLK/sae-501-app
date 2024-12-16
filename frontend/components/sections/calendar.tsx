@@ -94,18 +94,18 @@ export default function Calendar() {
   setLoading = setLoadingState;
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
+      const timeoutId = setTimeout(() => {
+        if (!userContext.user) {
+          router.push("/login");
+          setLoading(false);
+        }
+      }, 10000); // Timeout de 10 secondes
+    
       if (!userContext.user) {
-        router.push("/login");
-        setLoading(false);
+        return () => clearTimeout(timeoutId);
       }
-    }, 10000); // Timeout de 10 secondes
-  
-    if (!userContext.user) {
-      return () => clearTimeout(timeoutId);
-    }
-    loadEvents();
-  }, [userContext, router]);
+      loadEvents();
+    }, [router]);
 
   const loadEvents = async () => {
     if (!userContext.user) return;

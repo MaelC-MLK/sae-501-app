@@ -48,11 +48,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UpdateEvent } from "@/lib/actions";
 import { Separator } from "@/components/ui/separator";
-import { fetchUserBy } from "@/lib/data";
 import { PopupUpdateEventProps } from "@/types/event";
 import { fr } from "date-fns/locale";
 import { useUser } from "@/contexts/UserProvider";
-import { useDebouncedCallback } from "use-debounce";
 import { useToast } from "@/hooks/use-toast";
 import { Participant } from "@/types/user";
 
@@ -131,18 +129,16 @@ export default function PopupUpdateDraft({
   const [endTime, setEndTime] = useState<string>(
     format(new Date(dateEnd), "HH:mm")
   );
-  const [searchTerm, setSearchTerm] = useState<string>("");  
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
 
-  const [participants, setParticipants] = useState<Participant[]>(
-    eventData.users.map((user: User) => ({
-      id: user.id,
-      firstName: user.firstname,
-      lastName: user.lastname,
-      email: user.email,
-      avatar: user.avatar,
-    })) || []
-  );
+  // const [participants, setParticipants] = useState<Participant[]>(
+  //   eventData.users.map((user: User) => ({
+  //     id: user.id,
+  //     firstName: user.firstname,
+  //     lastName: user.lastname,
+  //     email: user.email,
+  //     avatar: user.avatar,
+  //   })) || []
+  // );
   // const [setIsPopoverOpen] = useState<boolean>(false);
   // const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPrivate, setIsPrivate] = useState<boolean>(
@@ -297,7 +293,7 @@ export default function PopupUpdateDraft({
       isVisible: "false",
       location: data.location || "",
       creator: `/api/users/${userContext.user.id}`,
-      users: participants.map((participant) => `/api/users/${participant.id}`),
+      users: [],
       limit: data.limit.toString() || "100",
     };  
   
@@ -336,7 +332,7 @@ export default function PopupUpdateDraft({
       isVisible: isPrivate ? "false" : "true",
       location: data.location || "",
       creator: `/api/users/${userContext.user.id}`,
-      users: participants.map((participant) => `/api/users/${participant.id}`),
+      users: [],
       is_draft: "false",
       limit: data.limit.toString() || "100",
     };  
