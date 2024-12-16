@@ -31,7 +31,7 @@ services:
     container_name: sae-backend
     build:
       context: .
-      dockerfile: docker/backend/Dockerfile
+      dockerfile: docker/backend/Dockerfile.prod
     ports:
       - "9000:9000"
     environment:
