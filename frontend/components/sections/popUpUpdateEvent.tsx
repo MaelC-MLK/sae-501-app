@@ -17,7 +17,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CalendarIcon, ClockIcon, CrossCircledIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
-import { DateRange } from "react-day-picker";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -51,7 +50,6 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UpdateEvent } from "@/lib/actions";
 import { Separator } from "@/components/ui/separator";
 import { fetchUserBy } from "@/lib/data";
-import { PopupUpdateEventProps } from "@/types/event";
 import { fr } from "date-fns/locale";
 import { useUser } from "@/contexts/UserProvider";
 import { useDebouncedCallback } from "use-debounce";
@@ -63,8 +61,6 @@ import ImageUpload from "@/components/sections/dropZoneEventPopup";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-
-
 
 const FormSchema = z.object({
   title: z.string().nonempty("Title is required"),
@@ -89,11 +85,39 @@ const FormSchema = z.object({
   limit: z.string(),
 });
 
+interface PopupUpdateEventProps {
+  eventData: {
+    id: number;
+    title: string;
+    start: string;
+    end: string;
+    extendedProps: {
+      description: string;
+      location: string;
+      date_start: string;
+      date_end: string;
+      image: string;
+      users: Array<{
+        id: number;
+        firstname: string;
+        lastname: string;
+        email: string;
+        avatar?: string;
+      }>;
+      isVisible: boolean;
+      is_draft: boolean;
+      limit: string;
+    };
+  };
+  className?: string;
+}
+
+import { DateRange } from "react-day-picker";
+
 export default function PopupUpdateEvent({
   eventData,
   className,
 }: PopupUpdateEventProps) {
-
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(eventData.start),
     to: new Date(eventData.end),
@@ -105,9 +129,25 @@ export default function PopupUpdateEvent({
     format(new Date(eventData.end), "HH:mm")
   );
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [participants, setParticipants] = useState<any[]>(
-    eventData.extendedProps.users.map((user: any) => ({
+  const [searchResults, setSearchResults] = useState<
+    Array<{
+      id: number;
+      firstName: string;
+      lastName: string;
+      email: string;
+      avatar?: string;
+    }>
+  >([]);
+  const [participants, setParticipants] = useState<
+    Array<{
+      id: number;
+      firstName: string;
+      lastName: string;
+      email: string;
+      avatar?: string;
+    }>
+  >(
+    eventData.extendedProps.users.map((user) => ({
       id: user.id,
       firstName: user.firstname,
       lastName: user.lastname,
@@ -123,7 +163,7 @@ export default function PopupUpdateEvent({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isMainDialogOpen, setIsMainDialogOpen] = useState<boolean>(false);
   const userContext = useUser();
-  const {toast} = useToast();
+  const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
   const [eventPicture, setEventPicture] = useState<File | null>(null);
 
@@ -139,7 +179,7 @@ export default function PopupUpdateEvent({
       time_end: endTime,
       image: eventData.extendedProps.image,
       users:
-        eventData.extendedProps.users.map((user: any) => ({
+        eventData.extendedProps.users.map((user) => ({
           id: user.id,
           firstName: user.firstname,
           lastName: user.lastname,
@@ -167,17 +207,6 @@ export default function PopupUpdateEvent({
     return localDate.toISOString().replace("T", " ").substring(0, 19);
   };
 
-  const areAllFieldsFilled = () => {
-    const values = form.getValues();
-    return (
-      values.title &&
-      values.date_start &&
-      values.date_end &&
-      values.time_start &&
-      values.time_end
-    );
-  };
-
   const handleSelect = (selectedDate: DateRange | undefined) => {
     if (!selectedDate?.from) {
       setDate({
@@ -187,14 +216,6 @@ export default function PopupUpdateEvent({
     } else {
       setDate(selectedDate);
     }
-  };
-
-  const handleStartTimeChange = (value: string) => {
-    setStartTime(value);
-  };
-
-  const handleEndTimeChange = (value: string) => {
-    setEndTime(value);
   };
 
   const handleSearchChange = useDebouncedCallback(async (value: string) => {
@@ -297,13 +318,13 @@ export default function PopupUpdateEvent({
     };
 
     try {
-        await UpdateEvent(formData, eventData.id);
+        await UpdateEvent(formData, eventData.id.toString());
 
         // Vérifier si l'image a été modifiée
         if (eventPicture) {
           const imageFile = new FormData();
           imageFile.append("imageFile", eventPicture);
-          await UpdateEventImage(eventData.id, imageFile);
+          await UpdateEventImage(eventData.id.toString(), imageFile);
         }
         
         setIsMainDialogOpen(false);
@@ -342,7 +363,7 @@ const extraParticipantsCount = participants.length - maxVisibleParticipants;
             onClick={() => setIsMainDialogOpen(true)}
           >
             <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2">
-              Modifier l'événement
+              Modifier l&apos;événement
             </div>
             <div className="rounded-full p-2 group-hover:bg-gray-200">
               <svg
@@ -628,7 +649,7 @@ const extraParticipantsCount = participants.length - maxVisibleParticipants;
 
                 <div className="flex flex-col mt-4">
                   <Label htmlFor="eventPicture" className="tex-left mb-2">
-                    Modifier l'image
+                    Modifier l&apos;image
                   </Label>
                   <ImageUpload 
                   name="eventPicture"
