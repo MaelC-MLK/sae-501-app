@@ -199,31 +199,36 @@ class UserController extends AbstractController
         $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
         if($existingUser){
-            if($existingUser->getVerificationToken() !== null && $existingUser->getLogout() == null){
+            // Verifier s'il a deja un compte anonyme
+            if($existingUser->getLogout() == null && $existingUser->getPassword() == null && $existingUser->getFirstName() == null &&  $existingUser->getLastName() == null){
                 $user = $existingUser;
             }
-            else {
+            // Verifier si il a déjà été deconnecté et désactivé
+            else if ($existingUser->getLogout() == null && $existingUser->isActive() == false) {
+                $user = $existingUser;
+            } else {
                 return new JsonResponse(["error" => "L'utilisateur existe déjà"], 422);
             }
         }
         else{
-            $firstName = $data['firstName'] ?? null;
-            $lastName = $data['lastName'] ?? null;
-            $plainPassword = $data['plainPassword'] ?? null;
-
-            if (empty($firstName) || empty($lastName) || empty($plainPassword)) {
-                return new JsonResponse(['error' => 'Informations incomplètes'], 400);
-            }
-
             $user = new User();
             $user->setEmail($email);
-            $user->setFirstName($firstName);
-            $user->setLastName($lastName);
-    
-            // Hasher le mot de passe
-            $password = $passwordHasher->hashPassword($user, $plainPassword);
-            $user->setPassword($password);
         }
+
+        $firstName = $data['firstName'] ?? null;
+        $lastName = $data['lastName'] ?? null;
+        $plainPassword = $data['plainPassword'] ?? null;
+
+        if (empty($firstName) || empty($lastName) || empty($plainPassword)) {
+            return new JsonResponse(['error' => 'Informations incomplètes'], 400);
+        }
+
+        $user->setFirstName($firstName);
+        $user->setLastName($lastName);
+    
+        // Hasher le mot de passe
+        $password = $passwordHasher->hashPassword($user, $plainPassword);
+        $user->setPassword($password);
 
         // Générer un token de vérification
         $token = Uuid::v4()->toRfc4122(); // Génération de token (UUID)

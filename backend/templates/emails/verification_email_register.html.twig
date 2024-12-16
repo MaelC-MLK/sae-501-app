@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Vérification de votre inscription</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4; /* hsl(0, 0%, 95.7%) */
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff; /* hsl(0, 0%, 100%) */
+            padding: 20px;
+            border-radius: 10px; /* 0.625rem */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        h1 {
+            margin: 0;
+            color: #0a0e1b; /* hsl(224, 71.4%, 4.1%) */
+        }
+
+        p {
+            font-size: 16px;
+            color: #666666; /* hsl(0, 0%, 40%) */
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #ffffff; /* hsl(0, 0%, 100%) */
+            background-color: #7d3cff; /* hsl(262.1, 83.3%, 57.8%) */
+            text-decoration: none;
+            border-radius: 6px; /* 0.375rem */
+            margin-top: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 10px 0;
+            font-size: 12px;
+            color: #999999; /* hsl(0, 0%, 60%) */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Vérification de votre inscription</h1>
+        </div>
+        <div style="text-align: center;">
+            <p>Bonjour,</p>
+            <p>
+                Cliquez sur le bouton suivant pour vérifier votre email :
+            </p>
+            <p>
+                <a style="color: white;" href="{{ verification_link }}" class="button">
+                    Valider mon inscription
+                </a>
+            </p>
+        </div>
+
+        <p>Si vous n'avez pas demandé cette vérification, vous pouvez ignorer cet email.</p>
+        <div class="footer">
+            <p>&copy; {{ "now"|date("Y") }} Eventify. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>
