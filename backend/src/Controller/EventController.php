@@ -64,25 +64,83 @@ class EventController extends AbstractController
     #[Route('/api/events', name: 'get_paginated_events', methods: ['GET'])]
     public function getPaginatedEvents(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        // Récupérer les paramètres `page` et `limit` depuis la requête
+        // Récupérer les paramètres `page`, `limit`, `search` et `order` depuis la requête
         $page = max(1, (int) $request->query->get('page', 1));
         $limit = max(1, (int) $request->query->get('limit', 10));
+        $search = $request->query->get('search', '');
+        $order = $request->query->get('order', 'mostRecent');
+        $startDate = $request->query->get('startDate', '');
+        $endDate = $request->query->get('endDate', '');
         $offset = ($page - 1) * $limit;
 
-        // Critères pour filtrer les événements
-        $criteria = ['isVisible' => true, 'supprime' => null];
         $repository = $entityManager->getRepository(Event::class);
 
         // Récupérer les événements paginés
-        $events = $repository->findBy(
-            $criteria,
-            ['date_start' => 'ASC'], // Tri par date de début
-            $limit,
-            $offset
-        );
+        $queryBuilder = $repository->createQueryBuilder('e')
+            ->where('e.isVisible = :isVisible')
+            ->andWhere('e.supprime IS NULL')
+            ->andWhere('e.date_start >= :now')
+            ->setParameter('now', new \DateTime())
+            ->setParameter('isVisible', true);
+
+        if (!empty($search)) {
+            $queryBuilder->andWhere('e.title LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        if (!empty($startDate)) {
+            $queryBuilder->andWhere('e.date_start >= :startDate')
+                ->setParameter('startDate', new \DateTime($startDate));
+        }
+    
+        if (!empty($endDate)) {
+            // Ajouter un jour à endDate pour inclure toute la journée
+            $endDateTime = new \DateTime($endDate);
+            $endDateTime->modify('+1 day'); // Passer à minuit du lendemain
+            $queryBuilder->andWhere('e.date_end < :endDate')
+                ->setParameter('endDate', $endDateTime);
+        }
+              
+
+        if ($order === 'mostRecent') {
+            $queryBuilder->orderBy('e.date_start', 'ASC');
+        } else {
+            $queryBuilder->orderBy('e.date_start', 'DESC');
+        }
+
+        $queryBuilder->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        $events = $queryBuilder->getQuery()->getResult();
 
         // Compter le total des événements pour calculer les pages totales
-        $totalEvents = $repository->count($criteria);
+        $countQueryBuilder = $repository->createQueryBuilder('e')
+            ->select('COUNT(e.id)')
+            ->where('e.isVisible = :isVisible')
+            ->andWhere('e.supprime IS NULL')
+            ->andWhere('e.date_start >= :now')
+            ->setParameter('isVisible', true)
+            ->setParameter('now', new \DateTime());
+
+        if (!empty($search)) {
+            $countQueryBuilder->andWhere('e.title LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        if (!empty($startDate)) {
+            $countQueryBuilder->andWhere('e.date_start >= :startDate')
+                ->setParameter('startDate', new \DateTime($startDate));
+        }
+    
+        if (!empty($endDate)) {
+            $endDateTime = new \DateTime($endDate);
+            $endDateTime->modify('+1 day'); // Passer à minuit du lendemain
+            $countQueryBuilder->andWhere('e.date_end < :endDate')
+                ->setParameter('endDate', $endDateTime);
+        }
+              
+
+        $totalEvents = $countQueryBuilder->getQuery()->getSingleScalarResult();
         $totalPages = (int) ceil($totalEvents / $limit);
 
         // Transformer les événements en tableau
