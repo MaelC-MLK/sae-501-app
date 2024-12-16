@@ -46,7 +46,7 @@ export default function Page() {
 
     return (
         <div className="">
-            <div className='flex min-h-screen'>
+            <div className='flex min-h-screen px-4 sm:px-0'>
                 <div className="flex flex-col justify-center w-full md:w-2/3 max-w-sm mx-auto mt-4 py-24">
                     <h1 className={`${k2d.className} text-3xl font-bold mb-6`}>Heureux de vous revoir parmi nous !</h1>
 
