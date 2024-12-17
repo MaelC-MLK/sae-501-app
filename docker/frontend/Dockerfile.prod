@@ -14,6 +14,6 @@ RUN npm run build
 
 # Utiliser une image de serveur web pour servir les fichiers statiques
 FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
+COPY --from=build /app/.next /usr/share/nginx/html
 EXPOSE 3000
 CMD ["nginx", "-g", "daemon off;"]
