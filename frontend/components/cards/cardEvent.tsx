@@ -31,7 +31,7 @@ export function CardEvent({ event }: { event: EventProps }) {
     }
 
     return (
-        <Link href={`/event/${event.idToken}`} className="border-2 rounded-xl overflow-hidden p-2 w-96 group bg-background relative h-fit">
+        <Link href={`/event/${event.idToken}`} className="border-2 rounded-xl overflow-hidden p-2 group bg-background relative h-fit w-full">
             <Badge variant={badgeVariant} className={`${participantPercentage >= 75 && participantPercentage < 100 ? 'bg-warning hover:bg-warning' : null} absolute top-4 right-4 z-20 gap-1`}>
 
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">

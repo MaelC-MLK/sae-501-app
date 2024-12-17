@@ -71,6 +71,7 @@ class EventController extends AbstractController
         $page = max(1, (int) $request->query->get('page', 1));
         $limit = max(1, (int) $request->query->get('limit', 10));
         $search = $request->query->get('search', '');
+        $location = $request->query->get('location', '');
         $order = $request->query->get('order', 'mostRecent');
         $startDate = $request->query->get('startDate', '');
         $endDate = $request->query->get('endDate', '');
@@ -89,6 +90,11 @@ class EventController extends AbstractController
         if (!empty($search)) {
             $queryBuilder->andWhere('e.title LIKE :search')
                 ->setParameter('search', '%' . $search . '%');
+        }
+
+        if (!empty($location)) {
+            $queryBuilder->andWhere('e.location LIKE :location')
+                ->setParameter('location', '%' . $location . '%');
         }
 
         if (!empty($startDate)) {
@@ -128,6 +134,11 @@ class EventController extends AbstractController
         if (!empty($search)) {
             $countQueryBuilder->andWhere('e.title LIKE :search')
                 ->setParameter('search', '%' . $search . '%');
+        }
+
+        if (!empty($location)) {
+            $countQueryBuilder->andWhere('e.location LIKE :location')
+                ->setParameter('location', '%' . $location . '%');
         }
 
         if (!empty($startDate)) {

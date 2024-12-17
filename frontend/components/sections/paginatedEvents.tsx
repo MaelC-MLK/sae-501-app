@@ -34,15 +34,16 @@ const PaginatedEvents = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [location, setLocation] = useState('');
   const [sortOrder, setSortOrder] = useState('mostRecent');
   const [startDate, setStartDate] = React.useState<Date>()
   const [endDate, setEndDate] = React.useState<Date>()
   const itemsPerPage = 6;
 
-  const fetchEvents = async (page: number, search: string, order: string, start: string, end: string) => {
+  const fetchEvents = async (page: number, search: string, location: string, order: string, start: string, end: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`http://localhost:8080/api/events?page=${page}&limit=${itemsPerPage}&search=${search}&order=${order}&startDate=${start}&endDate=${end}`);
+      const response = await fetch(`http://localhost:8080/api/events?page=${page}&limit=${itemsPerPage}&search=${search}&location=${location}&order=${order}&startDate=${start}&endDate=${end}`);
       if (!response.ok) throw new Error('Erreur lors de la récupération des événements');
 
       const data = await response.json();
@@ -57,11 +58,11 @@ const PaginatedEvents = () => {
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      fetchEvents(currentPage, searchQuery, sortOrder, startDate ? startDate.toISOString() : '', endDate ? endDate.toISOString() : '');
+      fetchEvents(currentPage, searchQuery, location, sortOrder, startDate ? startDate.toISOString() : '', endDate ? endDate.toISOString() : '');
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [currentPage, searchQuery, sortOrder, startDate, endDate]);
+  }, [currentPage, searchQuery, location, sortOrder, startDate, endDate]);
 
   const handlePreviousPage = () => {
     if (currentPage > 1) setCurrentPage((prev) => prev - 1);
@@ -76,33 +77,74 @@ const PaginatedEvents = () => {
       id="events-list"
       className="flex flex-col justify-center items-center my-14 scroll-mt-20"
     >
-      <div className="w-full flex flex-col justify-between items-center w-full max-w-7xl mb-5 gap-2">
-        <h2 className="font-bold justify-self-center md:px-10 text-xl md:text-2xl text-nowrap">
+      <div className="w-full flex flex-col justify-center items-start max-w-7xl mb-5 gap-5 px-4 sm:px-10">
+        <h2 className="font-bold justify-self-center text-xl md:text-2xl text-nowrap">
           Tous les événements !
         </h2>
-        <div className="flex flex-col sm:flex-row w-full items-end px-4 sm:px-10 gap-2">
-          <div className='flex flex-row gap-2'>
-            <Input
-              type="text"
-              placeholder="Rechercher..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <div className="flex flex-row gap-2 w-full">
-              {/* <Input
-                type="text"
-                placeholder="Où ?"
-                value={location}
-                onChange={handleLocationChange}
-                className="w-full"
-              /> */}
+        <div className="flex flex-col w-full items-end gap-2">
+          <Input
+            type="text"
+            placeholder="Rechercher..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <div className="flex md:flex-row flex-col gap-2 w-full">
+            <div className='flex flex-col sm:flex-row gap-2 w-full'>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !startDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className='w-4 mr-2' />
+                    {startDate ? format(startDate, "PPP") : <span>Date de début</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={startDate}
+                    onSelect={setStartDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal ",
+                      !endDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className='w-4 mr-2' />
+                    {endDate ? format(endDate, "PPP") : <span>Date de fin</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={endDate}
+                    onSelect={setEndDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className='flex flex-row gap-2 w-full'>
               <Input
                 type="text"
                 placeholder="Où ?"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
                 className="w-full"
               />
               <Select value={sortOrder} onValueChange={setSortOrder}>
-                <SelectTrigger className="w-[210px]">
+                <SelectTrigger className="">
                   <SelectValue placeholder="Trier" />
                 </SelectTrigger>
                 <SelectContent>
@@ -115,56 +157,10 @@ const PaginatedEvents = () => {
               </Select>
             </div>
           </div>
-          <div className='flex flex-col sm:flex-row gap-2'>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-[280px] justify-start text-left font-normal",
-                    !startDate && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className='w-4 mr-2' />
-                  {startDate ? format(startDate, "PPP") : <span>Date de début</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={startDate}
-                  onSelect={setStartDate}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-[280px] justify-start text-left font-normal ",
-                    !endDate && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className='w-4 mr-2' />
-                  {endDate ? format(endDate, "PPP") : <span>Date de fin</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={endDate}
-                  onSelect={setEndDate}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
         </div>
       </div>
-      <div className="flex flex-col items-center gap-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="flex flex-col items-center gap-4 w-full px-4 sm:px-10 max-w-7xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
           {isLoading ? (
             Array.from({ length: itemsPerPage }).map((_, index) => (
               <SkeletonCard key={index} />
