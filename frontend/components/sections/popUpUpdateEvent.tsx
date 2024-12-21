@@ -618,7 +618,7 @@ const extraParticipantsCount = participants.length - maxVisibleParticipants;
                     onValueChange={(value) => setIsPrivate(value === "private")}
                   >
                     <TabsList>
-                      <TabsTrigger value="private">Private</TabsTrigger>
+                      <TabsTrigger value="private">Privé</TabsTrigger>
                       <TabsTrigger value="public">Public</TabsTrigger>
                     </TabsList>
                   </Tabs>

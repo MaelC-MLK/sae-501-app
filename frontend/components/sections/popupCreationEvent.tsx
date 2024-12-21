@@ -287,6 +287,7 @@ export default function PopupCreationEvent({
     });
 
     setParticipants([]);
+    form.setValue("users", []);
     setImageFile(null);
     setIsPrivate(true);
   };
@@ -711,7 +712,7 @@ export default function PopupCreationEvent({
                     onValueChange={(value) => setIsPrivate(value === "private")}
                   >
                     <TabsList>
-                      <TabsTrigger value="private">Private</TabsTrigger>
+                      <TabsTrigger value="private">Privé</TabsTrigger>
                       <TabsTrigger value="public">Public</TabsTrigger>
                     </TabsList>
                   </Tabs>
@@ -867,6 +868,7 @@ export default function PopupCreationEvent({
               onClick={() => {
                 setIsConfirmDialogOpen(false);
                 setIsMainDialogOpen(false); // Fermer le popup de création d'événement
+                setParticipants([]);
                 form.reset({
                   title: "",
                   description: "",
