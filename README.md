@@ -62,6 +62,11 @@ sudo chmod 777 -R ./backend/public/uploads
 
 L'installation de l'application est terminé.
 
+## Liens
+- Frontend : [http://localhost:8090](http://localhost:8090)
+- Backend : [http://localhost:8080](http://localhost:8080)
+- phpMyAdmin : [http://localhost:8070](http://localhost:8070)
+
 ## Si problème 
 
 ### Si problème avec les migrations : 
@@ -82,13 +87,6 @@ docker exec -it sae-backend /bin/bash
 ```
 docker exec -it sae-frontend /bin/bash
 ```
-
-## Liens
-- Frontend : [http://localhost:8090](http://localhost:8090)
-- Backend : [http://localhost:8080](http://localhost:8080)
-- phpMyAdmin : [http://localhost:8070](http://localhost:8070)
-
-
 
 
 
