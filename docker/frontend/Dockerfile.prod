@@ -1,19 +1,23 @@
-# Utilisez une image de base appropriée
-FROM node:18-alpine AS build
+# Use the official Node.js image as the base image
+FROM node:18-alpine
 
-# Définir le répertoire de travail
+# Set the working directory to /app
 WORKDIR /app
 
-# Copier les fichiers de package et installer les dépendances
-COPY ./frontend/package*.json ./
-RUN npm install || cat /root/.npm/_logs/*-debug.log
+# Copy package.json and package-lock.json
+COPY frontend/package*.json ./
 
-# Copier le reste des fichiers de l'application et construire l'application
-COPY ./frontend ./
+# Install dependencies
+RUN npm install --omit=dev
+
+# Copy application source
+COPY frontend/ ./
+
+# Build the application
 RUN npm run build
 
-# Utiliser une image de serveur web pour servir les fichiers statiques
-FROM nginx:alpine
-COPY --from=build /app/.next /usr/share/nginx/html
+# Expose port 3000
 EXPOSE 3000
-CMD ["nginx", "-g", "daemon off;"]
+
+# Set the entrypoint
+CMD ["npm", "start"]
