@@ -1,4 +1,4 @@
-# SAÉ 501
+# SAÉ 501 - Eventify
 
 ## Installation
 
@@ -38,7 +38,7 @@ Une fois dans le conteneur docker :
 php bin/console lexik:jwt:generate-keypair
 ```
 
-### Import de la table Event
+### Import de la table Event à importer dans phpMyAdmin (port 8070)
 
 [Export de la base](./Eventify.sql)<br/><br/>
 Cette export contient un utilisateur et un administrateur :<br/>
