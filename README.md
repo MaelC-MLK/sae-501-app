@@ -62,6 +62,8 @@ sudo chmod 777 -R ./backend/public/uploads
 
 L'installation de l'application est terminé.
 
+## Si problème 
+
 ### Si problème avec les migrations : 
 
 - Supprimer toutes les migrations du projet dans les fichiers et sur phpMyAdmin
