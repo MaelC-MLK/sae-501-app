@@ -1,24 +1,8 @@
 # SAÉ 501
 
-## Fonctionnalités testables
-
-Actuellement, les fonctionnalités suivantes fonctionnent en environnement local, mais rencontrent des erreurs CORS sur Codespace, ce qui empêche leur bon fonctionnement dans cet environnement.
-
-Voici la liste des nouvelles fonctionnalités disponibles (29/11/2024) :
- - Améliorations graphiques
- - Pouvoir modifier la photo de profil
- - Pouvoir filtrer dans le calendrier entre les événement public ou privé
- - Pouvoir s'inscrire à un événement en tant qu'utilisateur inscrit
- - Pouvoir se désinscrire d'un évènement si on est inscrit en tant qu'utilisateur
- - Page 404 et 500
- - Pouvoir avoir une redirection pour les événéments publiques vers leur page détail
- - Fixe du calendrier ( Ouverture popup, rechargement des events à la création/modification )
- - Activation et désactivation des utilisateur dans le backoffice
- - Pour créer un compte on doit désormais valider un lien dans un mail sinon le compte n'est pas activé
-  
 ## Installation
 
-Il faut ensuite exécuter ces commandes :
+Il faut exécuter ces commandes :
 
 ### Installe les dépendances pour le frontend
 ```
@@ -37,7 +21,7 @@ docker-compose up -d
 ```
 docker exec -it sae-backend /bin/bash
 ```
-Dans le conteneur docker : 
+Une fois dans le conteneur docker : 
 ```
 php bin/console make:migration
 ```
@@ -49,17 +33,23 @@ php bin/console doctrine:migrations:migrate
 ```
 docker exec -it sae-backend /bin/bash
 ```
-Dans le conteneur docker : 
+Une fois dans le conteneur docker : 
 ```
 php bin/console lexik:jwt:generate-keypair
 ```
 
 ### Import de la table Event
 
-[Export de la base](./SAE501.sql)<br/><br/>
-Cette export contient un utilisateur déjà inscrit à des événements :<br/>
-email : test@gmail.com <br/>
-mot de passe : azertyuiop
+[Export de la base](./Eventify.sql)<br/><br/>
+Cette export contient un utilisateur et un administrateur :<br/>
+ADMIN : 
+email : admin@gmail.com <br/>
+mot de passe : adminpassword<br/><br/>
+
+UTILISATEUR : 
+email : user@gmail.com <br/>
+mot de passe : userpassword
+
 <br/><br/>
 Et des événements publics visibles sur la page d'accueil.
 <br/>
@@ -70,6 +60,8 @@ Il se peut que le dossier qui reçoit l'upload des images n'ait pas de permissio
 ```
 sudo chmod 777 -R ./backend/public/uploads
 ```
+
+# Installation de l'application terminé
 
 ### Si problème avec les migrations : 
 
