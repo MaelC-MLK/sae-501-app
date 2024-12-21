@@ -49,8 +49,7 @@ mot de passe : adminpassword<br/><br/>
 UTILISATEUR : 
 email : user@gmail.com <br/>
 mot de passe : userpassword
-
-<br/><br/>
+<br/>
 Et des événements publics visibles sur la page d'accueil.
 <br/>
 
@@ -61,7 +60,7 @@ Il se peut que le dossier qui reçoit l'upload des images n'ait pas de permissio
 sudo chmod 777 -R ./backend/public/uploads
 ```
 
-# Installation de l'application terminé
+L'installation de l'application est terminé.
 
 ### Si problème avec les migrations : 
 
