@@ -21,6 +21,22 @@ SET time_zone = "+00:00";
 -- Base de données : `SAE501`
 --
 
+
+--
+-- Déchargement des données de la table `user`
+--
+
+INSERT INTO `user` (`id`, `email`, `password`, `roles`, `first_name`, `last_name`, `avatar`, `image_size`, `updated_at`, `verification_token`, `token_expiry`, `logout`, `active`, `reset_token`, `reset_token_expiry`) VALUES
+(1, 'tomboutin.tom@gmail.com', '$2y$13$syOMg4qo54jamwzDrBUlSes1e900eIz1M5tj8vOlequ7IwIvq1FLy', '[]', 'Tom', 'Boutin', 'chill-guy-675838aa817be813181962.webp', 8556, '2024-12-10 12:48:42', NULL, NULL, '2024-12-21 16:20:09', 1, NULL, NULL),
+(2, 'maelcheron@gmail.com', '$2y$13$4L3WsNMxtzAMdHtlSMESuOa6MIf6mpaO8/7ffXMRFxtlXTkljhBPC', '[]', 'Mael', 'Cheron', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL),
+(7, 'test@gmail.com', '$2y$13$4L3WsNMxtzAMdHtlSMESuOa6MIf6mpaO8/7ffXMRFxtlXTkljhBPC', '[]', 'Test', 'Test', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL),
+(8, 'user2@gmail.com', '$2y$13$4L3WsNMxtzAMdHtlSMESuOa6MIf6mpaO8/7ffXMRFxtlXTkljhBPC', '[]', 'Prénom', 'Nom', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL),
+(9, 'admin@gmail.com', '$2y$13$P33C5U0Sd/NC0UibIem7D.BLZRqUBKlGWeJp7yaCybo47.SzX0OiW', '[\"ROLE_ADMIN\"]', 'Compte', 'Admin', NULL, NULL, NULL, NULL, NULL, '2024-12-21 16:19:36', 1, NULL, NULL),
+(10, 'user@gmail.com', '$2y$13$syOMg4qo54jamwzDrBUlSes1e900eIz1M5tj8vOlequ7IwIvq1FLy', '[]', 'Prénom', 'Nom', 'chill-guy-6766faf1aa87b724348683.webp', 8556, '2024-12-21 17:29:21', NULL, NULL, '2024-12-21 17:27:39', 1, NULL, NULL),
+(12, 'tom.boutin@etu.unilim.fr', '$2y$13$DCeIxbMbdEtp7/QTJR.Z0.WtZpnSeM6gKtrz4/1KaGP2MVY6zQKRu', '[]', 'Démo', 'Démo', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL);
+COMMIT;
+
+
 --
 -- Déchargement des données de la table `event`
 --
@@ -52,20 +68,6 @@ INSERT INTO `event_user` (`event_id`, `user_id`) VALUES
 (6, 1),
 (6, 2),
 (6, 7);
-
---
--- Déchargement des données de la table `user`
---
-
-INSERT INTO `user` (`id`, `email`, `password`, `roles`, `first_name`, `last_name`, `avatar`, `image_size`, `updated_at`, `verification_token`, `token_expiry`, `logout`, `active`, `reset_token`, `reset_token_expiry`) VALUES
-(1, 'tomboutin.tom@gmail.com', '$2y$13$syOMg4qo54jamwzDrBUlSes1e900eIz1M5tj8vOlequ7IwIvq1FLy', '[]', 'Tom', 'Boutin', 'chill-guy-675838aa817be813181962.webp', 8556, '2024-12-10 12:48:42', NULL, NULL, '2024-12-21 16:20:09', 1, NULL, NULL),
-(2, 'maelcheron@gmail.com', '$2y$13$4L3WsNMxtzAMdHtlSMESuOa6MIf6mpaO8/7ffXMRFxtlXTkljhBPC', '[]', 'Mael', 'Cheron', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL),
-(7, 'test@gmail.com', '$2y$13$4L3WsNMxtzAMdHtlSMESuOa6MIf6mpaO8/7ffXMRFxtlXTkljhBPC', '[]', 'Test', 'Test', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL),
-(8, 'user2@gmail.com', '$2y$13$4L3WsNMxtzAMdHtlSMESuOa6MIf6mpaO8/7ffXMRFxtlXTkljhBPC', '[]', 'Prénom', 'Nom', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL),
-(9, 'admin@gmail.com', '$2y$13$P33C5U0Sd/NC0UibIem7D.BLZRqUBKlGWeJp7yaCybo47.SzX0OiW', '[\"ROLE_ADMIN\"]', 'Compte', 'Admin', NULL, NULL, NULL, NULL, NULL, '2024-12-21 16:19:36', 1, NULL, NULL),
-(10, 'user@gmail.com', '$2y$13$syOMg4qo54jamwzDrBUlSes1e900eIz1M5tj8vOlequ7IwIvq1FLy', '[]', 'Prénom', 'Nom', 'chill-guy-6766faf1aa87b724348683.webp', 8556, '2024-12-21 17:29:21', NULL, NULL, '2024-12-21 17:27:39', 1, NULL, NULL),
-(12, 'tom.boutin@etu.unilim.fr', '$2y$13$DCeIxbMbdEtp7/QTJR.Z0.WtZpnSeM6gKtrz4/1KaGP2MVY6zQKRu', '[]', 'Démo', 'Démo', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL);
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
