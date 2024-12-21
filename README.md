@@ -53,7 +53,7 @@ mot de passe : userpassword
 Et des événements publics visibles sur la page d'accueil.
 <br/>
 
-### Si roblème d'upload d'image : 
+### Si problème d'upload d'image : 
 
 Il se peut que le dossier qui reçoit l'upload des images n'ait pas de permissions par défaut, dans ce cas effectuer cette commande à la racine du projet :
 ```
